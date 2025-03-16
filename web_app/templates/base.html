@@ -1,0 +1,197 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="AI-QS Digital Twin: Simplified analytics for critical decision-making">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+    <title>{{TITLE}}</title>
+    
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/bootstrap-selector/css/bootstrap-select.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/themify-icon/themify-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/flaticon/flaticon.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/animation/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/owl-carousel/assets/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/magnify-pop/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/nice-select/nice-select.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/elagent/style.css' %}">
+    <link rel="stylesheet" href="{% static 'vendors/scroll/jquery.mCustomScrollbar.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'toast/dist/snackbar.min.css' %}">
+</head>
+
+<body>
+    <div id="preloader">
+        <div id="ctn-preloader" class="ctn-preloader">
+            <div class="animation-preloader">
+                <svg class="loader-icon" width='100px' height='100px' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="uil-default" <rect x="0" y="0" width="100" height="100" fill="none" class="bk"></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(0 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='0.5s' begin='0s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(30 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='0.5s' begin='0.041666666666666664s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(60 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='0.5s' begin='0.08333333333333333s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(90 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='0.5s' begin='0.125s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(120 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='0.5s' begin='0.16666666666666666s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(150 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='0.5s' begin='0.20833333333333334s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(180 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='0.5s' begin='0.25s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(210 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='0.5s' begin='0.2916666666666667s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(240 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='0.5s' begin='0.3333333333333333s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(270 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='0.5s' begin='0.375s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(300 50 50) translate(0 -30)'>  <animate attributeName='opacity' from='1' to='0' dur='0.5s' begin='0.4166666666666667s' repeatCount='indefinite'/></rect><rect  x='46.5' y='40' width='7' height='20' rx='5' ry='5' fill='#FF6B00' transform='rotate(330 50 50) translate(0 -30)'>  <animate attributeName='opacity'/></rect></svg>
+            </div>
+            <div class="loader">
+                <div class="row">
+                    <div class="col-3 loader-section section-left">
+                        <div class="bg"></div>
+                    </div>
+                    <div class="col-3 loader-section section-left">
+                        <div class="bg"></div>
+                    </div>
+                    <div class="col-3 loader-section section-right">
+                        <div class="bg"></div>
+                    </div>
+                    <div class="col-3 loader-section section-right">
+                        <div class="bg"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="body_wrapper">
+        <header class="header_area navbar_fixed">
+            <nav class="navbar navbar-expand-lg menu_one erp_menu">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="{% url 'landing' %}"><img src="{% static 'img/Logo.png' %}" srcset="{% static 'img/Logo.png' %}" alt="logo"></a>
+                    <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="menu_toggle">
+                            <span class="hamburger">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </span>
+                            <span class="hamburger-cross">
+                                <span></span>
+                                <span></span>
+                            </span>
+                        </span>
+                    </button>
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        
+                        <ul class="navbar-nav ml-auto mr-auto menu">
+                            <li class="nav-item dropdown submenu mega_menu mega_menu_two">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Platform
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown submenu mega_menu mega_menu_two">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Use Cases
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown submenu mega_menu mega_menu_two">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Customers
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown submenu mega_menu mega_menu_two">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Resources
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown submenu mega_menu mega_menu_two">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    About
+                                </a>
+                            </li>
+                        </ul>
+                        <a class="login-link" href="{% url 'login_url' %}" aria-haspopup="true" aria-expanded="false">
+                            Login
+                        </a>
+                        <a class="er_btn btn_hover" href="{% url 'contact' %}">Contact Us</a>
+                        
+                    </div>
+                </div>
+            </nav>
+        </header>
+        {% block page_content %} {% endblock %}
+        <footer id="contact" class="footer_area h_footer_dark h_footer_dark_two">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-4 col-md-4">
+                        <div class="f_widget dark_widget company_widget">
+                            <a href="#" class="f-logo"><img src="{% static 'img/Logo-dark.png' %}" alt=""></a>
+                            <p>Optimize digital journeys, proactively manage your projects, and drive impactful business change.</p>
+            
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="f_widget dark_widget about-widget pl_70">
+                            <h3 class="f-title f_500 t_color f_size_18 mb_20">Company</h3>
+                            <ul class="list-unstyled f_list">
+                                <li>
+                                    <a href="contact">Contact Us</a>
+                                </li>
+                                <li>
+                                    <a href="#">Our Story</a>
+                                </li>
+                                <li>
+                                    <a href="#">Careers</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-4">
+                        <div class="f_widget dark_widget about-widget pl_40">
+                            <h3 class="f-title f_500 t_color f_size_18 mb_20">Useful Links</h3>
+                            <ul class="list-unstyled f_list">
+                                <li>
+                                    <a href="#">Privacy Policy</a>
+                                </li>
+                                <li>
+                                    <a href="#">Terms of Use</a>
+                                </li>
+                                <li>
+                                    <a href="#">Legal Information</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <div class="f_widget dark_widget about-widget">
+                            <h3 class="f-title f_500 t_color f_size_18 mb_20">Get in Touch</h3>
+                            <ul class="list-unstyled f_list">
+                                <li>
+                                    <img src="{% static 'img/linkedin.png' %}" />
+                                    <a href="#" class="ml-2">LinkedIn</a>
+                                </li>
+                                <li>
+                                    <img src="{% static 'img/facebook.png' %}" />
+                                    <a href="#" class="ml-2">Facebook</a>
+                                </li>
+                                <li>
+                                    <img src="{% static 'img/twitter.png' %}" />
+                                    <a href="#" class="ml-2">Twitter</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{% static 'js/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'js/propper.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'vendors/wow/wow.min.js' %}"></script>
+    <script src="{% static 'vendors/sckroller/jquery.parallax-scroll.js' %}"></script>
+    <script src="{% static 'vendors/owl-carousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'vendors/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
+    <script src="{% static 'vendors/isotope/isotope-min.js' %}"></script>
+    <script src="{% static 'vendors/magnify-pop/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'vendors/bootstrap-selector/js/bootstrap-select.min.js' %}"></script>
+    <script src="{% static 'vendors/nice-select/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'vendors/scroll/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+    <script src="{% static 'js/plugins.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'toast/dist/snackbar.min.js' %}"></script>
+
+    {% block extra_script %}
+    
+    {% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,1050 @@
+.hide {
+    display: none;
+}
+
+@font-face {
+    font-family: 'Avenir LTStd-Book';
+    src: url("../fonts/FontsFree-Net-AvenirLTStd-Book.ttf") format('truetype');
+}
+
+.store {
+    background-color: #E8F1EC;
+}
+
+.van {
+    background-color: #e1e2e7;
+}
+
+#main {
+    height: 100vh;
+}
+
+.store img {
+    width: 60%;
+    height: 350px;
+}
+
+.store .justify-content-center {
+    margin-top: 9%;
+}
+
+.van img {
+    width: 80%;
+    height: 330px;
+}
+
+.van .justify-content-center {
+    margin-top: 10.3%;
+}
+
+.iti {
+    width: 100%;
+    font-size: 16px;
+}
+
+.iti.iti--allow-dropdown {
+    width: 100%
+}
+
+.iti-mobile .iti__country {
+    font-size: 35px;
+}
+
+.my-select {
+    font-size: 16px;
+}
+
+.my-input {
+    font-size: 16px;
+}
+
+.button {
+    background-color: white;
+    border: 2px solid #CCCCCC;
+    color: black;
+    font-size: 18px;
+    font-family: 'Avenir LTStd-Book';
+    font-weight: bolder;
+    padding: 2% 15%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 8%;
+    /* position: absolute; */
+}
+
+.button:hover {
+    box-shadow: 0 0 0 2px white, 0 0 0 3px black
+}
+
+.button2 {
+    background-color: white;
+    border: 2px solid #CCCCCC;
+    color: black;
+    font-size: 18px;
+    font-family: 'Avenir LTStd-Book';
+    font-weight: bolder;
+    padding: 2% 15%;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 8%;
+    cursor: pointer;
+    /* position: absolute; */
+}
+
+.button2:hover {
+    box-shadow: 0 0 0 2px white, 0 0 0 3px black
+}
+
+* {
+    margin: 0;
+    padding: 0
+}
+
+/* #grad1 {} */
+
+#msform {
+    text-align: center;
+    position: relative;
+    margin-top: 20px
+}
+
+#msform fieldset .form-card {
+    background: #e6e6e6;
+    border: 0 none;
+    border-radius: 0px;
+    /* box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2); */
+    padding: 1% 1% 1% 1%;
+    box-sizing: border-box;
+    width: 100%;
+    position: relative;
+    text-align: left;
+    margin-left: 0%;
+}
+
+#msform fieldset {
+    background: white;
+    border: 0 none;
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 20px;
+    position: relative
+}
+
+#msform fieldset:not(:first-of-type) {
+    display: none
+}
+
+#msform input, #msform textarea {
+    padding: 0px 8px 4px 8px;
+    border: none;
+    border-radius: 0px;
+    margin-bottom: 25px;
+    margin-top: 2px;
+    /* width: 100%; */
+    box-sizing: border-box;
+    font-family: montserrat;
+    color: #2C3E50;
+    font-size: 16px;
+    letter-spacing: 1px
+}
+
+#msform input:focus, #msform textarea:focus {
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border: none;
+    font-weight: bold;
+    outline-width: 0
+}
+
+#msform .action-button {
+    width: 15%;
+    background: #193a83;
+    /* font-weight: bold; */
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 9px 5px;
+    margin: 10px 15px;
+    float: right;
+}
+
+#msform .action-button:hover, #msform .action-button:focus {
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #193a83
+}
+
+#msform .action-button-previous {
+    width: 10%;
+    background: #acacac;
+    /* font-weight: bold; */
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 9px 5px;
+    margin: 10px 5px;
+    float: right;
+}
+
+#msform .action-button-previous:hover, #msform .action-button-previous:focus {
+    box-shadow: 0 0 0 2px white, 0 0 0 3px #acacac
+}
+
+select.list-dt {
+    border: none;
+    outline: 0;
+    border-bottom: 1px solid #ccc;
+    padding: 2px 5px 3px 5px;
+    margin: 2px
+}
+
+select.list-dt:focus {
+    border-bottom: 2px solid #193a83
+}
+
+.card {
+    z-index: 0;
+    border: none;
+    border-radius: 0.5rem;
+    position: relative
+}
+
+.fs-title {
+    font-size: 25px;
+    color: #2C3E50;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-align: left
+}
+
+#progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    color: #D2D2D2;
+    display: flex;
+    /* flex-direction: column; */
+    align-items: center;
+    justify-content: center;
+    /* margin-left: 18%; */
+}
+
+#progressbar .active {
+    color: #00711A
+}
+
+#progressbar li {
+    list-style-type: none;
+    font-size: 12px;
+    width: 25%;
+    float: left;
+    position: relative
+}
+
+#progressbar #account:before {
+    font-family: FontAwesome;
+    content: "\f00c"
+}
+
+#progressbar #personal:before {
+    font-family: FontAwesome;
+    content: "\f00c"
+}
+
+#progressbar #date:before {
+    font-family: FontAwesome;
+    content: "\f00c"
+}
+
+#progressbar #payment:before {
+    font-family: FontAwesome;
+    content: "\f00c"
+}
+
+#progressbar #confirm:before {
+    font-family: FontAwesome;
+    content: "\f00c"
+}
+
+#progressbar li:before {
+    width: 50px;
+    height: 50px;
+    line-height: 45px;
+    display: block;
+    font-size: 18px;
+    color: #ffffff;
+    background: lightgray;
+    border-radius: 50%;
+    margin: 0 auto 10px auto;
+    padding: 2px
+}
+
+#progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: lightgray;
+    position: absolute;
+    left: 0;
+    top: 25px;
+    z-index: -1
+}
+
+#progressbar li.active:before, #progressbar li.active:after {
+    background: #00711A
+}
+
+.radio-group {
+    position: relative;
+    margin-bottom: 25px
+}
+
+.radio {
+    display: inline-block;
+    width: 204;
+    height: 104;
+    border-radius: 0;
+    background: lightblue;
+    box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    cursor: pointer;
+    margin: 8px 2px
+}
+
+.radio:hover {
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.3)
+}
+
+.radio.selected {
+    box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.1)
+}
+
+.fit-image {
+    width: 100%;
+    object-fit: cover
+}
+
+/* Optional: Makes the sample page fill the window. */
+
+html, body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.item {
+    background-color: white;
+    margin-top: 4%;
+    margin-right: 1%;
+    padding-bottom: 1%;
+    height: 12rem;
+}
+
+.item h5 {
+    color: #193a83;
+    margin-top: -5%;
+    margin-left: 3%;
+    font-family: 'Avenir LTStd-Book';
+    font-weight: bold;
+}
+
+.item p {
+    color: #000000;
+    margin-left: 3%;
+    margin-bottom: 2%;
+    font-size: 14px;
+    font-family: 'Avenir LTStd-Book';
+    font-weight: bold;
+}
+
+h4 {
+    color: #193a83;
+    margin-left: -2%;
+}
+
+#cbx {
+    /* -webkit-margin-end : 85%; */
+    margin-left: 95%;
+    cursor: pointer;
+}
+
+#border {
+    border: 1px solid black;
+    width: 7%;
+    margin-left: 45%;
+}
+
+#logo {
+    margin-left: -2%;
+}
+
+optgroup {
+    font-size: 18px;
+    margin-left: -20px;
+}
+
+#map {
+    width: 100%;
+    height: 500px;
+    margin-top: 1%;
+}
+
+#map2{
+    width: 100%;
+    height: 400px;
+    margin-top: 1%;
+}
+
+#schedule-table {
+    display: table;
+    border-collapse: separate;
+    box-sizing: border-box;
+    text-indent: initial;
+    border-spacing: auto;
+    border-color: grey;
+    table-layout: fixed;
+    width: 202%;
+}
+
+#mobile-schedule-table {
+    display: table;
+    border-collapse: separate;
+    box-sizing: border-box;
+    text-indent: initial;
+    border-spacing: auto;
+    border-color: grey;
+    table-layout: fixed;
+    width: 400%;
+}
+
+tbody tr td {
+    height: 30px;
+    margin: 10px;
+    padding: 5px;
+    background-color: lightgray;
+    cursor: pointer;
+    text-align: center;
+    width: auto;
+    font-weight: 400;
+    font-family: 'Avenir LTStd-Book';
+    font-size: 13px;
+}
+
+thead tr td {
+    height: 30px;
+    margin: 10px;
+    padding: 5px;
+    color: #193a83;
+    background-color: white;
+    text-align: center;
+    width: auto;
+    font-family: 'Avenir LTStd-Book';
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#storebutton:disabled {
+    background: #547e9b;
+    color: white;
+}
+
+#slotsbutton:disabled {
+    background: #547e9b;
+    color: white;
+}
+
+#detailNextButton .disabled {
+    background: #547e9b;
+    color: white;
+}
+
+.td-click:hover {
+    background-color: #193a83;
+    color: white;
+}
+
+.col-lg-12 .button {
+    margin-bottom: 5%;
+}
+
+.col-lg-12 .button2 {
+    margin-bottom: 5%;
+}
+
+#logout1 {
+    display: none;
+}
+
+#logout {
+    display: block;
+}
+
+#field-icon {
+    float: right;
+    margin-top: -30px;
+    margin-right: -2px;
+    position: relative;
+    z-index: 2;
+    font-size: 20px;
+    color: #193a83;
+}
+
+#mobile-schedule-table-head td {
+    /* border-bottom: solid 1px lightgray; */
+}
+
+.checkoutButton {
+    width: 15%;
+    background: #193a83;
+    /* font-weight: bold; */
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 9px 5px;
+    margin: 10px 42%;
+    display: none;
+}
+
+#mount-id {
+    height: 200px;
+}
+
+#successButton {
+    width: 15%;
+    background: #147a0b;
+    /* font-weight: bold; */
+    color: white;
+    border: 0 none;
+    border-radius: 0px;
+    cursor: pointer;
+    padding: 9px 5px;
+    margin: 10px 42%;
+    display: none;
+}
+
+.fa-check-circle {
+    font-size: 20px;
+}
+
+#payment_spinner {
+    margin-top: 21px;
+    color: #193a83;
+    margin-left: 47%;
+}
+
+/* #telephone {
+            width: 173%;
+        } */
+
+/* Mobile responsive */
+
+@media only screen and (max-width: 991px) {
+    #logout1 {
+        display: block;
+        font-size: 40px;
+        padding-top: 1%;
+    }
+    #logout {
+        display: none;
+    }
+    /* #telephone {
+                width: 192%;
+            } */
+    #schedule-table {
+        display: table;
+        border-collapse: separate;
+        box-sizing: border-box;
+        text-indent: initial;
+        border-spacing: 20px;
+        border-color: grey;
+        table-layout: fixed;
+        width: 695%;
+    }
+    #mobile-schedule-table {
+        display: table;
+        border-collapse: separate;
+        box-sizing: border-box;
+        text-indent: initial;
+        border-spacing: 20px;
+        border-color: grey;
+        table-layout: fixed;
+        width: 1500%;
+    }
+    tbody tr td {
+        height: 40px;
+        margin: 10px;
+        padding: 5px;
+        background-color: lightgray;
+        cursor: pointer;
+        text-align: center;
+        width: auto;
+        /* font-weight: 400; */
+        font-family: 'Avenir LTStd-Book';
+        font-size: 40px;
+    }
+    thead tr td {
+        height: 50px;
+        margin: 10px;
+        padding: 5px;
+        color: #193a83;
+        background-color: white;
+        text-align: center;
+        width: auto;
+        font-family: 'Avenir LTStd-Book';
+        font-weight: bold;
+        font-size: 40px;
+    }
+    /* #mobile-schedule-table #mobile-schedule-table-body tr td {
+                height: 40px;
+                margin: 10px;
+                padding: 5px;
+                background-color: #EFEFEF;
+                cursor: pointer;
+                text-align: center;
+                width: auto;
+                /* font-weight: 400; */
+    /* font-family: 'Avenir LTStd-Book';
+                font-size: 40px;
+            }  */
+    #msform {
+        text-align: center;
+        position: relative;
+        margin-top: 20px
+    }
+    #msform fieldset .form-card {
+        /* background: white; */
+        background: #e6e6e6;
+        border: 0 none;
+        border-radius: 0px;
+        /* box-shadow: 0 2px 2px 2px rgba(0, 0, 0, 0.2); */
+        padding: 1% 1% 1% 1%;
+        box-sizing: border-box;
+        width: 100%;
+        position: relative;
+        text-align: left;
+        margin-left: 0%;
+    }
+    #msform fieldset {
+        background: white;
+        border: 0 none;
+        border-radius: 0.5rem;
+        box-sizing: border-box;
+        width: 100%;
+        margin: 0;
+        padding-bottom: 20px;
+        position: relative
+    }
+    #msform fieldset:not(:first-of-type) {
+        display: none
+    }
+    #msform input, #msform textarea {
+        padding: 0px 8px 4px 8px;
+        border: none;
+        border-radius: 0px;
+        margin-bottom: 25px;
+        margin-top: 2px;
+        /* width: 100%; */
+        box-sizing: border-box;
+        font-family: montserrat;
+        color: #2C3E50;
+        font-size: 32px;
+        letter-spacing: 1px
+    }
+    #input {
+        font-size: 45px;
+    }
+    optgroup {
+        font-size: 12px;
+        margin-right: 80px;
+    }
+    #map {
+        width: 100%;
+        height: 327px;
+        zoom: 3;
+        margin-top: 1%;
+    }
+
+    #map2{
+        width: 100%;
+        height: 327px;
+        margin-top: 1%;
+        zoom: 3;
+    }
+    #footer {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        /* background-color: red;
+                color: white; */
+        text-align: center;
+        font-size: 28px;
+    }
+    .form-card:nth-child(2) {
+        margin-top: 30px;
+    }
+    .item #cbx {
+        /* Double-sized Checkboxes */
+        -ms-transform: scale(2.5);
+        /* IE */
+        -moz-transform: scale(2.5);
+        /* FF */
+        -webkit-transform: scale(2.5);
+        /* Safari and Chrome */
+        -o-transform: scale(2.5);
+        /* Opera */
+        transform: scale(2.5);
+        margin-top: 17px;
+    }
+    .owl-dots {
+        zoom: 2.5;
+        display: none;
+    }
+    .owl-theme .owl-nav {
+        zoom: 4;
+        margin-top: -7px;
+    }
+    /* #progressbar{
+                padding-top: 30%;
+            } */
+    .item {
+        background-color: white;
+        margin-top: 2%;
+        margin-right: 1%;
+        padding-bottom: 1%;
+        height: auto;
+    }
+    .item h5 {
+        color: #193a83;
+        margin-top: -2%;
+        margin-left: 3%;
+        font-family: 'Avenir LTStd-Book';
+        font-weight: bold;
+        font-size: 50px;
+    }
+    .item p {
+        color: #000000;
+        margin-left: 3%;
+        margin-bottom: 2%;
+        font-size: 36px;
+        font-family: 'Avenir LTStd-Book';
+        font-weight: bold;
+    }
+    /* #progressbar li {
+                list-style-type: none;
+                font-size: 20px;
+                width: 25%;
+                float: left;
+                position: relative;
+                transform: scale(1.2);
+                margin-top: 1%;
+            } */
+    #logo img {
+        width: 25%
+    }
+    h4 {
+        font-size: 50px;
+    }
+    #msform .action-button {
+        width: 42%;
+        background: #193a83;
+        /* font-weight: bold; */
+        color: white;
+        border: 0 none;
+        border-radius: 0px;
+        cursor: pointer;
+        padding: 15px 5px;
+        margin: 29px 15px;
+        float: right;
+        margin-bottom: 50px;
+        font-size: 40px;
+    }
+    #msform .action-button-previous {
+        width: 42%;
+        background: #acacac;
+        /* font-weight: bold; */
+        color: white;
+        border: 0 none;
+        border-radius: 0px;
+        cursor: pointer;
+        padding: 15px 5px;
+        margin: 29px 15px;
+        float: left;
+        margin-bottom: 50px;
+        font-size: 40px;
+    }
+    #msform .action-button img {
+        width: 48px;
+        margin-bottom: 10px;
+    }
+    #msform .action-button-previous img {
+        width: 48px;
+        margin-bottom: 10px;
+    }
+    #appointment .row .col {
+        height: 100px
+    }
+    #appointment .row p {
+        /* margin-top: 187px; */
+        font-size: 35px;
+        background-color: white;
+    }
+    #appointment .row .col-3 {
+        width: 200px;
+    }
+    .store img {
+        width: 60%;
+    }
+    .store .justify-content-center {
+        margin-top: 9%;
+    }
+    .van img {
+        width: 90%;
+    }
+    .van .justify-content-center {
+        margin-top: 9%;
+    }
+    .button {
+        background-color: #013152;
+        border: 2px solid #CCCCCC;
+        color: white;
+        font-size: 40px;
+        font-family: 'Avenir LTStd-Book';
+        font-weight: bolder;
+        padding: 25px 10%;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 5%;
+        margin-bottom: 25px;
+        cursor: pointer;
+    }
+    .button:hover {
+        box-shadow: 0 0 0 2px white, 0 0 0 3px black
+    }
+    .button2 {
+        background-color: #013152;
+        border: 2px solid #CCCCCC;
+        color: white;
+        font-size: 40px;
+        font-family: 'Avenir LTStd-Book';
+        font-weight: bolder;
+        padding: 25px 10%;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 5%;
+        margin-bottom: 25px;
+        cursor: pointer;
+    }
+    .button2:hover {
+        box-shadow: 0 0 0 2px white, 0 0 0 3px black
+    }
+    #progressbar {
+        margin-bottom: 30px;
+        overflow: hidden;
+        color: #D2D2D2;
+        /* margin-left: 18%; */
+    }
+    #progressbar .active {
+        color: #00711A
+    }
+    #progressbar li {
+        list-style-type: none;
+        font-size: 22px;
+        width: 25%;
+        float: left;
+        position: relative;
+        zoom: 1.6;
+        margin-bottom: 2px;
+        margin-top: 3%;
+    }
+    #progressbar #account:before {
+        font-family: FontAwesome;
+        content: "\f00c"
+    }
+    #progressbar #personal:before {
+        font-family: FontAwesome;
+        content: "\f00c"
+    }
+    #progressbar #date:before {
+        font-family: FontAwesome;
+        content: "\f00c"
+    }
+    #progressbar #payment:before {
+        font-family: FontAwesome;
+        content: "\f00c"
+    }
+    #progressbar #confirm:before {
+        font-family: FontAwesome;
+        content: "\f00c"
+    }
+    #progressbar li:before {
+        width: 50px;
+        height: 50px;
+        line-height: 45px;
+        display: block;
+        font-size: 20px;
+        color: #ffffff;
+        background: lightgray;
+        border-radius: 50%;
+        margin: 0 auto 10px auto;
+        padding: 2px
+    }
+    #progressbar li:after {
+        content: '';
+        width: 100%;
+        height: 2px;
+        background: lightgray;
+        position: absolute;
+        left: 0;
+        top: 25px;
+        z-index: -1
+    }
+    #progressbar li.active:before, #progressbar li.active:after {
+        background: #00711A
+    }
+    .alert {
+        font-size: 33px;
+    }
+    .alert .close span {
+        font-size: 53px
+    }
+    /* .gm-style-mtc button {
+                min-width: 250px;
+                min-height: 80px;
+                font-size: 80px;
+            } */
+    .form-control {
+        height: 100px;
+        width: 100%;
+    }
+    input[type="text"] {
+        font-size: 50px;
+    }
+    .my-select {
+        font-size: 30px;
+    }
+    .my-input {
+        font-size: 45px;
+    }
+    .form-label {
+        font-size: 40px;
+    }
+    #field-icon {
+        float: right;
+        margin-top: -75px;
+        margin-right: -7px;
+        position: relative;
+        z-index: 2;
+        font-size: 55px;
+        color: #193a83;
+    }
+    .modal.show .modal-dialog {
+        transform: scale(1.75);
+    }
+    .bootbox .modal-dialog {
+        margin-top: 7%;
+    }
+    #pText {
+        font-size: 23px;
+    }
+    #p-tag {
+        font-size: 34px;
+    }
+    .table-container {
+        margin-top: 60px !important;
+    }
+    #mobile-schedule-table-head {
+        margin: 50px 40px;
+    }
+    #mobile-schedule-table-body tr td {
+        margin: 0px 20px;
+        padding: 15px 0px !important;
+    }
+    .iti {
+        font-size: 28px;
+    }
+    #mount-id {
+        height: 269px;
+        transform: scale(2.5);
+        margin-top: 20%;
+        margin-right: 29%;
+        margin-left: 29%;
+    }
+    .checkoutButton {
+        width: 31%;
+        background: rgb(0, 90, 150);
+        color: white;
+        border: 0px none;
+        border-radius: 0px;
+        cursor: pointer;
+        padding: 9px 5px;
+        margin: 217px 36%;
+        display: none;
+        /* position: absolute; */
+        /* object-fit: scale-down; */
+        font-size: 37px;
+        height: 106px;
+    }
+    fieldset :nth-child(3) .action-button {
+        width: 42%;
+        background: #193a83;
+        /* font-weight: bold; */
+        color: white;
+        border: 0 none;
+        border-radius: 0px;
+        cursor: pointer;
+        padding: 15px 5px;
+        margin: 29px 15px;
+        float: right;
+        margin-bottom: 50px;
+        font-size: 40px;
+    }
+    fieldset :nth-child(3) .action-button-previous {
+        width: 42%;
+        background: #acacac;
+        /* font-weight: bold; */
+        color: white;
+        border: 0 none;
+        border-radius: 0px;
+        cursor: pointer;
+        padding: 15px 5px;
+        margin: 29px 15px;
+        float: left;
+        margin-bottom: 50px;
+        font-size: 40px;
+    }
+    #successButton {
+        width: 31%;
+        background: #147a0b;
+        /* font-weight: bold; */
+        color: white;
+        border: 0px none;
+        border-radius: 0px;
+        cursor: pointer;
+        padding: 9px 5px;
+        margin: 217px 36%;
+        display: none;
+        /* position: absolute; */
+        /* object-fit: scale-down; */
+        font-size: 37px;
+        height: 106px;
+    }
+    .fa-check-circle {
+        font-size: 43px;
+    }
+    .spinner-border {
+        zoom: 2;
+    }
+    #payment_spinner {
+        margin-top: 116px;
+        color: rgb(0, 90, 150);
+        margin-left: 47%;
+    }
+}

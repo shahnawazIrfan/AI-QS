@@ -1,0 +1,193 @@
+{% extends 'base.html' %} {% load static %} {% block page_content %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/select2.css' %}">
+<style>
+    .contact-card input[type="email"] {
+        border: 1px solid #ced4da;
+        padding: .375rem .75rem;
+    }
+
+    .contact-card textarea {
+        min-height: 100px;
+    }
+</style>
+
+<section class="erp_features_area_two sec_pad bg-color_pistachio">
+    <div class="container mt-2">
+        <div class="row erp_item_features align-items-center flex-row-reverse" id="erp_item_features_top">
+            <div class="col-lg-12">
+                <div class="card shadow-lg contact-card w-100">
+                    <h2 class="mb-4">Contact Us – Reach Out to Us Anytime</h2>
+                    <form action="#" method="post" class="contact-form">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="name" name="name" pattern="[A-Za-z ]+" title="Only alphabetic characters are allowed" minlength="3" maxlength="25" placeholder="e.g. John Doe" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="company" class="form-label">Company</label>
+                                <input type="text" class="form-control" id="company" name="company" pattern="^[a-zA-Z0-9\-._@&$ ]*$"  title="Only alphanumeric and special characters are allowed" minlength="3" maxlength="50" placeholder="e.g. Barclays">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label">Location</label>
+                                <select id="location" name="location" class="form-control" required>
+                                    <option></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="sector" class="form-label">Sector</label>
+                                <select id="sector" name="sector" class="form-control">
+                                    <option></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3" id="other-sector" style="display: none;">
+                                <label for="other" class="form-label">Other Industry</label>
+                                <input type="text" class="form-control" id="other" name="other" pattern="[a-zA-Z0-9 ]+" title="Only alphanumeric characters are allowed" minlength="3" maxlength="50" placeholder="Please specify the industry">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="e.g. johndoe@email.com" minlength="5" maxlength="30" value="{{ request.GET.email }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea id="description" name="description" class="form-control" placeholder="Tell us more about your request..." minlength="5" maxlength="400" required></textarea>
+                            </div>
+                        </div>
+                    
+                        <button type="submit" class="btn btn-success d-block mx-auto mt-5 w-50">Submit</button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}
+
+{% block extra_script %}
+
+<script src="{% static 'assets/js/select2/select2.full.min.js' %}"></script>
+<script src="{% static 'assets/js/select2/select2-custom.js' %}"></script>
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        $.getJSON('../static/countries.json', function(data) {
+            const countries = data.map(country => country.name).sort();
+
+            $('#location').select2({
+                data: countries.map(function(country) {
+                    return {
+                        id: country,
+                        text: country
+                    };
+                }),
+                placeholder: "e.g. United Kingdom",
+            });
+        })
+
+        const data = {
+            'Project Owners': ["Public Clients", "Private Clients"],
+            'Consultants': ["Environmental Consultants", "Surveyors", "Cost Estimators/Quantity Surveyors", "Legal Advisor", "Project Managers"],
+            'Design Professionals': ["Architects", "Civil Engineers", "Structural Engineers", "Mechanical, Electrical and Plumbing (MEP) Engineers", "Landscape Architects", "Urban Planners"],
+            'Construction Teams': ["Main Contractors"],
+            'Financial Stakeholders': ["Banks and Lending Institutions", "Insurance Companies"],
+            'Regulators and Authorities': ["Central Government Bodies"],
+            'Other: (if not listed)' : [" 'Add Industry' "]
+        };
+
+        let selectOptions = '';
+        for (const category in data) {
+            if (data.hasOwnProperty(category)) {
+                selectOptions += `<optgroup label="${category}">`;
+                data[category].forEach(item => {
+                    selectOptions += `<option value="${item}">${item}</option>`;
+                });
+                selectOptions += `</optgroup>`;
+            }
+        }
+
+        $('#sector').append(selectOptions);
+
+        $('#sector').select2({
+            placeholder: "e.g. Architects",
+        });
+
+        $('#sector').on('change', function() {
+            var otherSectorField = $('#other-sector');
+            var descriptionWrapper = $('#description');
+            var otherField = $('#other');
+
+            if ($(this).val() === " 'Add Industry' ") {
+                otherSectorField.show();
+                descriptionWrapper.parent().addClass('col-md-12');
+                otherField.prop('required', true);
+            } else {
+                otherSectorField.hide();
+                descriptionWrapper.parent().removeClass('col-md-12');
+                otherField.prop('required', false);
+            }
+        });
+
+    });
+
+    document.querySelector('.contact-form').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const formData = {
+            name: document.getElementById('name').value,
+            company: document.getElementById('company').value,
+            location: document.getElementById('location').value,
+            sector: document.getElementById('sector').value === " 'Add Industry' " ? document.getElementById('other').value : document.getElementById('sector').value,
+            email: document.getElementById('email').value,
+            description: document.getElementById('description').value
+        };
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'https://api.emailjs.com/api/v1.0/email/send', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                document.querySelector("form").reset();
+                $('#location, #sector').val(null).trigger('change');
+                Snackbar.show({
+                    text: "Thank you for contacting us! We'll get back to you shortly.",
+                    backgroundColor:'#28a745',
+                    pos: 'top-right',
+                    textColor: "#FFFFFF",
+                    actionTextColor: "#FFFFFF"
+                });
+            } else {
+                Snackbar.show({
+                    text: "Something went wrong. Please try again later.",
+                    backgroundColor:'#FF0000',
+                    pos: 'top-right',
+                    textColor: "#FFFFFF",
+                    actionTextColor: "#FFFFFF"
+                });
+            }
+        };
+
+        const data = JSON.stringify({
+            service_id: "service_xcz1owp",
+            template_id: "template_a0zlmda",
+            user_id: "2ThJZthzQIh6gw9zn",
+            template_params: formData
+        });
+
+        xhr.send(data);
+    });
+</script>
+
+
+{% endblock %}

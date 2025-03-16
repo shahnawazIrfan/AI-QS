@@ -1,0 +1,275 @@
+{% extends 'base.html' %} {% load static %} {% block page_content %}
+
+<section class="erp_features_area_two sec_pad bg-color_pistachio">
+    <div class="container-fluid mt-5">
+        <div class="row erp_item_features align-items-center flex-row-reverse" id="erp_item_features_top">
+            <div class="col-lg-6">
+                <div class="card shadow-lg contact-card">
+                    <h2 class="mb-4">Find out more and book a demo!</h2>
+                    <form action="{% url 'contact' %}" method="get" class="booking-demo-form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="e.g. johndoe@email.com" required>
+                        </div>
+                        <div class="form-check mt-4 mb-4">
+                            <input type="checkbox" class="form-check-input" id="consent" required>
+                            <label class="form-check-label" for="consent">I consent to AI-QS storing and processing my submitted information to provide the content requested and personalized commercial emails. For information on unsubscribing, please see our <a href="#">Privacy Policy.</a></label>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="erp_content_two">
+                    <div class="hosting_title erp_title">
+                        <h2>AI-QS Digital Twin: Simplified analytics for critical decision-making.</h2>
+                        <p>Optimize digital journeys, proactively manage your projects, and drive impactful business change.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- <section id="features" class="erp_service_area sec_pad bg_color">
+    <div class="container-fluid">
+        <div class="hosting_title erp_title text-center">
+            <h2>Consolidate data from multiple sources into a single reporting platform.</h2>
+            <p>The AI-QS Digital Twin Platform directly addresses the challenge of silo data by creating a unified environment where all relevant information can be integrated, analyzed, and visualized in real time. Here’s how it helps:</p>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-sm-6">
+                <div class="erp_service_item pr_70">
+                    <img src="{% static 'img/data-integration.svg' %}" alt="">
+                    <a href="#"><h3 class="h_head">Data Integration Across Platforms</h3></a>
+                    <p>AI-QS breaks down data silo by consolidating data from different sources—whether from construction equipment, IoT sensors, financial systems, or workforce management platforms—into a single, accessible dashboard. This eliminates the need for manual data merging and reduces inconsistencies.</p>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6">
+                <div class="erp_service_item pr_70">
+                    <img src="{% static 'img/analytics.svg' %}" alt="">
+                    <a href="#"><h3 class="h_head">Real-Time Analytics</h3></a>
+                    <p>With all your data centralized, the platform provides real-time analytics that connect previously isolated datasets. This enhances visibility and allows clients to make informed decisions based on comprehensive insights, rather than fragmented information.</p>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6">
+                <div class="erp_service_item pr_70">
+                    <img src="{% static 'img/collaboration.svg' %}" alt="">
+                    <a href="#"><h3 class="h_head">Enhanced Collaboration</h3></a>
+                    <p>By connecting silo data, the platform fosters better collaboration across departments. Project teams, managers, and stakeholders can access the same up-to-date information, ensuring alignment in strategy and execution.</p>
+                </div>
+            </div>
+            <div class="col-lg-6 col-sm-6">
+                <div class="erp_service_item pr_70">
+                    <img src="{% static 'img/insights.svg' %}" alt="">
+                    <a href="#"><h3 class="h_head">Predictive Insights</h3></a>
+                    <p>The AI-QS platform goes beyond simple data integration. It uses machine learning algorithms to uncover patterns and predict outcomes based on the unified data, helping clients anticipate issues, optimize resources, and improve overall performance.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> -->
+
+<section id="challenges" class="erp_features_area_two sec_pad bg_color">
+    <div class="container-fluid">
+        <div class="hosting_title erp_title text-center">
+            <h2>Consolidate data from multiple sources into a single reporting platform.</h2>
+            <p>The AI-QS Digital Twin Platform directly addresses the challenge of silo data by creating a unified environment where all relevant information can be integrated, analyzed, and visualized in real time. Here’s how it helps:</p>
+        </div>
+
+        <div class="row erp_item_features">
+            <div class="col-lg-6">
+                <div class="erp_service_item ml-5">
+                    <p><strong>Data Integration Across Platforms</strong><br>Al-QS breaks down data silo by consolidating data from different sources-whether from construction equipment, lo sensors, financial systems, or workforce management platforms-into a single, accessible dashboard. This eliminates the need for manual data merging and reduces inconsistencies.</p>
+                </div>
+                <div class="erp_service_item ml-5">
+                    <p><strong>Real-Time Analytics</strong> <br> With all your date centralized, the platform provides real-time analytics that connect previously isolated datasets. This enhances visibility and allows clients to make informed decisions based on comprehensive insights, rather than fragmented information.</p>
+                </div>
+                <div class="erp_service_item ml-5">
+                    <p><strong>Enhanced Collaboration</strong> <br> By connecting silo data, the platform fosters better collaboration across departments. Project teams, managers, and stakeholders can access the same up-to-date information.</p>
+                </div>
+                <div class="erp_service_item ml-5">
+                    <p><strong>Predictive Insights</strong> <br> The Al-QS platform goes beyond simple data integration. It uses machine learning algorithms to uncover patterns and predict outcomes based on the unified data, helping clients anticipate issues, optimize resources, and improve overall performance.</p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="erp_features_img_two">
+                    <img src="{% static 'img/data-sources-3.svg' %}" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="operations" class="erp_action_area">
+    <div class="container-fluid">
+        <div class="hosting_title erp_title text-center">
+            <h2>Unlock a Unified, 360-Degree View of Your Operations with AI-QS Digital Twin</h2>
+            <p>By bridging the gap between disconnected data sources, AI-QS Digital Twin Platform offers clients a cohesive, 360-degree view of their operations, making it easier to make critical decisions and drive efficiency.</p>
+            <button type="button" class="btn btn-success">Get In Touch</button>
+        </div>
+    </div>
+</section>
+
+<section id="challenges" class="erp_features_area_two sec_pad">
+    <div class="container-fluid">
+        <div class="hosting_title erp_title text-center">
+            <h2>Challenges faced by Our Clients</h2>
+            <p>Construction projects often struggle with managing silo data, leading to challenges that impact efficiency, decision-making, and overall growth. At AI-QS, we address these issues by:</p>
+        </div>
+
+        <div class="row erp_item_features">
+            <div class="col-lg-6">
+                <div class="erp_features_img_two">
+                    <img src="{% static 'img/data-sources-2.svg' %}" alt="">
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="erp_service_item pr_50">
+                    <p><strong>Data Management and Record-keeping</strong><br>Councils often have outdated, fragmented IT systems for tracking property assets, maintenance schedules, and compliance information. This can lead to inefficiencies, missed inspections, and challenges in meeting regulatory requirements.</p>
+                </div>
+                <div class="erp_service_item pr_50">
+                    <p><strong>Regulatory Compliance</strong> <br> Councils must comply with an array of regulations for health, safety, access, and compliance across their facilities. Managing these across multiple systems can be a major administrative burden.</p>
+                </div>
+                <div class="erp_service_item pr_50">
+                    <p><strong>Sustainability and Energy Efficiency</strong> <br> Upgrading properties to meet sustainability goals and reduce energy consumption is both a financial and logistical challenge.</p>
+                </div>
+                <div class="erp_service_item pr_50">
+                    <p><strong>Technology Adoption</strong> <br> Public organizations are adopting technology in isolated environments, which limits their ability to fully leverage the data they collect.</p>
+                </div>
+                <div class="erp_service_item pr_50">
+                    <p><strong>Workforce</strong> <br> Project knowledge and information are often lost when staff members leave, impacting continuity and long-term success.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="analytics" class="erp_features_area_two sec_pad bg_color">
+    <div class="container-fluid">
+        <div class="hosting_title erp_title text-center">
+            <h2>Analytics that tell you more in less time</h2>
+            <p>Cut through data complexity and focus on what matters most to your business and customers.</p>
+        </div>
+
+        <div class="row erp_item_features">
+            <div class="col-lg-6">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="erp_service_item pr_70">
+                                <p><strong>Project Status Overview</strong><br>Displays the overall progress of ongoing projects with completion percentages. </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="erp_service_item pr_50">
+                                <p><strong>Risk Management</strong><br>Identifies potential risks, mitigation strategies, and current risk levels for each project. </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="erp_service_item pr_50">
+                                <p><strong>Cost Tracking</strong><br>Monitors allocated budgets, expenditures, and any cost overruns in real-time. </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="erp_service_item pr_50">
+                                <p><strong>Sustainability Metrics</strong><br>Tracks carbon footprint, and sustainability efforts. </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="erp_service_item pr_50">
+                                <p><strong>Timeline Management</strong><br>Highlights critical milestones, deadlines, and potential delays. </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="erp_service_item pr_50">
+                                <p><strong>Quality Control</strong><br>Displays quality assurance reports, inspections, and issue tracking. </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="erp_service_item pr_50">
+                                <p><strong>Compliance</strong><br>Shows golden thread progress, safety inspections reports, and compliance status. </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="erp_service_item pr_50">
+                                <p><strong>Stakeholder Communication</strong><br>Provides updates on stakeholder meetings, decisions, and approvals. </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="erp_features_img_two">
+                    <img src="{% static 'img/data-sources.svg' %}" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="explore_product" class="erp_action_area bg-color_pistachio">
+    <div class="container-fluid">
+        <div class="hosting_title erp_title text-center">
+            <h2>See AI-QS Digital Twin Platform in action</h2>
+            <p>Dive into specific use-cases, watch real-world applications of our technology, and understand how AI-QS can adapt to serve a wide array of industries and digital challenges.</p>
+            <button type="button" class="btn btn-success">Explore Our Product Tour Library</button>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}
+
+{% block extra_script %}
+
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+
+<script>
+    // document.querySelector('.booking-demo-form').addEventListener('submit', function(event) {
+    //     event.preventDefault();
+
+    //     const formData = {
+    //         email: document.getElementById('email').value
+    //     };
+
+    //     const xhr = new XMLHttpRequest();
+    //     xhr.open('POST', 'https://api.emailjs.com/api/v1.0/email/send', true);
+    //     xhr.setRequestHeader('Content-Type', 'application/json');
+
+    //     xhr.onload = function() {
+    //         if (xhr.status === 200) {
+    //             document.querySelector("form").reset();
+    //             Snackbar.show({
+    //                 text: "Thank you for booking a demo with us! We'll get back to you shortly.",
+    //                 backgroundColor:'#28a745',
+    //                 pos: 'top-right',
+    //                 textColor: "#FFFFFF",
+    //                 actionTextColor: "#FFFFFF"
+    //             });
+    //         } else {
+    //             Snackbar.show({
+    //                 text: "Something went wrong. Please try again later.",
+    //                 backgroundColor:'#FF0000',
+    //                 pos: 'top-right',
+    //                 textColor: "#FFFFFF",
+    //                 actionTextColor: "#FFFFFF"
+    //             });
+    //         }
+    //     };
+
+    //     const data = JSON.stringify({
+    //         service_id: "service_xcz1owp",
+    //         template_id: "template_admwi4l",
+    //         user_id: "2ThJZthzQIh6gw9zn",
+    //         template_params: formData
+    //     });
+
+    //     xhr.send(data);
+    // });
+</script>
+
+
+{% endblock %}
