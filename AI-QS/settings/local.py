@@ -16,8 +16,13 @@ ALLOWED_HOSTS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(tempfile.gettempdir(), 'AI-QS_db_local.sqlite3'),
+        'ENGINE': 'djongo',
+        'NAME': 'aiqs',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb+srv://syedminhaj65:ZXC!asd123@cluster0.sm0jc.mongodb.net/aiqs',
+            'tls': True,
+        }
     }
 }
 

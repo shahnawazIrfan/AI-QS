@@ -1,20 +1,46 @@
 [
-    {
-        "model": "web_app.userprofile",
-        "pk": 1,
-        "fields": {
-            "password": "pbkdf2_sha256$260000$kmsgXcUkblkbI8jZtfQtxC$6/4ZS5bDC2LjI0rKX6UQ/YLMPwNmlJwO/Sy4WEwJvzs=",
-            "last_login": "2024-11-10T08:57:03.785Z",
-            "name": "Syed Minhaj",
-            "email": "syed.minhaj65@outlook.com",
-            "role": 1,
-            "is_active": true,
-            "is_staff": true,
-            "terms_conditions": true,
-            "created_at": "2024-11-10T20:12:41.138Z",
-            "updated_at": "2024-11-10T20:12:41.309Z",
-            "groups": [],
-            "user_permissions": []
-        }
+{
+    "model": "web_app.userprofile",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$kmsgXcUkblkbI8jZtfQtxC$6/4ZS5bDC2LjI0rKX6UQ/YLMPwNmlJwO/Sy4WEwJvzs=",
+        "last_login": "2025-03-16T05:01:55.803Z",
+        "name": "Syed Minhaj",
+        "email": "syed.minhaj65@outlook.com",
+        "role": 1,
+        "is_active": true,
+        "is_staff": true,
+        "terms_conditions": true,
+        "created_at": "2024-11-10T20:12:41.138Z",
+        "updated_at": "2024-11-10T20:12:41.309Z",
+        "groups": [],
+        "user_permissions": []
     }
+},
+{
+    "model": "web_app.userprofile",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$260000$FddSIzSHEESdeB0Z7FpBox$WNA6jLncvZPeb4qgiEzoVNUjP9/mLbhtPRTe/0qyhmQ=",
+        "last_login": "2025-03-14T17:39:52.592Z",
+        "name": "Patrick",
+        "email": "patrick@gmail.com",
+        "role": 1,
+        "is_active": true,
+        "is_staff": false,
+        "terms_conditions": true,
+        "created_at": "2024-11-17T09:39:50.667Z",
+        "updated_at": "2024-11-17T09:44:09.358Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "web_app.usersession",
+    "pk": 133,
+    "fields": {
+        "user": 1,
+        "session": "n8caygh5fuig4oljws1xnq7yjmwaiz3f"
+    }
+}
 ]

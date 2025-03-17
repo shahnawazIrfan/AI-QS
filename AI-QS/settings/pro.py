@@ -13,12 +13,13 @@ ALLOWED_HOSTS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'AI_QS_Database',
-        'USER': 'administrator',
-        'PASSWORD': 'AI_QS!9pL*X3^vW2&zRd0$8jKv',
-        'HOST': 'ai-qs-db.ctiuygsq2ryo.eu-west-2.rds.amazonaws.com',
-        'PORT': '5432',
+        'ENGINE': 'djongo',
+        'NAME': 'aiqs',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb+srv://syedminhaj65:ZXC!asd123@cluster0.sm0jc.mongodb.net/aiqs',
+            'tls': True,
+        }
     }
 }
 
