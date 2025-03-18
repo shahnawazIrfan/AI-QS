@@ -9,3 +9,5 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 admin.site.register(models.UserProfile, UserProfileAdmin)
 admin.site.register(models.UserSession)
+admin.site.register(models.CostSummarySection)
+admin.site.register(models.CostSummary)

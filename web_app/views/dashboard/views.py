@@ -13,6 +13,10 @@ import seaborn as sns
 import base64
 from io import BytesIO
 import matplotlib
+from bson import ObjectId
+from django.forms.models import model_to_dict
+
+from web_app import models
 matplotlib.use('Agg')
 
 logger = logging.getLogger(__name__)
@@ -52,6 +56,21 @@ class CostDashboardView(ViewBase):
     TEMPLATE_NAME = 'dashboard/cost_dashboard.html'
 
     def get(self, request, *args, **kwargs):
+        total_new_cost_summary_sections = models.CostSummarySection.objects.count()
+        new_cost_summary = models.CostSummary.objects.all()
+
+        new_cost_summary_data = []
+        for item in new_cost_summary:
+            item_dict = model_to_dict(item)
+            item_dict['id'] = item._id
+
+            section_dict = model_to_dict(item.section)
+            section_dict['id'] = str(item.section._id)
+            item_dict["section"] = section_dict
+
+            new_cost_summary_data.append(item_dict)
+
+
         # dynamodb = boto3.resource("dynamodb", region_name="eu-west-2", )
         # new_cost_summary_table = dynamodb.Table("new_cost_summary")
         # new_contract_sum_table = dynamodb.Table("new_contract_sum")
@@ -199,6 +218,8 @@ class CostDashboardView(ViewBase):
         #     plt.close(fig)
         
         context = {
+            'new_cost_summary_data': new_cost_summary_data,
+            'total_new_cost_summary_sections': total_new_cost_summary_sections
             # 'new_cost_summary_records': sorted_cost_summary_records,
             # 'new_contract_sum_records': sorted_contract_sum_records,
             # 'new_change_records': sorted_new_change_records,
@@ -476,56 +497,40 @@ class InformationManagementDashboardView(ViewBase):
         return self.render(context)
     
 
-def update_dynamo_record(request):
+def save_cost_summary(request):
     if request.method == "POST":
         try:
-            dynamodb = boto3.resource("dynamodb", region_name="eu-west-2", )
             data = json.loads(request.body)
-            search_value = data.get("search_value")
-            search_column = data.get("search_column")
-            new_value = data.get("new_value")
-            table_name = data.get("table_name")
-            table = dynamodb.Table(table_name)
+            type = data.get("type")
+            section_id = data.get("section_id")
+            section_name = data.get("section_name")
+            row_id = data.get("row_id")
+            ref = data.get("ref")
+            item = data.get("item")
+            contract_sum = data.get("contract_sum")
+            certified_payments = data.get("certified_payments")
+            accrued_payments = data.get("accrued_payments")
+            total_expenditure = data.get("total_expenditure")
+            variance_total = data.get("variance_total")
+            variance_period = data.get("variance_period")
 
-            if not search_value or not search_column or new_value is None:
-                return JsonResponse({"error": "Missing required parameters"}, status=400)
+            if type == "section" and not section_id:
+                section = models.CostSummarySection.objects.create(_id=str(ObjectId()), name=section_name)
+                return JsonResponse({"message": "Cost summary saved successfully", "id": section._id}, status=201)
             
-            if "£" in new_value:
-                cleaned_value = new_value.replace("£", "")
-                cleaned_value = re.sub(r"[^\d.]", "", cleaned_value)
-                new_value = Decimal(str(cleaned_value)) if '.' in cleaned_value else int(cleaned_value)
-
-            try:
-                if "." in str(search_value):
-                    search_value = Decimal(str(search_value))
-                else:
-                    search_value = int(search_value)
-            except ValueError:
-                search_value = str(search_value)
+            if type == "section" and section_id:
+                section = models.CostSummarySection.objects.filter(_id=section_id).update(name=section_name)
+                return JsonResponse({"message": "Cost summary updated successfully", "id": section_id}, status=200)
             
-            response = table.scan(
-                FilterExpression=f"#{'_'.join(search_column.lower().split())} = :val",
-                ExpressionAttributeNames={f"#{'_'.join(search_column.lower().split())}": search_column},
-                ExpressionAttributeValues={":val": search_value}
-            )
-            items = response.get('Items', [])
-            items = sorted(items, key=lambda x: float(x.get('Ref', 0)))
-
-            if not items:
-                return JsonResponse({"error": "Item not found"}, status=404)
-
-            ref_id = items[0]['Ref']
-
-            table.update_item(
-                Key={'Ref': ref_id},
-                UpdateExpression=f"set #{'_'.join(search_column.lower().split())} = :value",
-                ExpressionAttributeNames={f"#{'_'.join(search_column.lower().split())}": search_column},
-                ExpressionAttributeValues={':value': new_value}
-            )
-
-            return JsonResponse({"message": f"Field '{search_column}' updated successfully!"}, status=200)
+            if type == "row" and not row_id and section_id:
+                row = models.CostSummary.objects.create(_id=str(ObjectId()), ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, accrued_payments=accrued_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id)
+                return JsonResponse({"message": "Cost summary row saved successfully", "id": row._id}, status=201)
+            
+            if type == "row" and row_id and section_id:
+                row = models.CostSummary.objects.filter(_id=row_id).update(ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, accrued_payments=accrued_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id)
+                return JsonResponse({"message": "Cost summary row updated successfully", "id": row_id}, status=200)
 
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=400)
 
-    return JsonResponse({"error": "Invalid request method"}, status=400)
+    return JsonResponse({"error": "Invalid request"}, status=400)

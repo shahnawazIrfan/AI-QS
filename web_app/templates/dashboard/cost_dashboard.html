@@ -6648,6 +6648,10 @@
             width: 400px;
         }
 
+        .section-header th:first-child input:focus-visible {
+            outline: 1px solid rgba(133, 204, 87, 1)
+        }
+
         td {
             font-size: 12px;
             cursor: pointer;
@@ -6656,6 +6660,10 @@
 
         td input {
             width: 70px;
+        }
+
+        td input:focus-visible {
+            outline: 1px solid rgba(133, 204, 87, 1)
         }
 
         .item {
@@ -6766,7 +6774,31 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody>
+                        {% for cost in new_cost_summary_data %}
+                            <tr class="section-header" data-id="{{ cost.section.id }}">
+                                <th colspan="8" onclick="makeEditable(this)">{{ cost.section.name }}</th>
+                                <th>
+                                    <button class="save-btn" onclick="saveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></button>
+                                    <button class="delete-btn" onclick="deleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+                                </th>
+                            </tr>
+                            <tr data-id="{{ cost.id }}">
+                                <td>{{ cost.ref }}</td>
+                                <td class="item" onclick="makeEditable(this)">{{ cost.item }}</td>
+                                <td onclick="makeEditable(this)">{{ cost.contract_sum }}</td>
+                                <td onclick="makeEditable(this)">{{ cost.certified_payments }}</td>
+                                <td onclick="makeEditable(this)">{{ cost.accrued_payments }}</td>
+                                <td onclick="makeEditable(this)">{{ cost.total_expenditure }}</td>
+                                <td onclick="makeEditable(this)">{{ cost.variance_total }}</td>
+                                <td onclick="makeEditable(this)">{{ cost.variance_period }}</td>
+                                <td>
+                                    <button class="save-btn" onclick="saveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></button>
+                                    <button class="delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -6977,196 +7009,187 @@
         });
     });
 
-
-    function updateValue(element) {
-        let newValue = element.innerText.trim();
-        let searchValue = element.getAttribute('data-search-value'); // Fixed search term
-        let searchColumn = element.getAttribute('data-search-column'); // Column to update
-        let tableName = element.getAttribute('data-table-name'); 
-
-        $.ajax({
-            url: '/dashboard/update-dynamo-record/',  // Django API URL
-            type: 'POST',
-            contentType: 'application/json',
-            headers: { "X-CSRFToken": token},
-            data: JSON.stringify({
-                search_value: searchValue, // Searching in contract_sum
-                search_column: searchColumn, // Field to update
-                table_name: tableName,
-                new_value: newValue // New value
-            }),
-            success: function(response) {
-                console.log(response.message);
-                // location.reload();
-            },
-            error: function(xhr) {
-                console.error('Error updating:', xhr.responseText);
-            }
-        });
+    function extractNumber(value) {
+        let num = parseFloat(value.replace(/[^0-9.-]/g, ''));
+        return isNaN(num) ? 0 : num;
     }
 
 
-    // $("#cost_summary_add_new_row").click(function () {
-    //     let containerClasses = [".v2035_16661", ".v2035_16682", ".v2035_16701", ".v2035_16720", ".v2035_16739", ".v2035_16758", ".v2035_16777", ".v2035_16796"]; // Add more class names here
+    let sectionCount = {{total_new_cost_summary_sections}};
 
-    //     containerClasses.forEach(function (containerClass) {
-    //         let container = $(containerClass);
-    //         let lastDiv = container.children().last();
+    function addNewSection() {
+        sectionCount++;
+        let table = document.getElementById("financeTable").getElementsByTagName('tbody')[0];
+        let sectionHeader = document.createElement("tr");
+        sectionHeader.classList.add("section-header");
+        sectionHeader.innerHTML = `
+    <th colspan="8" onclick="makeEditable(this)">${sectionCount}</th>
+    <th>
+        <button class="save-btn" onclick="saveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+        <button class="delete-btn" onclick="deleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+    </th>
+`;
+        table.appendChild(sectionHeader);
+        addNewRow(sectionCount);
+    }
 
-    //         if (lastDiv.length) {
-    //             let newDiv = lastDiv.clone();
-    //             let lastTop = parseInt(lastDiv.css("top"), 10);
-    //             newDiv.css("top", (lastTop + 40) + "px");
+    function addNewRow(sectionNum = null) {
+        if (sectionCount === 0) {
+            alert("Please add a section first!");
+            return;
+        }
 
-    //             container.append(newDiv);
-    //         }
-    //     });
-    // });
+        let table = document.getElementById("financeTable").getElementsByTagName('tbody')[0];
+        let lastRows = table.querySelectorAll("tr:not(.section-header)");
+        let newRowIndex = 1;
+        if (lastRows.length > 0) {
+            let lastRef = lastRows[lastRows.length - 1].children[0].innerText;
+            let [lastSection, lastRow] = lastRef.split(".").map(Number);
+            newRowIndex = sectionNum ? 1 : lastRow + 1;
+            sectionNum = sectionNum || lastSection;
+        }
 
-    $("#contract_sum_add_new_row").click(function () {
-        let containerClasses = [".v2035_16824", ".v2035_16845", ".v2035_16864", ".v2035_16883"]; // Add more class names here
+        let newRow = document.createElement("tr");
+        newRow.innerHTML = `
+    <td>${sectionNum}.${newRowIndex}</td>
+    <td class="item" onclick="makeEditable(this)"></td>
+    <td onclick="makeEditable(this)"></td>
+    <td onclick="makeEditable(this)"></td>
+    <td onclick="makeEditable(this)"></td>
+    <td onclick="makeEditable(this)"></td>
+    <td onclick="makeEditable(this)"></td>
+    <td onclick="makeEditable(this)"></td>
+    <td>
+        <button class="save-btn" onclick="saveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+        <button class="delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+    </td>
+`;
+        table.appendChild(newRow);
+    }
 
-        containerClasses.forEach(function (containerClass) {
-            let container = $(containerClass);
-            let lastDiv = container.children().last();
+    function makeEditable(cell) {
+        if (cell.querySelector("input")) return;
+        let input = document.createElement("input");
+        input.type = "text";
+        input.value = cell.innerText;
+        cell.innerText = "";
+        cell.appendChild(input);
+        input.focus();
 
-            if (lastDiv.length) {
-                let newDiv = lastDiv.clone();
-                let lastTop = parseInt(lastDiv.css("top"), 10);
-                newDiv.css("top", (lastTop + 40) + "px");
-
-                container.append(newDiv);
-            }
+        input.addEventListener("blur", function () {
+            cell.innerText = input.value;
+            showSaveButton(cell);
         });
-    });
+    }
 
+    function showSaveButton(cell) {
+        let row = cell.closest("tr");
+        let saveButton = row.querySelector(".save-btn");
+        if (saveButton) {
+            saveButton.style.display = "inline-block";
+        }
+    }
 
-    $("#change_breakdown_new_row").click(function () {
-        let containerClasses = [".v2038_21393", ".v2038_21414", ".v2038_21433", ".v2038_21452", ".v2038_21471", ".v2038_21490"]; // Add more class names here
+    function deleteRow(button) {
+        let row = button.closest("tr");
+        row.parentNode.removeChild(row);
+    }
 
-        containerClasses.forEach(function (containerClass) {
-            let container = $(containerClass);
-            let lastDiv = container.children().last();
+    function deleteSection(button) {
+        let section = button.closest("tr");
+        let nextSibling = section.nextElementSibling;
+        while (nextSibling && !nextSibling.classList.contains("section-header")) {
+            let temp = nextSibling;
+            nextSibling = nextSibling.nextElementSibling;
+            temp.parentNode.removeChild(temp);
+        }
+        section.parentNode.removeChild(section);
+        if (document.querySelectorAll(".section-header").length === 0) {
+            sectionCount = 0;
+        }
+    }
 
-            if (lastDiv.length) {
-                let newDiv = lastDiv.clone();
-                let lastTop = parseInt(lastDiv.css("top"), 10);
-                newDiv.css("top", (lastTop + 40) + "px");
+    function saveData(button) {
+        let row = button.closest("tr");
+        let isSection = row.classList.contains("section-header");
 
-                container.append(newDiv);
-            }
-        });
-    });
-
-
-    let sectionCount = 0;
-
-        function addNewSection() {
-            sectionCount++;
-            let table = document.getElementById("financeTable").getElementsByTagName('tbody')[0];
-            let sectionHeader = document.createElement("tr");
-            sectionHeader.classList.add("section-header");
-            sectionHeader.innerHTML = `
-        <th colspan="8" onclick="makeEditable(this)">Section ${sectionCount}: New Section</th>
-        <th>
-            <button class="save-btn" onclick="saveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
-            <button class="delete-btn" onclick="deleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
-        </th>
-    `;
-            table.appendChild(sectionHeader);
-            addNewRow(sectionCount);
+        let sectionRow = row;
+        while (sectionRow && !sectionRow.classList.contains("section-header")) {
+            sectionRow = sectionRow.previousElementSibling;
         }
 
-        function addNewRow(sectionNum = null) {
-            if (sectionCount === 0) {
-                alert("Please add a section first!");
-                return;
-            }
+        let sectionName = sectionRow ? sectionRow.innerText.split(":")[0].replace("Section ", "").trim() : "Unknown";
 
-            let table = document.getElementById("financeTable").getElementsByTagName('tbody')[0];
-            let lastRows = table.querySelectorAll("tr:not(.section-header)");
-            let newRowIndex = 1;
-            if (lastRows.length > 0) {
-                let lastRef = lastRows[lastRows.length - 1].children[0].innerText;
-                let [lastSection, lastRow] = lastRef.split(".").map(Number);
-                newRowIndex = sectionNum ? 1 : lastRow + 1;
-                sectionNum = sectionNum || lastSection;
-            }
+        let cells = row.querySelectorAll("td, th");
+        let data = {};
 
-            let newRow = document.createElement("tr");
-            newRow.innerHTML = `
-        <td>${sectionNum}.${newRowIndex}</td>
-        <td class="item" onclick="makeEditable(this)"></td>
-        <td onclick="makeEditable(this)"></td>
-        <td onclick="makeEditable(this)"></td>
-        <td onclick="makeEditable(this)"></td>
-        <td onclick="makeEditable(this)"></td>
-        <td onclick="makeEditable(this)"></td>
-        <td onclick="makeEditable(this)"></td>
-        <td>
-            <button class="save-btn" onclick="saveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
-            <button class="delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
-        </td>
-    `;
-            table.appendChild(newRow);
-        }
+        if (isSection) {
+            data["section_id"] = sectionRow?.getAttribute("data-id") ?? null;
+            data["section_name"] = cells[0].innerText.trim();
+            data["type"] = 'section';
 
-        function makeEditable(cell) {
-            if (cell.querySelector("input")) return;
-            let input = document.createElement("input");
-            input.type = "text";
-            input.value = cell.innerText;
-            cell.innerText = "";
-            cell.appendChild(input);
-            input.focus();
-
-            input.addEventListener("blur", function () {
-                cell.innerText = input.value;
-                showSaveButton(cell);
-            });
-        }
-
-        function showSaveButton(cell) {
-            let row = cell.closest("tr");
-            let saveButton = row.querySelector(".save-btn");
-            if (saveButton) {
-                saveButton.style.display = "inline-block";
-            }
-        }
-
-        function deleteRow(button) {
-            let row = button.closest("tr");
-            row.parentNode.removeChild(row);
-        }
-
-        function deleteSection(button) {
-            let section = button.closest("tr");
-            let nextSibling = section.nextElementSibling;
-            while (nextSibling && !nextSibling.classList.contains("section-header")) {
-                let temp = nextSibling;
-                nextSibling = nextSibling.nextElementSibling;
-                temp.parentNode.removeChild(temp);
-            }
-            section.parentNode.removeChild(section);
-            if (document.querySelectorAll(".section-header").length === 0) {
-                sectionCount = 0;
-            }
-        }
-
-        function saveData(button) {
-            let row = button.closest("tr");
-            let cells = row.querySelectorAll("td, th");
-            let data = [];
-
-            cells.forEach((cell, index) => {
-                if (index < cells.length - 1) {
-                    data.push(cell.innerText.trim());
+            $.ajax({
+                url: "/dashboard/save-cost-summary/",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                headers: {
+                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                },
+                success: function(response) {
+                    console.log("Response:", response);
+                    if (response.message) {
+                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        row.setAttribute("data-id", response.id);
+                    } else {
+                        alert("Error saving data: " + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong!");
                 }
             });
-
-            console.log(data);
-            button.style.display = "none";
         }
+        else {
+            data["row_id"] = row?.getAttribute("data-id") ?? null;
+            data["section_id"] = sectionRow?.getAttribute("data-id") ?? null;
+            data["ref"] = cells[0].innerText.trim();
+            data["item"] = cells[1].innerText.trim();
+            data["contract_sum"] = extractNumber(cells[2].innerText.trim());
+            data["certified_payments"] = extractNumber(cells[3].innerText.trim());
+            data["accrued_payments"] = extractNumber(cells[4].innerText.trim());
+            data["total_expenditure"] = extractNumber(cells[5].innerText.trim());
+            data["variance_total"] = extractNumber(cells[6].innerText.trim());
+            data["variance_period"] = extractNumber(cells[7].innerText.trim());
+            data["type"] = 'row';
+
+            $.ajax({
+                url: "/dashboard/save-cost-summary/",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                headers: {
+                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                },
+                success: function(response) {
+                    console.log("Response:", response);
+                    if (response.message) {
+                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        row.setAttribute("data-id", response.id);
+                    } else {
+                        alert("Error saving data: " + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong!");
+                }
+            });
+        }
+
+        console.log("Sending data:", data);
+    }
 
 </script>
 

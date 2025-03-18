@@ -1,3 +1,4 @@
+from bson import ObjectId
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.conf import settings
@@ -82,3 +83,33 @@ class UserSession(models.Model):
 
     class Meta:
         verbose_name_plural = "Sessions"
+
+
+class CostSummarySection(models.Model):
+    _id = models.CharField(max_length=24, primary_key=True)
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name_plural = "Cost Section"
+
+
+class CostSummary(models.Model):
+    _id = models.CharField(max_length=24, primary_key=True)
+    ref = models.CharField(max_length=50)
+    item = models.CharField(max_length=255, blank=True, null=True)
+    contract_sum = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    certified_payments = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    accrued_payments = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    total_expenditure = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    variance_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    variance_period = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    section = models.ForeignKey(CostSummarySection, on_delete=models.CASCADE, related_name="cost_summaries")
+
+    def __str__(self):
+        return f"{self.section.name} - {self.ref}"
+
+    class Meta:
+        verbose_name_plural = "Cost Summary"
