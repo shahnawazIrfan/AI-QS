@@ -52,172 +52,172 @@ class CostDashboardView(ViewBase):
     TEMPLATE_NAME = 'dashboard/cost_dashboard.html'
 
     def get(self, request, *args, **kwargs):
-        dynamodb = boto3.resource("dynamodb", region_name="eu-west-2", )
-        new_cost_summary_table = dynamodb.Table("new_cost_summary")
-        new_contract_sum_table = dynamodb.Table("new_contract_sum")
-        new_change_table = dynamodb.Table("new_change")
-        new_cost_reporting_table = dynamodb.Table("new_cost_reporting")
+        # dynamodb = boto3.resource("dynamodb", region_name="eu-west-2", )
+        # new_cost_summary_table = dynamodb.Table("new_cost_summary")
+        # new_contract_sum_table = dynamodb.Table("new_contract_sum")
+        # new_change_table = dynamodb.Table("new_change")
+        # new_cost_reporting_table = dynamodb.Table("new_cost_reporting")
 
-        new_cost_summary_table_response = new_cost_summary_table.scan()
-        new_cost_summary_records = new_cost_summary_table_response.get('Items', [])
+        # new_cost_summary_table_response = new_cost_summary_table.scan()
+        # new_cost_summary_records = new_cost_summary_table_response.get('Items', [])
 
-        sorted_records = sorted(new_cost_summary_records, key=lambda x: float(x.get('Ref', 0)))
+        # sorted_records = sorted(new_cost_summary_records, key=lambda x: float(x.get('Ref', 0)))
 
-        sorted_cost_summary_records = {}
-        if sorted_records:
-            keys = sorted_records[0].keys()
-            for key in keys:
-                sorted_cost_summary_records[key.replace(" ", "").replace("&", "").replace("-", "")] = [record.get(key, '') for record in sorted_records]
-
-
-        new_contract_sum_table_response = new_contract_sum_table.scan()
-        new_contract_sum_records = new_contract_sum_table_response.get('Items', [])
-
-        sorted_records = sorted(new_contract_sum_records, key=lambda x: float(x.get('Ref', 0)))
-
-        sorted_contract_sum_records = {}
-        if sorted_records:
-            keys = sorted_records[0].keys()
-            for key in keys:
-                sorted_contract_sum_records[key.replace(" ", "").replace("&", "").replace("-", "")] = [record.get(key, '') for record in sorted_records]
+        # sorted_cost_summary_records = {}
+        # if sorted_records:
+        #     keys = sorted_records[0].keys()
+        #     for key in keys:
+        #         sorted_cost_summary_records[key.replace(" ", "").replace("&", "").replace("-", "")] = [record.get(key, '') for record in sorted_records]
 
 
-        new_change_table_response = new_change_table.scan()
-        new_change_table_records = new_change_table_response.get('Items', [])
+        # new_contract_sum_table_response = new_contract_sum_table.scan()
+        # new_contract_sum_records = new_contract_sum_table_response.get('Items', [])
 
-        sorted_records = sorted(new_change_table_records, key=lambda x: float(x.get('Ref', 0)))
+        # sorted_records = sorted(new_contract_sum_records, key=lambda x: float(x.get('Ref', 0)))
 
-        sorted_new_change_records = {}
-        if sorted_records:
-            keys = sorted_records[0].keys()
-            for key in keys:
-                sorted_new_change_records[key.replace(" ", "").replace("&", "").replace("-", "")] = [record.get(key, '') for record in sorted_records]
+        # sorted_contract_sum_records = {}
+        # if sorted_records:
+        #     keys = sorted_records[0].keys()
+        #     for key in keys:
+        #         sorted_contract_sum_records[key.replace(" ", "").replace("&", "").replace("-", "")] = [record.get(key, '') for record in sorted_records]
+
+
+        # new_change_table_response = new_change_table.scan()
+        # new_change_table_records = new_change_table_response.get('Items', [])
+
+        # sorted_records = sorted(new_change_table_records, key=lambda x: float(x.get('Ref', 0)))
+
+        # sorted_new_change_records = {}
+        # if sorted_records:
+        #     keys = sorted_records[0].keys()
+        #     for key in keys:
+        #         sorted_new_change_records[key.replace(" ", "").replace("&", "").replace("-", "")] = [record.get(key, '') for record in sorted_records]
 
         
-        total_contract_sum = sum(float(item.get('CONTRACT SUM', 0)) for item in new_cost_summary_table_response.get('Items', []))
-        certified_payments_sum = sum(float(item.get('CERTIFIED PAYMENTS TO CONTRACTOR', 0)) for item in new_cost_summary_table_response.get('Items', []))
-        anticipated_payments_sum = sum(float(item.get('ACCRUED & ANTICIPATED PAYMENTS', 0)) for item in new_cost_summary_table_response.get('Items', []))
-        forecast_expenditures_sum = sum(float(item.get('TOTAL FORECAST EXPENDITURE', 0)) for item in new_cost_summary_table_response.get('Items', []))
-        total_variance_sum = sum(float(item.get('VARIANCE - TOTAL', 0)) for item in new_cost_summary_table_response.get('Items', []))
-        total_variance_period_sum = sum(float(item.get('VARIANCE - IN PERIOD', 0)) for item in new_cost_summary_table_response.get('Items', []))
+        # total_contract_sum = sum(float(item.get('CONTRACT SUM', 0)) for item in new_cost_summary_table_response.get('Items', []))
+        # certified_payments_sum = sum(float(item.get('CERTIFIED PAYMENTS TO CONTRACTOR', 0)) for item in new_cost_summary_table_response.get('Items', []))
+        # anticipated_payments_sum = sum(float(item.get('ACCRUED & ANTICIPATED PAYMENTS', 0)) for item in new_cost_summary_table_response.get('Items', []))
+        # forecast_expenditures_sum = sum(float(item.get('TOTAL FORECAST EXPENDITURE', 0)) for item in new_cost_summary_table_response.get('Items', []))
+        # total_variance_sum = sum(float(item.get('VARIANCE - TOTAL', 0)) for item in new_cost_summary_table_response.get('Items', []))
+        # total_variance_period_sum = sum(float(item.get('VARIANCE - IN PERIOD', 0)) for item in new_cost_summary_table_response.get('Items', []))
         
-        new_cost_reporting_table_response = new_cost_reporting_table.scan()
-        forecast_monthly = sum(float(item.get('Forecast Monthly', 0)) for item in new_cost_reporting_table_response.get('Items', []))
-        actual_monthly = sum(float(item.get('Actual Monthly', 0)) for item in new_cost_reporting_table_response.get('Items', []))
+        # new_cost_reporting_table_response = new_cost_reporting_table.scan()
+        # forecast_monthly = sum(float(item.get('Forecast Monthly', 0)) for item in new_cost_reporting_table_response.get('Items', []))
+        # actual_monthly = sum(float(item.get('Actual Monthly', 0)) for item in new_cost_reporting_table_response.get('Items', []))
 
-        months = sorted(
-            new_cost_reporting_table_response.get("Items", []),
-            key=lambda x: x.get("Interim Payments", 0)
-        )
+        # months = sorted(
+        #     new_cost_reporting_table_response.get("Items", []),
+        #     key=lambda x: x.get("Interim Payments", 0)
+        # )
 
-        months = [item["Month"] for item in months if "Month" in item]
+        # months = [item["Month"] for item in months if "Month" in item]
 
-        forecast = sorted(
-            new_cost_reporting_table_response.get("Items", []),
-            key=lambda x: x.get("Interim Payments", 0)
-        )
+        # forecast = sorted(
+        #     new_cost_reporting_table_response.get("Items", []),
+        #     key=lambda x: x.get("Interim Payments", 0)
+        # )
 
-        forecast = [item["Forecast Monthly"] for item in forecast if "Forecast Monthly" in item]
+        # forecast = [item["Forecast Monthly"] for item in forecast if "Forecast Monthly" in item]
 
-        cumulative = sorted(
-            new_cost_reporting_table_response.get("Items", []),
-            key=lambda x: x.get("Interim Payments", 0)
-        )
+        # cumulative = sorted(
+        #     new_cost_reporting_table_response.get("Items", []),
+        #     key=lambda x: x.get("Interim Payments", 0)
+        # )
 
-        cumulative = [item["Forecast Cumulative"] for item in cumulative if "Forecast Cumulative" in item]
+        # cumulative = [item["Forecast Cumulative"] for item in cumulative if "Forecast Cumulative" in item]
 
-        # cost reporting graph
+        # # cost reporting graph
         
-        sns.set_style("whitegrid")
-        fig, ax1 = plt.subplots(figsize=(8, 4))
+        # sns.set_style("whitegrid")
+        # fig, ax1 = plt.subplots(figsize=(8, 4))
 
-        ax1.bar(months, forecast, color='royalblue')
+        # ax1.bar(months, forecast, color='royalblue')
 
-        ax2 = ax1.twinx()
-        ax2.plot(months, cumulative, color='dodgerblue', marker='o', linestyle='-', linewidth=2)
+        # ax2 = ax1.twinx()
+        # ax2.plot(months, cumulative, color='dodgerblue', marker='o', linestyle='-', linewidth=2)
 
-        ax1.set_xlabel("Months", fontsize=12)
-        ax1.set_xticklabels(months, fontsize=12)
+        # ax1.set_xlabel("Months", fontsize=12)
+        # ax1.set_xticklabels(months, fontsize=12)
 
-        ax1.spines['top'].set_visible(False)
-        ax1.spines['right'].set_visible(False)
-        ax2.spines['top'].set_visible(False)
+        # ax1.spines['top'].set_visible(False)
+        # ax1.spines['right'].set_visible(False)
+        # ax2.spines['top'].set_visible(False)
 
-        ax1.set_xlabel("")
-        ax2.set_ylabel("")
+        # ax1.set_xlabel("")
+        # ax2.set_ylabel("")
 
-        ax2.set_yticklabels([])
-        ax2.tick_params(right=False)
+        # ax2.set_yticklabels([])
+        # ax2.tick_params(right=False)
 
-        plt.title("")
+        # plt.title("")
 
-        buffer = BytesIO()
-        plt.savefig(buffer, format='png', bbox_inches='tight')
-        buffer.seek(0)
-        cost_reporting_graph = base64.b64encode(buffer.getvalue()).decode()
-        buffer.close()
-        plt.close(fig)
+        # buffer = BytesIO()
+        # plt.savefig(buffer, format='png', bbox_inches='tight')
+        # buffer.seek(0)
+        # cost_reporting_graph = base64.b64encode(buffer.getvalue()).decode()
+        # buffer.close()
+        # plt.close(fig)
 
 
-        # top graphs
-        months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
+        # # top graphs
+        # months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
 
-        payment_sums = {
-            'certified_payments_sum': certified_payments_sum,
-            'anticipated_payments_sum': anticipated_payments_sum,
-            'forecast_expenditures_sum': forecast_expenditures_sum,
-            'total_variance_sum': total_variance_sum,
-            'total_variance_period_sum': total_variance_period_sum,
-        }
+        # payment_sums = {
+        #     'certified_payments_sum': certified_payments_sum,
+        #     'anticipated_payments_sum': anticipated_payments_sum,
+        #     'forecast_expenditures_sum': forecast_expenditures_sum,
+        #     'total_variance_sum': total_variance_sum,
+        #     'total_variance_period_sum': total_variance_period_sum,
+        # }
 
-        graphs = {}
+        # graphs = {}
 
-        for key, value in payment_sums.items():
-            values = [0, 0, value, 0, 0, 0, 0]
+        # for key, value in payment_sums.items():
+        #     values = [0, 0, value, 0, 0, 0, 0]
             
-            x = np.linspace(0, len(values) - 1, 300)
-            y = np.interp(x, range(len(values)), values)
+        #     x = np.linspace(0, len(values) - 1, 300)
+        #     y = np.interp(x, range(len(values)), values)
 
-            plt.figure(figsize=(6, 2), dpi=100)
-            plt.plot(x, y, color='#86CD57', linewidth=2)
-            plt.fill_between(x, y, min(values), color='#d3e7c7', alpha=0.4)
+        #     plt.figure(figsize=(6, 2), dpi=100)
+        #     plt.plot(x, y, color='#86CD57', linewidth=2)
+        #     plt.fill_between(x, y, min(values), color='#d3e7c7', alpha=0.4)
 
-            plt.xticks([])
-            plt.yticks([])
-            plt.gca().spines['top'].set_visible(False)
-            plt.gca().spines['right'].set_visible(False)
-            plt.gca().spines['left'].set_visible(False)
-            plt.gca().spines['bottom'].set_visible(False)
-            plt.grid(False)
+        #     plt.xticks([])
+        #     plt.yticks([])
+        #     plt.gca().spines['top'].set_visible(False)
+        #     plt.gca().spines['right'].set_visible(False)
+        #     plt.gca().spines['left'].set_visible(False)
+        #     plt.gca().spines['bottom'].set_visible(False)
+        #     plt.grid(False)
 
-            buffer = BytesIO()
-            plt.savefig(buffer, format='png', bbox_inches='tight', transparent=True)
-            buffer.seek(0)
+        #     buffer = BytesIO()
+        #     plt.savefig(buffer, format='png', bbox_inches='tight', transparent=True)
+        #     buffer.seek(0)
 
-            graphs[key] = base64.b64encode(buffer.getvalue()).decode()
-            buffer.close()
-            plt.close(fig)
+        #     graphs[key] = base64.b64encode(buffer.getvalue()).decode()
+        #     buffer.close()
+        #     plt.close(fig)
         
         context = {
-            'new_cost_summary_records': sorted_cost_summary_records,
-            'new_contract_sum_records': sorted_contract_sum_records,
-            'new_change_records': sorted_new_change_records,
-            'total_contract_sum': total_contract_sum,
-            'certified_payments_sum': certified_payments_sum,
-            'anticipated_payments_sum': anticipated_payments_sum,
-            'forecast_expenditures_sum': forecast_expenditures_sum,
-            'total_variance_sum': total_variance_sum,
-            'total_variance_period_sum': total_variance_period_sum,
-            'forecast_monthly': forecast_monthly,
-            'actual_monthly': actual_monthly,
-            'cost_reporting_graph': cost_reporting_graph,
-            "graphs": {
-                "certified_payments_sum": graphs["certified_payments_sum"],
-                "anticipated_payments_sum": graphs["anticipated_payments_sum"],
-                "forecast_expenditures_sum": graphs["forecast_expenditures_sum"],
-                "total_variance_sum": graphs["total_variance_sum"],
-                "total_variance_period_sum": graphs["total_variance_period_sum"]
-            }
+            # 'new_cost_summary_records': sorted_cost_summary_records,
+            # 'new_contract_sum_records': sorted_contract_sum_records,
+            # 'new_change_records': sorted_new_change_records,
+            # 'total_contract_sum': total_contract_sum,
+            # 'certified_payments_sum': certified_payments_sum,
+            # 'anticipated_payments_sum': anticipated_payments_sum,
+            # 'forecast_expenditures_sum': forecast_expenditures_sum,
+            # 'total_variance_sum': total_variance_sum,
+            # 'total_variance_period_sum': total_variance_period_sum,
+            # 'forecast_monthly': forecast_monthly,
+            # 'actual_monthly': actual_monthly,
+            # 'cost_reporting_graph': cost_reporting_graph,
+            # "graphs": {
+            #     "certified_payments_sum": graphs["certified_payments_sum"],
+            #     "anticipated_payments_sum": graphs["anticipated_payments_sum"],
+            #     "forecast_expenditures_sum": graphs["forecast_expenditures_sum"],
+            #     "total_variance_sum": graphs["total_variance_sum"],
+            #     "total_variance_period_sum": graphs["total_variance_period_sum"]
+            # }
         }
 
         return self.render(context)
