@@ -127,153 +127,6 @@ class CostDashboardView(ViewBase):
                 section_dict["rows"].append(change_breakdown_dict)
 
             new_change_breakdown_data.append(section_dict)
-
-
-        # dynamodb = boto3.resource("dynamodb", region_name="eu-west-2", )
-        # new_cost_summary_table = dynamodb.Table("new_cost_summary")
-        # new_contract_sum_table = dynamodb.Table("new_contract_sum")
-        # new_change_table = dynamodb.Table("new_change")
-        # new_cost_reporting_table = dynamodb.Table("new_cost_reporting")
-
-        # new_cost_summary_table_response = new_cost_summary_table.scan()
-        # new_cost_summary_records = new_cost_summary_table_response.get('Items', [])
-
-        # sorted_records = sorted(new_cost_summary_records, key=lambda x: float(x.get('Ref', 0)))
-
-        # sorted_cost_summary_records = {}
-        # if sorted_records:
-        #     keys = sorted_records[0].keys()
-        #     for key in keys:
-        #         sorted_cost_summary_records[key.replace(" ", "").replace("&", "").replace("-", "")] = [record.get(key, '') for record in sorted_records]
-
-
-        # new_contract_sum_table_response = new_contract_sum_table.scan()
-        # new_contract_sum_records = new_contract_sum_table_response.get('Items', [])
-
-        # sorted_records = sorted(new_contract_sum_records, key=lambda x: float(x.get('Ref', 0)))
-
-        # sorted_contract_sum_records = {}
-        # if sorted_records:
-        #     keys = sorted_records[0].keys()
-        #     for key in keys:
-        #         sorted_contract_sum_records[key.replace(" ", "").replace("&", "").replace("-", "")] = [record.get(key, '') for record in sorted_records]
-
-
-        # new_change_table_response = new_change_table.scan()
-        # new_change_table_records = new_change_table_response.get('Items', [])
-
-        # sorted_records = sorted(new_change_table_records, key=lambda x: float(x.get('Ref', 0)))
-
-        # sorted_new_change_records = {}
-        # if sorted_records:
-        #     keys = sorted_records[0].keys()
-        #     for key in keys:
-        #         sorted_new_change_records[key.replace(" ", "").replace("&", "").replace("-", "")] = [record.get(key, '') for record in sorted_records]
-
-        
-        # total_contract_sum = sum(float(item.get('CONTRACT SUM', 0)) for item in new_cost_summary_table_response.get('Items', []))
-        # certified_payments_sum = sum(float(item.get('CERTIFIED PAYMENTS TO CONTRACTOR', 0)) for item in new_cost_summary_table_response.get('Items', []))
-        # anticipated_payments_sum = sum(float(item.get('ACCRUED & ANTICIPATED PAYMENTS', 0)) for item in new_cost_summary_table_response.get('Items', []))
-        # forecast_expenditures_sum = sum(float(item.get('TOTAL FORECAST EXPENDITURE', 0)) for item in new_cost_summary_table_response.get('Items', []))
-        # total_variance_sum = sum(float(item.get('VARIANCE - TOTAL', 0)) for item in new_cost_summary_table_response.get('Items', []))
-        # total_variance_period_sum = sum(float(item.get('VARIANCE - IN PERIOD', 0)) for item in new_cost_summary_table_response.get('Items', []))
-        
-        # new_cost_reporting_table_response = new_cost_reporting_table.scan()
-        # forecast_monthly = sum(float(item.get('Forecast Monthly', 0)) for item in new_cost_reporting_table_response.get('Items', []))
-        # actual_monthly = sum(float(item.get('Actual Monthly', 0)) for item in new_cost_reporting_table_response.get('Items', []))
-
-        # months = sorted(
-        #     new_cost_reporting_table_response.get("Items", []),
-        #     key=lambda x: x.get("Interim Payments", 0)
-        # )
-
-        # months = [item["Month"] for item in months if "Month" in item]
-
-        # forecast = sorted(
-        #     new_cost_reporting_table_response.get("Items", []),
-        #     key=lambda x: x.get("Interim Payments", 0)
-        # )
-
-        # forecast = [item["Forecast Monthly"] for item in forecast if "Forecast Monthly" in item]
-
-        # cumulative = sorted(
-        #     new_cost_reporting_table_response.get("Items", []),
-        #     key=lambda x: x.get("Interim Payments", 0)
-        # )
-
-        # cumulative = [item["Forecast Cumulative"] for item in cumulative if "Forecast Cumulative" in item]
-
-        # # cost reporting graph
-        
-        # sns.set_style("whitegrid")
-        # fig, ax1 = plt.subplots(figsize=(8, 4))
-
-        # ax1.bar(months, forecast, color='royalblue')
-
-        # ax2 = ax1.twinx()
-        # ax2.plot(months, cumulative, color='dodgerblue', marker='o', linestyle='-', linewidth=2)
-
-        # ax1.set_xlabel("Months", fontsize=12)
-        # ax1.set_xticklabels(months, fontsize=12)
-
-        # ax1.spines['top'].set_visible(False)
-        # ax1.spines['right'].set_visible(False)
-        # ax2.spines['top'].set_visible(False)
-
-        # ax1.set_xlabel("")
-        # ax2.set_ylabel("")
-
-        # ax2.set_yticklabels([])
-        # ax2.tick_params(right=False)
-
-        # plt.title("")
-
-        # buffer = BytesIO()
-        # plt.savefig(buffer, format='png', bbox_inches='tight')
-        # buffer.seek(0)
-        # cost_reporting_graph = base64.b64encode(buffer.getvalue()).decode()
-        # buffer.close()
-        # plt.close(fig)
-
-
-        # # top graphs
-        # months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
-
-        # payment_sums = {
-        #     'certified_payments_sum': certified_payments_sum,
-        #     'anticipated_payments_sum': anticipated_payments_sum,
-        #     'forecast_expenditures_sum': forecast_expenditures_sum,
-        #     'total_variance_sum': total_variance_sum,
-        #     'total_variance_period_sum': total_variance_period_sum,
-        # }
-
-        # graphs = {}
-
-        # for key, value in payment_sums.items():
-        #     values = [0, 0, value, 0, 0, 0, 0]
-            
-        #     x = np.linspace(0, len(values) - 1, 300)
-        #     y = np.interp(x, range(len(values)), values)
-
-        #     plt.figure(figsize=(6, 2), dpi=100)
-        #     plt.plot(x, y, color='#86CD57', linewidth=2)
-        #     plt.fill_between(x, y, min(values), color='#d3e7c7', alpha=0.4)
-
-        #     plt.xticks([])
-        #     plt.yticks([])
-        #     plt.gca().spines['top'].set_visible(False)
-        #     plt.gca().spines['right'].set_visible(False)
-        #     plt.gca().spines['left'].set_visible(False)
-        #     plt.gca().spines['bottom'].set_visible(False)
-        #     plt.grid(False)
-
-        #     buffer = BytesIO()
-        #     plt.savefig(buffer, format='png', bbox_inches='tight', transparent=True)
-        #     buffer.seek(0)
-
-        #     graphs[key] = base64.b64encode(buffer.getvalue()).decode()
-        #     buffer.close()
-        #     plt.close(fig)
         
         context = {
             'new_cost_summary_data': new_cost_summary_data,
@@ -287,128 +140,218 @@ class CostDashboardView(ViewBase):
             'anticipated_payments_sum': anticipated_payments_sum,
             'forecast_expenditures_sum': forecast_expenditures_sum,
             'total_variance_sum': total_variance_sum,
-            'total_variance_period_sum': total_variance_period_sum,
-            # 'new_cost_summary_records': sorted_cost_summary_records,
-            # 'new_contract_sum_records': sorted_contract_sum_records,
-            # 'new_change_records': sorted_new_change_records,
-            # 'certified_payments_sum': certified_payments_sum,
-            # 'forecast_monthly': forecast_monthly,
-            # 'actual_monthly': actual_monthly,
-            # 'cost_reporting_graph': cost_reporting_graph,
-            # "graphs": {
-            #     "certified_payments_sum": graphs["certified_payments_sum"],
-            #     "anticipated_payments_sum": graphs["anticipated_payments_sum"],
-            #     "forecast_expenditures_sum": graphs["forecast_expenditures_sum"],
-            #     "total_variance_sum": graphs["total_variance_sum"],
-            #     "total_variance_period_sum": graphs["total_variance_period_sum"]
-            # }
+            'total_variance_period_sum': total_variance_period_sum
         }
 
         return self.render(context)
     
     def post(self, request, *args, **kwargs):
-        dynamodb = boto3.resource("dynamodb", region_name="eu-west-2", )
-        new_cost_summary_table = dynamodb.Table("new_cost_summary")
-        new_contract_sum_table = dynamodb.Table("new_contract_sum")
-        new_change_table = dynamodb.Table("new_change")
-        new_cost_reporting_table = dynamodb.Table("new_cost_reporting")
-
         if "file" not in request.FILES:
             return JsonResponse({"error": "No file uploaded"}, status=400)
 
         file = request.FILES["file"]
 
         wb = openpyxl.load_workbook(file, data_only=True)
+
+        # new cost summary sheet
         
         if "NEW Cost Summary" not in wb.sheetnames:
             return JsonResponse({"error": "Sheet 'NEW Cost Summary' not found"}, status=400)
 
         new_cost_summary_sheet = wb["NEW Cost Summary"]
 
-        headers = [cell.value for cell in new_cost_summary_sheet[1]]
+        new_cost_summary_required_columns = {"Ref", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE", "VARIANCE - TOTAL ", "VARIANCE - IN PERIOD"}
 
-        items = []
+        new_cost_summary_headers = [cell.value for cell in new_cost_summary_sheet[1]]
+
+        new_cost_summary_missing_columns = new_cost_summary_required_columns - set(new_cost_summary_headers)
+        if new_cost_summary_missing_columns:
+            return JsonResponse({"error": f"Invalid format for Sheet 'NEW Cost Summary': Missing columns - {', '.join(new_cost_summary_missing_columns)}"}, status=400)
+
+        new_cost_summary_section_id = ""
+
         for row in new_cost_summary_sheet.iter_rows(min_row=2, values_only=True):
-            item = {headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else "0") for i in range(len(headers))}
-            new_cost_summary_table.put_item(Item=item)
-            items.append(item)
+            item = {new_cost_summary_headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else 0.0) for i in range(len(new_cost_summary_headers))}
+            
+            try:
+                if "." not in item['Ref'] and item['Item'] != "" and all(v == 0.0 for k, v in item.items() if k not in ["Ref", "Item"]):
+                    section = models.CostSummarySection.objects.create(_id=str(ObjectId()), name=item['Item'])
+                    new_cost_summary_section_id = section._id
 
+                elif "." in item['Ref'] and any(v not in [0.0, ""] for k, v in item.items() if k != "Ref"):
+                    row = models.CostSummary.objects.create(_id=str(ObjectId()), ref=item['Ref'], item=item['Item'], contract_sum=item['CONTRACT SUM'], certified_payments=item['CERTIFIED PAYMENTS TO CONTRACTOR'], accrued_payments=item['ACCRUED & ANTICIPATED PAYMENTS'], total_expenditure=item['TOTAL FORECAST EXPENDITURE'], variance_total=item['VARIANCE - TOTAL '], variance_period=item['VARIANCE - IN PERIOD'], section_id=new_cost_summary_section_id)
+
+            except Exception as e:
+                print(e)
+                pass
+
+
+        # new contract sum sheet
 
         if "NEW Contract Sum" not in wb.sheetnames:
             return JsonResponse({"error": "Sheet 'NEW Contract Sum' not found"}, status=400)
 
         new_contract_sum_sheet = wb["NEW Contract Sum"]
 
-        headers = [cell.value for cell in new_contract_sum_sheet[1]]
+        new_contract_sum_required_columns = {"Ref", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR"}
 
-        required_columns = ["Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE"]
-        required_indexes = [headers.index(col) for col in required_columns if col in headers]
+        new_contract_sum_headers = [cell.value for cell in new_contract_sum_sheet[1]]
 
-        items = []
-        for row in new_contract_sum_sheet.iter_rows(min_row=3, values_only=True):
-            if all(row[i] not in [None, ""] for i in required_indexes):
-                item = {headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else "0") for i in range(len(headers))}
-                new_contract_sum_table.put_item(Item=item)
-                items.append(item)
+        new_contract_sum_missing_columns = new_contract_sum_required_columns - set(new_contract_sum_headers)
+        if new_contract_sum_missing_columns:
+            return JsonResponse(
+                {"error": f"Invalid format for Sheet 'NEW Contract Sum': Missing columns - {', '.join(new_contract_sum_missing_columns)}"},
+                status=400
+            )
 
+        new_contract_sum_section_id = ""
+
+        for row in new_contract_sum_sheet.iter_rows(min_row=2, values_only=True):
+            item = {
+                new_contract_sum_headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else 0.0)
+                for i in range(len(new_contract_sum_headers))
+            }
+
+            try:
+                if "." not in item['Ref'] and item['Item'] != "" and all(v == 0.0 for k, v in item.items() if k not in ["Ref", "Item"]):
+                    section = models.ContractSumSection.objects.create(_id=str(ObjectId()), name=item['Item'])
+                    new_contract_sum_section_id = section._id
+
+                elif "." in item['Ref'] and any(v not in [0.0, ""] for k, v in item.items() if k != "Ref"):
+                    row = models.ContractSum.objects.create(
+                        _id=str(ObjectId()),
+                        ref=item['Ref'],
+                        item=item['Item'],
+                        contract_sum=item['CONTRACT SUM'],
+                        certified_payments=item['CERTIFIED PAYMENTS TO CONTRACTOR'],
+                        section_id=new_contract_sum_section_id
+                    )
+
+            except Exception:
+                pass
+
+        # new change breakdown sheet
 
         if "NEW EAChange" not in wb.sheetnames:
             return JsonResponse({"error": "Sheet 'NEW EAChange' not found"}, status=400)
 
-        new_change_sheet = wb["NEW EAChange"]
+        new_change_breakdown_sheet = wb["NEW EAChange"]
 
-        headers = [cell.value for cell in new_change_sheet[1]]
+        new_change_breakdown_required_columns = {"Ref", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE", "VARIANCE - TOTAL ", "VARIANCE - IN PERIOD"}
 
-        required_columns = ["CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE", "VARIANCE - TOTAL", "VARIANCE - IN PERIOD"]
-        required_indexes = [headers.index(col) for col in required_columns if col in headers]
+        new_change_breakdown_headers = [cell.value for cell in new_change_breakdown_sheet[1]]
 
-        items = []
-        for row in new_change_sheet.iter_rows(min_row=3, values_only=True):
-            if not any(row[i] not in [None, ""] for i in required_indexes):
-                continue
+        new_change_breakdown_missing_columns = new_change_breakdown_required_columns - set(new_change_breakdown_headers)
+        if new_change_breakdown_missing_columns:
+            return JsonResponse(
+                {"error": f"Invalid format for Sheet 'NEW Change Breakdown': Missing columns - {', '.join(new_change_breakdown_missing_columns)}"},
+                status=400
+            )
+
+        new_change_breakdown_section_id = ""
+
+        for row in new_change_breakdown_sheet.iter_rows(min_row=2, values_only=True):
+            item = {
+                new_change_breakdown_headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else 0.0)
+                for i in range(len(new_change_breakdown_headers))
+            }
+
+            try:
+                if "." not in item['Ref'] and item['Item'] != "" and all(v == 0.0 for k, v in item.items() if k not in ["Ref", "Item"]):
+                    section = models.ChangeBreakDownSection.objects.create(_id=str(ObjectId()), name=item['Item'])
+                    new_change_breakdown_section_id = section._id
+
+                elif "." in item['Ref'] and any(v not in [0.0, ""] for k, v in item.items() if k != "Ref"):
+                    row = models.ChangeBreakDown.objects.create(
+                        _id=str(ObjectId()),
+                        ref=item['Ref'],
+                        item=item['Item'],
+                        certified_payments=item['CERTIFIED PAYMENTS TO CONTRACTOR'],
+                        total_expenditure=item['TOTAL FORECAST EXPENDITURE'],
+                        variance_total=item['VARIANCE - TOTAL '],
+                        variance_period=item['VARIANCE - IN PERIOD'],
+                        section_id=new_change_breakdown_section_id
+                    )
+
+            except Exception:
+                pass
+
+
+        # if "NEW Contract Sum" not in wb.sheetnames:
+        #     return JsonResponse({"error": "Sheet 'NEW Contract Sum' not found"}, status=400)
+
+        # new_contract_sum_sheet = wb["NEW Contract Sum"]
+
+        # headers = [cell.value for cell in new_contract_sum_sheet[1]]
+
+        # required_columns = ["Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE"]
+        # required_indexes = [headers.index(col) for col in required_columns if col in headers]
+
+        # items = []
+        # for row in new_contract_sum_sheet.iter_rows(min_row=3, values_only=True):
+        #     if all(row[i] not in [None, ""] for i in required_indexes):
+        #         item = {headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else "0") for i in range(len(headers))}
+        #         new_contract_sum_table.put_item(Item=item)
+        #         items.append(item)
+
+
+        # if "NEW EAChange" not in wb.sheetnames:
+        #     return JsonResponse({"error": "Sheet 'NEW EAChange' not found"}, status=400)
+
+        # new_change_sheet = wb["NEW EAChange"]
+
+        # headers = [cell.value for cell in new_change_sheet[1]]
+
+        # required_columns = ["CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE", "VARIANCE - TOTAL", "VARIANCE - IN PERIOD"]
+        # required_indexes = [headers.index(col) for col in required_columns if col in headers]
+
+        # items = []
+        # for row in new_change_sheet.iter_rows(min_row=3, values_only=True):
+        #     if not any(row[i] not in [None, ""] for i in required_indexes):
+        #         continue
             
-            item = {headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else "0") for i in range(len(headers))}
-            new_change_table.put_item(Item=item)
-            items.append(item)
+        #     item = {headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else "0") for i in range(len(headers))}
+        #     new_change_table.put_item(Item=item)
+        #     items.append(item)
 
-        if "New Cost Reporting " not in wb.sheetnames:
-            return JsonResponse({"error": "Sheet 'New Cost Reporting' not found"}, status=400)
+        # if "New Cost Reporting " not in wb.sheetnames:
+        #     return JsonResponse({"error": "Sheet 'New Cost Reporting' not found"}, status=400)
 
-        new_cost_reporting_sheet = wb["New Cost Reporting "]
+        # new_cost_reporting_sheet = wb["New Cost Reporting "]
 
-        headers = [cell.value for cell in new_cost_reporting_sheet[1]]
+        # headers = [cell.value for cell in new_cost_reporting_sheet[1]]
 
-        required_columns = ["Interim Payments", "Month", "Forecast Monthly", "Actual Monthly", "Forecast Cumulative", "Actual Cumulative"]
-        required_indexes = {col: headers.index(col) for col in required_columns if col in headers}
+        # required_columns = ["Interim Payments", "Month", "Forecast Monthly", "Actual Monthly", "Forecast Cumulative", "Actual Cumulative"]
+        # required_indexes = {col: headers.index(col) for col in required_columns if col in headers}
 
-        items = []
-        for row in new_cost_reporting_sheet.iter_rows(min_row=2, values_only=True):
-            if all(row[i] not in [None, "", "#REF!"] for i in required_indexes.values()):
-                item = {}
-                for col, i in required_indexes.items():
-                    value = row[i]
+        # items = []
+        # for row in new_cost_reporting_sheet.iter_rows(min_row=2, values_only=True):
+        #     if all(row[i] not in [None, "", "#REF!"] for i in required_indexes.values()):
+        #         item = {}
+        #         for col, i in required_indexes.items():
+        #             value = row[i]
 
-                    if col == "Month":
-                        if isinstance(value, datetime):
-                            value = value.strftime("%b")
-                        elif isinstance(value, str) and value.strip():
-                            try:
-                                value = datetime.strptime(value, "%m/%d/%Y").strftime("%b")
-                            except ValueError:
-                                value = ""
-                        else:
-                            value = ""
+        #             if col == "Month":
+        #                 if isinstance(value, datetime):
+        #                     value = value.strftime("%b")
+        #                 elif isinstance(value, str) and value.strip():
+        #                     try:
+        #                         value = datetime.strptime(value, "%m/%d/%Y").strftime("%b")
+        #                     except ValueError:
+        #                         value = ""
+        #                 else:
+        #                     value = ""
 
-                    elif isinstance(value, float):
-                        value = Decimal(str(value))
+        #             elif isinstance(value, float):
+        #                 value = Decimal(str(value))
 
-                    else:
-                        value = str(value) if value not in [None, ""] else "0"
+        #             else:
+        #                 value = str(value) if value not in [None, ""] else "0"
 
-                    item[col] = value
+        #             item[col] = value
 
-                new_cost_reporting_table.put_item(Item=item)
-                items.append(item)
+        #         new_cost_reporting_table.put_item(Item=item)
+        #         items.append(item)
 
         return JsonResponse({"message": "File processed successfully"}, status=201)
     
