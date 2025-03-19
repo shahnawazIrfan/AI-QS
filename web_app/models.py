@@ -139,3 +139,31 @@ class ContractSum(models.Model):
 
     class Meta:
         verbose_name_plural = "Contract Sum"
+
+
+class ChangeBreakDownSection(models.Model):
+    _id = models.CharField(max_length=24, primary_key=True)
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name_plural = "Change Break Down Section"
+
+
+class ChangeBreakDown(models.Model):
+    _id = models.CharField(max_length=24, primary_key=True)
+    ref = models.CharField(max_length=50)
+    item = models.CharField(max_length=255, blank=True, null=True)
+    certified_payments = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    total_expenditure = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    variance_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    variance_period = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    section = models.ForeignKey(ChangeBreakDownSection, on_delete=models.CASCADE, related_name="change_breakdown")
+
+    def __str__(self):
+        return f"{self.section.name} - {self.ref}"
+
+    class Meta:
+        verbose_name_plural = "Change Break Down"

@@ -11,5 +11,6 @@ urlpatterns = [
     path('retro-fit/', views.RetroFitDashboardView.as_view(), name='retro_fit'),
     path('information-management/', views.InformationManagementDashboardView.as_view(), name='information_management'),
     path('cost-summary-operations/', views.costSummaryOperationsView.as_view(), name='cost_summary_operations'),
-    path('contract-sum-operations/', views.contractSumOperationsView.as_view(), name='contract_sum_operations')
+    path('contract-sum-operations/', views.contractSumOperationsView.as_view(), name='contract_sum_operations'),
+    path('change-breakdown-operations/', views.changeBreakDownOperationsView.as_view(), name='change_breakdown_operations')
 ]

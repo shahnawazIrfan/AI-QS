@@ -98,6 +98,27 @@ class CostDashboardView(ViewBase):
             new_contract_sum_data.append(section_dict)
 
 
+        # change breakdown table
+        total_new_change_breakdown_sections = models.ChangeBreakDownSection.objects.count()
+        ChangeBreakDownSections = models.ChangeBreakDownSection.objects.prefetch_related("change_breakdown").all()
+
+        new_change_breakdown_data = []
+
+        for section in ChangeBreakDownSections:
+            section_dict = {
+                "section_id": section._id,
+                "section_name": section.name,
+                "rows": []
+            }
+
+            for change_breakdown in section.change_breakdown.all():
+                change_breakdown_dict = model_to_dict(change_breakdown, exclude=["section"])
+                change_breakdown_dict["id"] = str(change_breakdown._id)
+                section_dict["rows"].append(change_breakdown_dict)
+
+            new_change_breakdown_data.append(section_dict)
+
+
         # dynamodb = boto3.resource("dynamodb", region_name="eu-west-2", )
         # new_cost_summary_table = dynamodb.Table("new_cost_summary")
         # new_contract_sum_table = dynamodb.Table("new_contract_sum")
@@ -248,7 +269,9 @@ class CostDashboardView(ViewBase):
             'new_cost_summary_data': new_cost_summary_data,
             'total_new_cost_summary_sections': total_new_cost_summary_sections,
             'new_contract_sum_data': new_contract_sum_data,
-            'total_new_contract_sum_sections': total_new_contract_sum_sections
+            'total_new_contract_sum_sections': total_new_contract_sum_sections,
+            'new_change_breakdown_data': new_change_breakdown_data,
+            'total_new_change_breakdown_sections': total_new_change_breakdown_sections
             # 'new_cost_summary_records': sorted_cost_summary_records,
             # 'new_contract_sum_records': sorted_contract_sum_records,
             # 'new_change_records': sorted_new_change_records,
@@ -627,6 +650,59 @@ class contractSumOperationsView(ViewBase):
             if type == "delete_row" and delete_row_id:
                 models.ContractSum.objects.filter(_id=delete_row_id).delete()
                 return JsonResponse({"message": "Cost summary row deleted successfully"}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+        
+
+class changeBreakDownOperationsView(ViewBase):
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            type = data.get("type")
+            section_id = data.get("section_id")
+            section_name = data.get("section_name")
+            row_id = data.get("row_id")
+            ref = data.get("ref")
+            item = data.get("item")
+            certified_payments = data.get("certified_payments")
+            total_expenditure = data.get("total_expenditure")
+            variance_total = data.get("variance_total")
+            variance_period = data.get("variance_period")
+
+            if type == "section" and not section_id:
+                section = models.ChangeBreakDownSection.objects.create(_id=str(ObjectId()), name=section_name)
+                return JsonResponse({"message": "Change break down saved successfully", "id": section._id}, status=201)
+            
+            if type == "section" and section_id:
+                section = models.ChangeBreakDownSection.objects.filter(_id=section_id).update(name=section_name)
+                return JsonResponse({"message": "Change break down updated successfully", "id": section_id}, status=200)
+            
+            if type == "row" and not row_id and section_id:
+                row = models.ChangeBreakDown.objects.create(_id=str(ObjectId()), ref=ref, item=item, certified_payments=certified_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id)
+                return JsonResponse({"message": "Change break down row saved successfully", "id": row._id}, status=201)
+            
+            if type == "row" and row_id and section_id:
+                row = models.ChangeBreakDown.objects.filter(_id=row_id).update(ref=ref, item=item, certified_payments=certified_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id)
+                return JsonResponse({"message": "Change break down row updated successfully", "id": row_id}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            type = data.get("type")
+            delete_row_id = request.GET.get("delete_row_id")
+            delete_section_id = request.GET.get("delete_section_id")
+
+            if type == "delete_section" and delete_section_id:
+                models.ChangeBreakDownSection.objects.filter(_id=delete_section_id).delete()
+                return JsonResponse({"message": "Change break down section deleted successfully"}, status=200)
+
+            if type == "delete_row" and delete_row_id:
+                models.ChangeBreakDown.objects.filter(_id=delete_row_id).delete()
+                return JsonResponse({"message": "Change break down row deleted successfully"}, status=200)
 
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
