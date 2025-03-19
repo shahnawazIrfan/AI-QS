@@ -56,28 +56,46 @@ class CostDashboardView(ViewBase):
     TEMPLATE_NAME = 'dashboard/cost_dashboard.html'
 
     def get(self, request, *args, **kwargs):
+        # cost summary table
         total_new_cost_summary_sections = models.CostSummarySection.objects.count()
-        sections = models.CostSummarySection.objects.prefetch_related("cost_summaries").all()
+        costSummarySections = models.CostSummarySection.objects.prefetch_related("cost_summaries").all()
 
         new_cost_summary_data = []
 
-        # Step 2: Loop through each section and get its related cost summaries
-        for section in sections:
+        for section in costSummarySections:
             section_dict = {
                 "section_id": section._id,
-                "section_name": section.name,  # Get section name
-                "rows": []  # Initialize empty list for rows
+                "section_name": section.name,
+                "rows": []
             }
 
-            # Step 3: Get related cost summaries for this section
             for cost_summary in section.cost_summaries.all():
                 cost_summary_dict = model_to_dict(cost_summary, exclude=["section"])
-                cost_summary_dict["id"] = str(cost_summary._id)  # Convert _id to string
+                cost_summary_dict["id"] = str(cost_summary._id)
                 section_dict["rows"].append(cost_summary_dict)
 
             new_cost_summary_data.append(section_dict)
 
-        print(new_cost_summary_data)
+
+        # contract sum table
+        total_new_contract_sum_sections = models.ContractSumSection.objects.count()
+        ContractSumSections = models.ContractSumSection.objects.prefetch_related("contract_sums").all()
+
+        new_contract_sum_data = []
+
+        for section in ContractSumSections:
+            section_dict = {
+                "section_id": section._id,
+                "section_name": section.name,
+                "rows": []
+            }
+
+            for contract_sum in section.contract_sums.all():
+                contract_sum_dict = model_to_dict(contract_sum, exclude=["section"])
+                contract_sum_dict["id"] = str(contract_sum._id)
+                section_dict["rows"].append(contract_sum_dict)
+
+            new_contract_sum_data.append(section_dict)
 
 
         # dynamodb = boto3.resource("dynamodb", region_name="eu-west-2", )
@@ -228,7 +246,9 @@ class CostDashboardView(ViewBase):
         
         context = {
             'new_cost_summary_data': new_cost_summary_data,
-            'total_new_cost_summary_sections': total_new_cost_summary_sections
+            'total_new_cost_summary_sections': total_new_cost_summary_sections,
+            'new_contract_sum_data': new_contract_sum_data,
+            'total_new_contract_sum_sections': total_new_contract_sum_sections
             # 'new_cost_summary_records': sorted_cost_summary_records,
             # 'new_contract_sum_records': sorted_contract_sum_records,
             # 'new_change_records': sorted_new_change_records,
@@ -555,6 +575,57 @@ class costSummaryOperationsView(ViewBase):
 
             if type == "delete_row" and delete_row_id:
                 models.CostSummary.objects.filter(_id=delete_row_id).delete()
+                return JsonResponse({"message": "Cost summary row deleted successfully"}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+        
+
+class contractSumOperationsView(ViewBase):
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            type = data.get("type")
+            section_id = data.get("section_id")
+            section_name = data.get("section_name")
+            row_id = data.get("row_id")
+            ref = data.get("ref")
+            item = data.get("item")
+            contract_sum = data.get("contract_sum")
+            certified_payments = data.get("certified_payments")
+
+            if type == "section" and not section_id:
+                section = models.ContractSumSection.objects.create(_id=str(ObjectId()), name=section_name)
+                return JsonResponse({"message": "Contract sum saved successfully", "id": section._id}, status=201)
+            
+            if type == "section" and section_id:
+                section = models.ContractSumSection.objects.filter(_id=section_id).update(name=section_name)
+                return JsonResponse({"message": "Contract sum updated successfully", "id": section_id}, status=200)
+            
+            if type == "row" and not row_id and section_id:
+                row = models.ContractSum.objects.create(_id=str(ObjectId()), ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, section_id=section_id)
+                return JsonResponse({"message": "Contract sum row saved successfully", "id": row._id}, status=201)
+            
+            if type == "row" and row_id and section_id:
+                row = models.ContractSum.objects.filter(_id=row_id).update(ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, section_id=section_id)
+                return JsonResponse({"message": "Contract sum row updated successfully", "id": row_id}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
+    def delete(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            type = data.get("type")
+            delete_row_id = request.GET.get("delete_row_id")
+            delete_section_id = request.GET.get("delete_section_id")
+
+            if type == "delete_section" and delete_section_id:
+                models.ContractSumSection.objects.filter(_id=delete_section_id).delete()
+                return JsonResponse({"message": "Cost summary section deleted successfully"}, status=200)
+
+            if type == "delete_row" and delete_row_id:
+                models.ContractSum.objects.filter(_id=delete_row_id).delete()
                 return JsonResponse({"message": "Cost summary row deleted successfully"}, status=200)
 
         except Exception as e:

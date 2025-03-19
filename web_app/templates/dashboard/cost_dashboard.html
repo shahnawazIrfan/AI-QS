@@ -6620,7 +6620,7 @@
 
         thead th {
             background-color: rgba(229, 248, 243, 1);
-            font-weight: bold;
+            font-weight: 900;
             font-size: 12px;
             height: 45px;
         }
@@ -6809,7 +6809,7 @@
         </div>
     </div>
     <div class="v2035_16820"><span class="v2035_16821">Contract Sum Breakdown</span>
-        <div class="v2036_14922" onclick="addNewSection()"><img class="img-fluid" src="{% static 'img/add_section.svg' %}" alt=""></div>
+        <div class="v2036_14922" onclick="contractSumAddNewSection()"><img class="img-fluid" src="{% static 'img/add_section.svg' %}" alt=""></div>
         <div class="v2036_14923"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
         <div class="table-container mt-3">
             <table id="contractSumTable">
@@ -6824,23 +6824,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for cost in new_cost_summary_data %}
-                        <tr class="section-header" data-id="{{ cost.section_id }}">
-                            <th colspan="4" onclick="makeEditable(this)">{{ cost.section_name }}</th>
+                    {% for contract in new_contract_sum_data %}
+                        <tr class="section-header" data-id="{{ contract.section_id }}">
+                            <th colspan="4" onclick="contractSumMakeEditable(this)">{{ contract.section_name }}</th>
                             <th>
-                                <button class="save-btn" onclick="saveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></button>
-                                <button class="delete-btn" onclick="deleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+                                <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></button>
+                                <button class="delete-btn" onclick="contractSumDeleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
                             </th>
                         </tr>
-                        {% for row in cost.rows %}
+                        {% for row in contract.rows %}
                             <tr data-id="{{ row.id }}">
                                 <td>{{ row.ref }}</td>
-                                <td class="item" onclick="makeEditable(this)">{{ row.item }}</td>
-                                <td onclick="makeEditable(this)">£{{ row.contract_sum }}</td>
-                                <td onclick="makeEditable(this)">£{{ row.certified_payments }}</td>
+                                <td class="item" onclick="contractSumMakeEditable(this)">{{ row.item }}</td>
+                                <td onclick="contractSumMakeEditable(this)">£{{ row.contract_sum }}</td>
+                                <td onclick="contractSumMakeEditable(this)">£{{ row.certified_payments }}</td>
                                 <td>
-                                    <button class="save-btn" onclick="saveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></button>
-                                    <button class="delete-btn" onclick="deleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+                                    <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></button>
+                                    <button class="delete-btn" onclick="contractSumDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
                                 </td>
                                 <td><span id="contract_sum_forecast">£{{ row.certified_payments }}</span></td>
                             </tr>
@@ -6850,7 +6850,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="v2036_14924" onclick="addNewRow()"><img class="img-fluid" src="{% static 'img/add_row.svg' %}" alt=""></div>
+        <div class="v2036_14924" onclick="contractSumAddNewRow()"><img class="img-fluid" src="{% static 'img/add_row.svg' %}" alt=""></div>
     </div>
     <div class="v2038_14920">
         <div class="v2038_14921"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
@@ -7250,6 +7250,236 @@
     }
 
     // cost summary table end
+
+
+    // contract sum table start
+
+    let contractSumSectionCount = {{total_new_contract_sum_sections}};
+
+    function contractSumAddNewSection() {
+        contractSumSectionCount++;
+        let table = document.getElementById("contractSumTable").getElementsByTagName('tbody')[0];
+        let sectionHeader = document.createElement("tr");
+        sectionHeader.classList.add("section-header");
+        sectionHeader.innerHTML = `
+    <th colspan="4" onclick="contractSumMakeEditable(this)">${contractSumSectionCount}</th>
+    <th>
+        <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+        <button class="delete-btn" onclick="contractSumDeleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+    </th>
+    `;
+        table.appendChild(sectionHeader);
+        contractSumAddNewRow(contractSumSectionCount);
+        $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
+    }
+
+    function contractSumAddNewRow(sectionNum = null) {
+        if (contractSumSectionCount === 0) {
+            alert("Please add a section first!");
+            return;
+        }
+
+        let table = document.getElementById("contractSumTable").getElementsByTagName('tbody')[0];
+        let lastRows = table.querySelectorAll("tr:not(.section-header)");
+        let newRowIndex = 1;
+        if (lastRows.length > 0) {
+            let lastRef = lastRows[lastRows.length - 1].children[0].innerText;
+            let [lastSection, lastRow] = lastRef.split(".").map(Number);
+            newRowIndex = sectionNum ? 1 : lastRow + 1;
+            sectionNum = sectionNum || lastSection;
+        }
+
+        let newRow = document.createElement("tr");
+        newRow.innerHTML = `
+    <td>${sectionNum}.${newRowIndex}</td>
+    <td class="item" onclick="contractSumMakeEditable(this)"></td>
+    <td onclick="contractSumMakeEditable(this)"></td>
+    <td onclick="contractSumMakeEditable(this)"></td>
+    <td>
+        <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+        <button class="delete-btn" onclick="contractSumDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+    </td>
+    <td><span id="contract_sum_forecast">£0</span></td>
+    `;
+        table.appendChild(newRow);
+        $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
+    }
+
+    function contractSumMakeEditable(cell) {
+        if (cell.querySelector("input")) return;
+        let input = document.createElement("input");
+        input.type = "text";
+        input.value = cell.innerText;
+        cell.innerText = "";
+        cell.appendChild(input);
+        input.focus();
+
+        input.addEventListener("blur", function () {
+            cell.innerText = input.value;
+            contractSumShowSaveButton(cell);
+        });
+    }
+
+    function contractSumShowSaveButton(cell) {
+        let row = cell.closest("tr");
+        let saveButton = row.querySelector(".save-btn");
+        if (saveButton) {
+            saveButton.style.display = "inline-block";
+        }
+    }
+
+    function contractSumDeleteRow(button) {
+        let row = button.closest("tr");
+        row.parentNode.removeChild(row);
+        let row_id = row?.getAttribute("data-id") ?? null;
+        let data = {"type": "delete_row"};
+
+        if (row_id) {
+            $.ajax({
+                url: "/dashboard/contract-sum-operations/?delete_row_id="+row_id,
+                type: "DELETE",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                headers: {
+                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                },
+                success: function(response) {
+                    console.log("Response:", response);
+                    if (response.message) {
+                        console.log('Deleted successfully')
+                    } else {
+                        alert("Error deleting data: " + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong!");
+                }
+            });
+        }
+    }
+
+    function contractSumDeleteSection(button) {
+        let section = button.closest("tr");
+        let nextSibling = section.nextElementSibling;
+        while (nextSibling && !nextSibling.classList.contains("section-header")) {
+            let temp = nextSibling;
+            nextSibling = nextSibling.nextElementSibling;
+            temp.parentNode.removeChild(temp);
+        }
+        section.parentNode.removeChild(section);
+        if (document.querySelectorAll(".section-header").length === 0) {
+            contractSumSectionCount = 0;
+        }
+
+        let section_id = section?.getAttribute("data-id") ?? null;
+        let data = {"type": "delete_section"};
+
+        if (section_id) {
+            $.ajax({
+                url: "/dashboard/contract-sum-operations/?delete_section_id="+section_id,
+                type: "DELETE",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                headers: {
+                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                },
+                success: function(response) {
+                    console.log("Response:", response);
+                    if (response.message) {
+                        console.log('Deleted successfully')
+                    } else {
+                        alert("Error deleting data: " + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong!");
+                }
+            });
+        }
+
+    }
+
+    function contractSumSaveData(button) {
+        let row = button.closest("tr");
+        let isSection = row.classList.contains("section-header");
+
+        let sectionRow = row;
+        while (sectionRow && !sectionRow.classList.contains("section-header")) {
+            sectionRow = sectionRow.previousElementSibling;
+        }
+
+        let sectionName = sectionRow ? sectionRow.innerText.split(":")[0].replace("Section ", "").trim() : "Unknown";
+
+        let cells = row.querySelectorAll("td, th");
+        let data = {};
+
+        if (isSection) {
+            data["section_id"] = sectionRow?.getAttribute("data-id") ?? null;
+            data["section_name"] = cells[0].innerText.trim();
+            data["type"] = 'section';
+
+            $.ajax({
+                url: "/dashboard/contract-sum-operations/",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                headers: {
+                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                },
+                success: function(response) {
+                    console.log("Response:", response);
+                    if (response.message) {
+                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        row.setAttribute("data-id", response.id);
+                    } else {
+                        alert("Error saving data: " + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong!");
+                }
+            });
+        }
+        else {
+            data["row_id"] = row?.getAttribute("data-id") ?? null;
+            data["section_id"] = sectionRow?.getAttribute("data-id") ?? null;
+            data["ref"] = cells[0].innerText.trim();
+            data["item"] = cells[1].innerText.trim();
+            data["contract_sum"] = extractNumber(cells[2].innerText.trim());
+            data["certified_payments"] = extractNumber(cells[3].innerText.trim());
+            data["type"] = 'row';
+
+            $.ajax({
+                url: "/dashboard/contract-sum-operations/",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                headers: {
+                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                },
+                success: function(response) {
+                    console.log("Response:", response);
+                    if (response.message) {
+                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        row.setAttribute("data-id", response.id);
+                    } else {
+                        alert("Error saving data: " + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong!");
+                }
+            });
+        }
+
+        console.log("Sending data:", data);
+    }
+
+    // contract sum table end
 
 </script>
 
