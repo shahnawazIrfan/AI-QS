@@ -11,7 +11,7 @@
 
     .v2011_16830 {
         width: 100%;
-        height: 1135px;
+        height: 1300px;
         background: rgba(250, 250, 250, 1);
         opacity: 1;
         position: relative;
@@ -4651,7 +4651,7 @@
 
     .v2038_14920 {
         width: 55%;
-        height: 334px;
+        height: 465px;
         background: rgba(255, 255, 255, 1);
         opacity: 1;
         position: absolute;
@@ -5031,7 +5031,7 @@
 
     .v2038_21389 {
         width: 832px;
-        height: 334px;
+        height: 465px;
         background: rgba(255, 255, 255, 1);
         opacity: 1;
         position: absolute;
@@ -5042,6 +5042,21 @@
         border-bottom-left-radius: 14px;
         border-bottom-right-radius: 14px;
         /* overflow: hidden; */;
+    }
+
+    .v2038_21390 {
+        width: 100%;
+        height: 465px;
+        background: rgba(255, 255, 255, 1);
+        opacity: 1;
+        position: absolute;
+        top: 3px;
+        left: 17px;
+        border-top-left-radius: 14px;
+        border-top-right-radius: 14px;
+        border-bottom-left-radius: 14px;
+        border-bottom-right-radius: 14px;
+        /* overflow: hidden; */
     }
 
     .v2038_21519 {
@@ -5058,62 +5073,39 @@
     }
 
     .v2038_21391 {
-        width: 805px;
-        height: 282px;
-        background: rgba(255, 255, 255, 1);
-        opacity: 1;
+        width: 208px;
+        color: rgba(21, 22, 20, 1);
         position: absolute;
-        top: 50px;
-        left: 9px;
-        border-top-left-radius: 14px;
-        border-top-right-radius: 14px;
-        border-bottom-left-radius: 14px;
-        border-bottom-right-radius: 14px;
-        overflow-y: scroll;
-        overflow-x: hidden;
-        scrollbar-width: thin;
-        scrollbar-color: rgb(227 227 227) transparent;
-        /* overflow: hidden; */;
+        top: 16px;
+        left: 0;
+        font-family: Plus Jakarta Sans;
+        font-weight: Bold;
+        font-size: 16px;
+        opacity: 1;
+        text-align: center;
     }
 
     .v2038_21392 {
-        width: 739px;
-        height: 369px;
-        background: rgba(255, 255, 255, 1);
-        padding: 7px 0px;
-        margin: 3px;
         opacity: 1;
-        position: absolute;
-        top: 1px;
-        left: 24px;
-        border-top-left-radius: 12px;
-        border-top-right-radius: 12px;
-        border-bottom-left-radius: 12px;
-        border-bottom-right-radius: 12px;
-        /* overflow: hidden; */;
+        position: relative;
+        top: 8px;
+        left: 580px;
+        cursor: pointer;
     }
 
     .v2038_21393 {
-        width: 59px;
-        height: 364px;
-        background: rgba(255, 255, 255, 1);
         opacity: 1;
         position: absolute;
-        top: 2px;
-        left: 0px;
-        /* overflow: hidden; */;
+        top: 20px;
+        left: 785px;
     }
 
     .v2038_21394 {
-        width: 59px;
-        height: 44px;
-        background: rgba(229, 248, 243, 1);
-        margin: 12px;
         opacity: 1;
         position: absolute;
-        top: 0px;
-        left: 0px;
-        /* overflow: hidden; */;
+        bottom: 9px;
+        left: 400px;
+        cursor: pointer;
     }
 
     .v2038_21395 {
@@ -6877,67 +6869,53 @@
             </div>
         </div>
     </div>
-    <div class="v2038_21389"><span class="v2038_21519">Change Breakdown</span>
-        <div class="v2038_21391">
-            <div class="v2038_21392">
-                <div class="v2038_21393">
-                    <div class="v2038_21394"><span class="v2038_21395">Ref:</span></div>
-                    {% for data in new_change_records.Ref %}
-                        {% widthratio forloop.counter0 1 40 as offset %} 
-                        <div class="v2038_21396" style="top: {{ 44|add:offset }}px;">
-                            <span class="v2038_21397 ref" contenteditable="true" onblur="updateValue(this)" data-search-column="Item" data-search-value="{{ data }}" data-table-name="new_change">{{ data }}</span>
-                        </div>
-                    {% endfor %}
-                </div>
-                <div class="v2038_21414">
-                    <div class="v2038_21415"><span class="v2038_21416">Item</span></div>
-                    {% for data in new_change_records.Item %}
-                        {% widthratio forloop.counter0 1 40 as offset %} 
-                        <div class="v2038_21417" style="top: {{ 44|add:offset }}px;">
-                            <span class="v2038_21418 item" contenteditable="true" onblur="updateValue(this)" data-search-column="Item" data-search-value="{{ data }}" data-table-name="new_change">{{ data }}</span>
-                        </div>
-                    {% endfor %}
-                </div>
-                <div class="v2038_21433">
-                    <div class="v2038_21434"><span class="v2038_21435">Certified Payment to Contractor </span></div>
-                    {% for data in new_change_records.CERTIFIEDPAYMENTSTOCONTRACTOR %}
-                        {% widthratio forloop.counter0 1 40 as offset %} 
-                        <div class="v2038_21436" style="top: {{ 44|add:offset }}px;">
-                            <span class="v2038_21437 certified_payment" contenteditable="true" onblur="updateValue(this)" data-search-column="Item" data-search-value="{{ data }}" data-table-name="new_change">£{{ data }}</span>
-                        </div>
-                    {% endfor %}
-                </div>
-                <div class="v2038_21452">
-                    <div class="v2038_21453"><span class="v2038_21454">Total Forecast Expenditure</span></div>
-                    {% for data in new_change_records.TOTALFORECASTEXPENDITURE %}
-                        {% widthratio forloop.counter0 1 40 as offset %} 
-                        <div class="v2038_21455" style="top: {{ 44|add:offset }}px;">
-                            <span class="v2038_21456 forecast_expenditure" contenteditable="true" onblur="updateValue(this)" data-search-column="Item" data-search-value="{{ data }}" data-table-name="new_change">£{{ data }}</span>
-                        </div>
-                    {% endfor %}
-                </div>
-                <div class="v2038_21471">
-                    <div class="v2038_21472"><span class="v2038_21473">Variance Total </span></div>
-                    {% for data in new_change_records.VARIANCETOTAL %}
-                        {% widthratio forloop.counter0 1 40 as offset %} 
-                        <div class="v2038_21474" style="top: {{ 44|add:offset }}px;">
-                            <span class="v2038_21475 variance_total" contenteditable="true" onblur="updateValue(this)" data-search-column="Item" data-search-value="{{ data }}" data-table-name="new_change">£{{ data }}</span>
-                        </div>
-                    {% endfor %}
-                </div>
-                <div class="v2038_21490">
-                    <div class="v2038_21491"><span class="v2038_21492">Variance Period</span></div>
-                    {% for data in new_change_records.VARIANCEINPERIOD %}
-                        {% widthratio forloop.counter0 1 40 as offset %} 
-                        <div class="v2038_21493" style="top: {{ 44|add:offset }}px;">
-                            <span class="v2038_21494 variance_period" contenteditable="true" onblur="updateValue(this)" data-search-column="Item" data-search-value="{{ data }}" data-table-name="new_change">£{{ data }}</span>
-                        </div>
-                    {% endfor %}
-                </div>
+    <div class="v2038_21389">
+        <div class="v2038_21390"><span class="v2038_21391">Change Breakdown</span>
+            <div class="v2038_21392" onclick="changeBreakDownAddNewSection()"><img class="img-fluid" src="{% static 'img/add_section.svg' %}" alt=""></div>
+            <div class="v2038_21393"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
+            <div class="table-container mt-3">
+                <table id="changeBreakDownTable">
+                    <thead>
+                        <tr>
+                            <th>Ref:</th>
+                            <th class="item">Item</th>
+                            <th>Certified Payments</th>
+                            <th>Total Expenditure</th>
+                            <th>Variance Total</th>
+                            <th>Variance Period</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cost in new_cost_summary_data %}
+                            <tr class="section-header" data-id="{{ cost.section_id }}">
+                                <th colspan="6" onclick="changeBreakDownMakeEditable(this)">{{ cost.section_name }}</th>
+                                <th>
+                                    <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></button>
+                                    <button class="delete-btn" onclick="changeBreakDownDeleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+                                </th>
+                            </tr>
+                            {% for row in cost.rows %}
+                                <tr data-id="{{ row.id }}">
+                                    <td>{{ row.ref }}</td>
+                                    <td class="item" onclick="changeBreakDownMakeEditable(this)">{{ row.item }}</td>
+                                    <td onclick="changeBreakDownMakeEditable(this)">£{{ row.certified_payments }}</td>
+                                    <td onclick="changeBreakDownMakeEditable(this)">£{{ row.total_expenditure }}</td>
+                                    <td onclick="changeBreakDownMakeEditable(this)">£{{ row.variance_total }}</td>
+                                    <td onclick="changeBreakDownMakeEditable(this)">£{{ row.variance_period }}</td>
+                                    <td>
+                                        <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></button>
+                                        <button class="delete-btn" onclick="changeBreakDownDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
+            <div class="v2038_21394" onclick="changeBreakDownAddNewRow()"><img class="img-fluid" src="{% static 'img/add_row.svg' %}" alt=""></div>
         </div>
-        <div class="v2038_21521"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
-        <div class="v2038_21522" id="change_breakdown_new_row"><img class="img-fluid" src="{% static 'img/add_section.svg' %}" alt=""></div>
     </div>
 </div>
 
