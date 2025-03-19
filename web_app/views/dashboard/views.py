@@ -57,18 +57,27 @@ class CostDashboardView(ViewBase):
 
     def get(self, request, *args, **kwargs):
         total_new_cost_summary_sections = models.CostSummarySection.objects.count()
-        new_cost_summary = models.CostSummary.objects.all()
+        sections = models.CostSummarySection.objects.prefetch_related("cost_summaries").all()
 
         new_cost_summary_data = []
-        for item in new_cost_summary:
-            item_dict = model_to_dict(item)
-            item_dict['id'] = item._id
 
-            section_dict = model_to_dict(item.section)
-            section_dict['id'] = str(item.section._id)
-            item_dict["section"] = section_dict
+        # Step 2: Loop through each section and get its related cost summaries
+        for section in sections:
+            section_dict = {
+                "section_id": section._id,
+                "section_name": section.name,  # Get section name
+                "rows": []  # Initialize empty list for rows
+            }
 
-            new_cost_summary_data.append(item_dict)
+            # Step 3: Get related cost summaries for this section
+            for cost_summary in section.cost_summaries.all():
+                cost_summary_dict = model_to_dict(cost_summary, exclude=["section"])
+                cost_summary_dict["id"] = str(cost_summary._id)  # Convert _id to string
+                section_dict["rows"].append(cost_summary_dict)
+
+            new_cost_summary_data.append(section_dict)
+
+        print(new_cost_summary_data)
 
 
         # dynamodb = boto3.resource("dynamodb", region_name="eu-west-2", )
@@ -497,8 +506,8 @@ class InformationManagementDashboardView(ViewBase):
         return self.render(context)
     
 
-def save_cost_summary(request):
-    if request.method == "POST":
+class costSummaryOperationsView(ViewBase):
+    def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body)
             type = data.get("type")
@@ -533,4 +542,20 @@ def save_cost_summary(request):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
 
-    return JsonResponse({"error": "Invalid request"}, status=400)
+    def delete(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            type = data.get("type")
+            delete_row_id = request.GET.get("delete_row_id")
+            delete_section_id = request.GET.get("delete_section_id")
+
+            if type == "delete_section" and delete_section_id:
+                models.CostSummarySection.objects.filter(_id=delete_section_id).delete()
+                return JsonResponse({"message": "Cost summary section deleted successfully"}, status=200)
+
+            if type == "delete_row" and delete_row_id:
+                models.CostSummary.objects.filter(_id=delete_row_id).delete()
+                return JsonResponse({"message": "Cost summary row deleted successfully"}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)

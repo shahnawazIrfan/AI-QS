@@ -10,5 +10,5 @@ urlpatterns = [
     path('net-carbon/', views.NetCarbonDashboardView.as_view(), name='net_carbon'),
     path('retro-fit/', views.RetroFitDashboardView.as_view(), name='retro_fit'),
     path('information-management/', views.InformationManagementDashboardView.as_view(), name='information_management'),
-    path('save-cost-summary/', views.save_cost_summary, name='save_cost_summary')
+    path('cost-summary-operations/', views.costSummaryOperationsView.as_view(), name='cost_summary_operations')
 ]
