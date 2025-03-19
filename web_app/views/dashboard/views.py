@@ -530,11 +530,29 @@ class costSummaryOperationsView(ViewBase):
             
             if type == "row" and not row_id and section_id:
                 row = models.CostSummary.objects.create(_id=str(ObjectId()), ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, accrued_payments=accrued_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id)
-                return JsonResponse({"message": "Cost summary row saved successfully", "id": row._id}, status=201)
+               
+                cost_summary = models.CostSummary.objects.all()
+                total_contract_sum = sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum)
+                certified_payments_sum = sum(Decimal(str(obj.certified_payments)) for obj in cost_summary if obj.certified_payments)
+                anticipated_payments_sum = sum(Decimal(str(obj.accrued_payments)) for obj in cost_summary if obj.accrued_payments)
+                forecast_expenditures_sum = sum(Decimal(str(obj.total_expenditure)) for obj in cost_summary if obj.total_expenditure)
+                total_variance_sum = sum(Decimal(str(obj.variance_total)) for obj in cost_summary if obj.variance_total)
+                total_variance_period_sum = sum(Decimal(str(obj.variance_period)) for obj in cost_summary if obj.variance_period)
+                
+                return JsonResponse({"message": "Cost summary row saved successfully", "id": row._id, "total_contract_sum": total_contract_sum, "certified_payments_sum": certified_payments_sum, "anticipated_payments_sum": anticipated_payments_sum, "forecast_expenditures_sum": forecast_expenditures_sum, "total_variance_sum": total_variance_sum, "total_variance_period_sum": total_variance_period_sum}, status=201)
             
             if type == "row" and row_id and section_id:
                 row = models.CostSummary.objects.filter(_id=row_id).update(ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, accrued_payments=accrued_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id)
-                return JsonResponse({"message": "Cost summary row updated successfully", "id": row_id}, status=200)
+                
+                cost_summary = models.CostSummary.objects.all()
+                total_contract_sum = sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum)
+                certified_payments_sum = sum(Decimal(str(obj.certified_payments)) for obj in cost_summary if obj.certified_payments)
+                anticipated_payments_sum = sum(Decimal(str(obj.accrued_payments)) for obj in cost_summary if obj.accrued_payments)
+                forecast_expenditures_sum = sum(Decimal(str(obj.total_expenditure)) for obj in cost_summary if obj.total_expenditure)
+                total_variance_sum = sum(Decimal(str(obj.variance_total)) for obj in cost_summary if obj.variance_total)
+                total_variance_period_sum = sum(Decimal(str(obj.variance_period)) for obj in cost_summary if obj.variance_period)
+                
+                return JsonResponse({"message": "Cost summary row updated successfully", "id": row_id, "total_contract_sum": total_contract_sum, "certified_payments_sum": certified_payments_sum, "anticipated_payments_sum": anticipated_payments_sum, "forecast_expenditures_sum": forecast_expenditures_sum, "total_variance_sum": total_variance_sum, "total_variance_period_sum": total_variance_period_sum}, status=200)
 
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
@@ -552,7 +570,16 @@ class costSummaryOperationsView(ViewBase):
 
             if type == "delete_row" and delete_row_id:
                 models.CostSummary.objects.filter(_id=delete_row_id).delete()
-                return JsonResponse({"message": "Cost summary row deleted successfully"}, status=200)
+
+                cost_summary = models.CostSummary.objects.all()
+                total_contract_sum = sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum)
+                certified_payments_sum = sum(Decimal(str(obj.certified_payments)) for obj in cost_summary if obj.certified_payments)
+                anticipated_payments_sum = sum(Decimal(str(obj.accrued_payments)) for obj in cost_summary if obj.accrued_payments)
+                forecast_expenditures_sum = sum(Decimal(str(obj.total_expenditure)) for obj in cost_summary if obj.total_expenditure)
+                total_variance_sum = sum(Decimal(str(obj.variance_total)) for obj in cost_summary if obj.variance_total)
+                total_variance_period_sum = sum(Decimal(str(obj.variance_period)) for obj in cost_summary if obj.variance_period)
+
+                return JsonResponse({"message": "Cost summary row deleted successfully", "total_contract_sum": total_contract_sum, "certified_payments_sum": certified_payments_sum, "anticipated_payments_sum": anticipated_payments_sum, "forecast_expenditures_sum": forecast_expenditures_sum, "total_variance_sum": total_variance_sum, "total_variance_period_sum": total_variance_period_sum}, status=200)
 
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)

@@ -7091,6 +7091,14 @@
                     console.log("Response:", response);
                     if (response.message) {
                         console.log('Deleted successfully')
+
+                        $(".v2032_16022").html(`£${response.total_contract_sum}`);
+                        $(".v2032_15965").html(`£${response.certified_payments_sum}`);
+                        $(".v2033_16102").html(`£${response.anticipated_payments_sum}`);
+                        $(".v2033_16120").html(`£${response.forecast_expenditures_sum}`);
+                        $(".v2033_16138").html(`£${response.total_variance_sum}`);
+                        $(".v2033_16156").html(`£${response.total_variance_period_sum}`);
+
                     } else {
                         alert("Error deleting data: " + response.error);
                     }
@@ -7132,6 +7140,14 @@
                     console.log("Response:", response);
                     if (response.message) {
                         console.log('Deleted successfully')
+
+                        $(".v2032_16022").html(`£${response.total_contract_sum}`);
+                        $(".v2032_15965").html(`£${response.certified_payments_sum}`);
+                        $(".v2033_16102").html(`£${response.anticipated_payments_sum}`);
+                        $(".v2033_16120").html(`£${response.forecast_expenditures_sum}`);
+                        $(".v2033_16138").html(`£${response.total_variance_sum}`);
+                        $(".v2033_16156").html(`£${response.total_variance_period_sum}`);
+
                     } else {
                         alert("Error deleting data: " + response.error);
                     }
@@ -7213,6 +7229,14 @@
                     if (response.message) {
                         button.style.display = "none"; // Save hone ke baad button hide kar do
                         row.setAttribute("data-id", response.id);
+
+                        $(".v2032_16022").html(`£${response.total_contract_sum}`);
+                        $(".v2032_15965").html(`£${response.certified_payments_sum}`);
+                        $(".v2033_16102").html(`£${response.anticipated_payments_sum}`);
+                        $(".v2033_16120").html(`£${response.forecast_expenditures_sum}`);
+                        $(".v2033_16138").html(`£${response.total_variance_sum}`);
+                        $(".v2033_16156").html(`£${response.total_variance_period_sum}`);
+
                     } else {
                         alert("Error saving data: " + response.error);
                     }
