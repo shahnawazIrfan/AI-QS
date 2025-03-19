@@ -15,6 +15,7 @@ from io import BytesIO
 import matplotlib
 from bson import ObjectId
 from django.forms.models import model_to_dict
+from django.db.models import Sum
 
 from web_app import models
 matplotlib.use('Agg')
@@ -56,6 +57,15 @@ class CostDashboardView(ViewBase):
     TEMPLATE_NAME = 'dashboard/cost_dashboard.html'
 
     def get(self, request, *args, **kwargs):
+        # top card counts
+        cost_summary = models.CostSummary.objects.all()
+        total_contract_sum = sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum)
+        certified_payments_sum = sum(Decimal(str(obj.certified_payments)) for obj in cost_summary if obj.certified_payments)
+        anticipated_payments_sum = sum(Decimal(str(obj.accrued_payments)) for obj in cost_summary if obj.accrued_payments)
+        forecast_expenditures_sum = sum(Decimal(str(obj.total_expenditure)) for obj in cost_summary if obj.total_expenditure)
+        total_variance_sum = sum(Decimal(str(obj.variance_total)) for obj in cost_summary if obj.variance_total)
+        total_variance_period_sum = sum(Decimal(str(obj.variance_period)) for obj in cost_summary if obj.variance_period)
+
         # cost summary table
         total_new_cost_summary_sections = models.CostSummarySection.objects.count()
         costSummarySections = models.CostSummarySection.objects.prefetch_related("cost_summaries").all()
@@ -271,16 +281,17 @@ class CostDashboardView(ViewBase):
             'new_contract_sum_data': new_contract_sum_data,
             'total_new_contract_sum_sections': total_new_contract_sum_sections,
             'new_change_breakdown_data': new_change_breakdown_data,
-            'total_new_change_breakdown_sections': total_new_change_breakdown_sections
+            'total_new_change_breakdown_sections': total_new_change_breakdown_sections,
+            'total_contract_sum': total_contract_sum,
+            'certified_payments_sum': certified_payments_sum,
+            'anticipated_payments_sum': anticipated_payments_sum,
+            'forecast_expenditures_sum': forecast_expenditures_sum,
+            'total_variance_sum': total_variance_sum,
+            'total_variance_period_sum': total_variance_period_sum,
             # 'new_cost_summary_records': sorted_cost_summary_records,
             # 'new_contract_sum_records': sorted_contract_sum_records,
             # 'new_change_records': sorted_new_change_records,
-            # 'total_contract_sum': total_contract_sum,
             # 'certified_payments_sum': certified_payments_sum,
-            # 'anticipated_payments_sum': anticipated_payments_sum,
-            # 'forecast_expenditures_sum': forecast_expenditures_sum,
-            # 'total_variance_sum': total_variance_sum,
-            # 'total_variance_period_sum': total_variance_period_sum,
             # 'forecast_monthly': forecast_monthly,
             # 'actual_monthly': actual_monthly,
             # 'cost_reporting_graph': cost_reporting_graph,
