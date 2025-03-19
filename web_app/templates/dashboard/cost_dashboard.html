@@ -7459,6 +7459,237 @@
 
     // contract sum table end
 
+
+    // change breakdown table start
+
+    // let changeBreakDownSectionCount = {{total_new_change_breakdown_sections}};
+    let changeBreakDownSectionCount = 0;
+
+    function changeBreakDownAddNewSection() {
+        changeBreakDownSectionCount++;
+        let table = document.getElementById("changeBreakDownTable").getElementsByTagName('tbody')[0];
+        let sectionHeader = document.createElement("tr");
+        sectionHeader.classList.add("section-header");
+        sectionHeader.innerHTML = `
+    <th colspan="4" onclick="changeBreakDownMakeEditable(this)">${changeBreakDownSectionCount}</th>
+    <th>
+        <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+        <button class="delete-btn" onclick="changeBreakDownDeleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+    </th>
+    `;
+        table.appendChild(sectionHeader);
+        changeBreakDownAddNewRow(changeBreakDownSectionCount);
+        $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
+    }
+
+    function changeBreakDownAddNewRow(sectionNum = null) {
+        if (changeBreakDownSectionCount === 0) {
+            alert("Please add a section first!");
+            return;
+        }
+
+        let table = document.getElementById("changeBreakDownTable").getElementsByTagName('tbody')[0];
+        let lastRows = table.querySelectorAll("tr:not(.section-header)");
+        let newRowIndex = 1;
+        if (lastRows.length > 0) {
+            let lastRef = lastRows[lastRows.length - 1].children[0].innerText;
+            let [lastSection, lastRow] = lastRef.split(".").map(Number);
+            newRowIndex = sectionNum ? 1 : lastRow + 1;
+            sectionNum = sectionNum || lastSection;
+        }
+
+        let newRow = document.createElement("tr");
+        newRow.innerHTML = `
+    <td>${sectionNum}.${newRowIndex}</td>
+    <td class="item" onclick="changeBreakDownMakeEditable(this)"></td>
+    <td onclick="changeBreakDownMakeEditable(this)"></td>
+    <td onclick="changeBreakDownMakeEditable(this)"></td>
+    <td>
+        <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+        <button class="delete-btn" onclick="changeBreakDownDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+    </td>
+    <td><span id="contract_sum_forecast">£0</span></td>
+    `;
+        table.appendChild(newRow);
+        $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
+    }
+
+    function changeBreakDownMakeEditable(cell) {
+        if (cell.querySelector("input")) return;
+        let input = document.createElement("input");
+        input.type = "text";
+        input.value = cell.innerText;
+        cell.innerText = "";
+        cell.appendChild(input);
+        input.focus();
+
+        input.addEventListener("blur", function () {
+            cell.innerText = input.value;
+            changeBreakDownShowSaveButton(cell);
+        });
+    }
+
+    function changeBreakDownShowSaveButton(cell) {
+        let row = cell.closest("tr");
+        let saveButton = row.querySelector(".save-btn");
+        if (saveButton) {
+            saveButton.style.display = "inline-block";
+        }
+    }
+
+    function changeBreakDownDeleteRow(button) {
+        let row = button.closest("tr");
+        row.parentNode.removeChild(row);
+        let row_id = row?.getAttribute("data-id") ?? null;
+        let data = {"type": "delete_row"};
+
+        if (row_id) {
+            $.ajax({
+                url: "/dashboard/contract-sum-operations/?delete_row_id="+row_id,
+                type: "DELETE",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                headers: {
+                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                },
+                success: function(response) {
+                    console.log("Response:", response);
+                    if (response.message) {
+                        console.log('Deleted successfully')
+                    } else {
+                        alert("Error deleting data: " + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong!");
+                }
+            });
+        }
+    }
+
+    function changeBreakDownDeleteSection(button) {
+        let section = button.closest("tr");
+        let nextSibling = section.nextElementSibling;
+        while (nextSibling && !nextSibling.classList.contains("section-header")) {
+            let temp = nextSibling;
+            nextSibling = nextSibling.nextElementSibling;
+            temp.parentNode.removeChild(temp);
+        }
+        section.parentNode.removeChild(section);
+        if (document.querySelectorAll(".section-header").length === 0) {
+            changeBreakDownSectionCount = 0;
+        }
+
+        let section_id = section?.getAttribute("data-id") ?? null;
+        let data = {"type": "delete_section"};
+
+        if (section_id) {
+            $.ajax({
+                url: "/dashboard/contract-sum-operations/?delete_section_id="+section_id,
+                type: "DELETE",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                headers: {
+                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                },
+                success: function(response) {
+                    console.log("Response:", response);
+                    if (response.message) {
+                        console.log('Deleted successfully')
+                    } else {
+                        alert("Error deleting data: " + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong!");
+                }
+            });
+        }
+
+    }
+
+    function changeBreakDownSaveData(button) {
+        let row = button.closest("tr");
+        let isSection = row.classList.contains("section-header");
+
+        let sectionRow = row;
+        while (sectionRow && !sectionRow.classList.contains("section-header")) {
+            sectionRow = sectionRow.previousElementSibling;
+        }
+
+        let sectionName = sectionRow ? sectionRow.innerText.split(":")[0].replace("Section ", "").trim() : "Unknown";
+
+        let cells = row.querySelectorAll("td, th");
+        let data = {};
+
+        if (isSection) {
+            data["section_id"] = sectionRow?.getAttribute("data-id") ?? null;
+            data["section_name"] = cells[0].innerText.trim();
+            data["type"] = 'section';
+
+            $.ajax({
+                url: "/dashboard/contract-sum-operations/",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                headers: {
+                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                },
+                success: function(response) {
+                    console.log("Response:", response);
+                    if (response.message) {
+                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        row.setAttribute("data-id", response.id);
+                    } else {
+                        alert("Error saving data: " + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong!");
+                }
+            });
+        }
+        else {
+            data["row_id"] = row?.getAttribute("data-id") ?? null;
+            data["section_id"] = sectionRow?.getAttribute("data-id") ?? null;
+            data["ref"] = cells[0].innerText.trim();
+            data["item"] = cells[1].innerText.trim();
+            data["contract_sum"] = extractNumber(cells[2].innerText.trim());
+            data["certified_payments"] = extractNumber(cells[3].innerText.trim());
+            data["type"] = 'row';
+
+            $.ajax({
+                url: "/dashboard/contract-sum-operations/",
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json",
+                headers: {
+                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                },
+                success: function(response) {
+                    console.log("Response:", response);
+                    if (response.message) {
+                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        row.setAttribute("data-id", response.id);
+                    } else {
+                        alert("Error saving data: " + response.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    alert("Something went wrong!");
+                }
+            });
+        }
+
+        console.log("Sending data:", data);
+    }
+
+    // change breakdown table end
+
 </script>
 
 {% endblock %}
