@@ -649,3 +649,74 @@ class changeBreakDownOperationsView(ViewBase):
 
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)
+        
+
+class getCostChartDataView(ViewBase):
+    def get(self, request, *args, **kwargs):
+        data = models.CostReporting.objects.values("month").distinct().order_by("month")
+        months = [d["month"] for d in data if d["month"]]
+
+        forecast_monthly_data = []
+        actual_monthly_data = []
+        forecast_cumulative_data = []
+        actual_cumulative_data = []
+
+        for month in months:
+            cost_reporting = models.CostReporting.objects.all()
+            forecast_monthly = sum(Decimal(str(obj.forecast_monthly)) for obj in cost_reporting if obj.forecast_monthly)
+            actual_monthly = sum(Decimal(str(obj.actual_monthly)) for obj in cost_reporting if obj.actual_monthly)
+            forecast_cumulative = sum(Decimal(str(obj.forecast_comulative)) for obj in cost_reporting if obj.forecast_comulative)
+            actual_cumulative = sum(Decimal(str(obj.actual_comulative)) for obj in cost_reporting if obj.actual_comulative)
+
+            # forecast_monthly = models.CostReporting.objects.filter(month__startswith=month).aggregate(Sum("forecast_monthly"))["forecast_monthly__sum"] or 0
+            # actual_monthly = models.CostReporting.objects.filter(month__startswith=month).aggregate(Sum("actual_monthly"))["actual_monthly__sum"] or 0
+            # forecast_cumulative = models.CostReporting.objects.filter(month__lte=month).aggregate(Sum("forecast_comulative"))["forecast_comulative__sum"] or 0
+            # actual_cumulative = models.CostReporting.objects.filter(month__lte=month).aggregate(Sum("actual_comulative"))["actual_comulative__sum"] or 0
+            
+
+            forecast_monthly_data.append(forecast_monthly)
+            actual_monthly_data.append(actual_monthly)
+            forecast_cumulative_data.append(forecast_cumulative)
+            actual_cumulative_data.append(actual_cumulative)
+
+        chart_data = {
+            "labels": months,
+            "datasets": [
+                {
+                    "type": "bar",
+                    "label": "Forecast Monthly",
+                    "data": forecast_monthly_data,
+                    "backgroundColor": "rgba(54, 162, 235, 0.5)",
+                    "borderColor": "rgba(54, 162, 235, 1)",
+                    "borderWidth": 1,
+                    "stack": "Stack 0"
+                },
+                {
+                    "type": "bar",
+                    "label": "Actual Monthly",
+                    "data": actual_monthly_data,
+                    "backgroundColor": "rgba(255, 159, 64, 0.5)",
+                    "borderColor": "rgba(255, 159, 64, 1)",
+                    "borderWidth": 1,
+                    "stack": "Stack 0"
+                },
+                {
+                    "type": "line",
+                    "label": "Forecast Cumulative",
+                    "data": forecast_cumulative_data,
+                    "borderColor": "rgba(75, 192, 192, 1)",
+                    "borderWidth": 2,
+                    "fill": False
+                },
+                {
+                    "type": "line",
+                    "label": "Actual Cumulative",
+                    "data": actual_cumulative_data,
+                    "borderColor": "rgba(153, 102, 255, 1)",
+                    "borderWidth": 2,
+                    "fill": False
+                }
+            ]
+        }
+        
+        return JsonResponse(chart_data)

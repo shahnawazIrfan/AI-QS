@@ -6,6 +6,7 @@
 <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css?family=Alata&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css?family=ABeeZee&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 
@@ -6558,9 +6559,10 @@
 
     .cost_reporting_graph {
         position: relative;
-        right: 450px;
+        right: 430px;
         width: 867px;
-        height: 256px;
+        height: 500px;
+        top: 38px;
     }
 
     .top_graph {
@@ -6863,12 +6865,13 @@
         <div class="v2038_15101">
             <div class="v2038_15102">
                 <div class="v2038_15103">
-                    <div class="v2038_15104"></div><span class="v2038_15105 forecast_graph">Forecast</span>
+                    <div class="v2038_15104"></div><span class="v2038_15105" id="showForecast">Forecast</span>
                 </div>
                 <div class="v2038_15106">
-                    <div class="v2038_15107"></div><span class="v2038_15108 actual_graph">Actual</span>
+                    <div class="v2038_15107"></div><span class="v2038_15108" id="showActual">Actual</span>
                 </div>
-                <img class="cost_reporting_graph" src="data:image/png;base64,{{ cost_reporting_graph }}" alt="Graph">
+                <div class="cost_reporting_graph"><canvas id="cost_reporting_graph"></canvas></div>
+                
             </div>
         </div>
     </div>
@@ -7718,6 +7721,100 @@
     }
 
     // change breakdown table end
+
+    // cost reporting graph start
+
+    let costChart; // Chart instance
+
+    function loadChart(type) {
+        $.ajax({
+            url: "/dashboard/cost-chart-data/",  // Django API ka endpoint
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                const chartData = {
+                    labels: data.labels,
+                    datasets: []
+                };
+
+                if (type === "forecast") {
+                    chartData.datasets.push(
+                        {
+                            type: "bar",
+                            label: "Forecast Monthly",
+                            data: data.datasets[0].data, // Forecast Monthly
+                            backgroundColor: "rgba(54, 162, 235, 0.5)",
+                            borderColor: "rgba(54, 162, 235, 1)",
+                            borderWidth: 1,
+                            stack: "Stack 0"
+                        },
+                        {
+                            type: "line",
+                            label: "Forecast Cumulative",
+                            data: data.datasets[2].data, // Forecast Cumulative
+                            borderColor: "rgba(75, 192, 192, 1)",
+                            borderWidth: 2,
+                            fill: false
+                        }
+                    );
+                } else {
+                    chartData.datasets.push(
+                        {
+                            type: "bar",
+                            label: "Actual Monthly",
+                            data: data.datasets[1].data, // Actual Monthly
+                            backgroundColor: "rgba(255, 159, 64, 0.5)",
+                            borderColor: "rgba(255, 159, 64, 1)",
+                            borderWidth: 1,
+                            stack: "Stack 0"
+                        },
+                        {
+                            type: "line",
+                            label: "Actual Cumulative",
+                            data: data.datasets[3].data, // Actual Cumulative
+                            borderColor: "rgba(153, 102, 255, 1)",
+                            borderWidth: 2,
+                            fill: false
+                        }
+                    );
+                }
+
+                if (costChart) {
+                    costChart.destroy(); // Destroy previous chart
+                }
+
+                const ctx = document.getElementById("cost_reporting_graph").getContext("2d");
+                costChart = new Chart(ctx, {
+                    type: "bar",
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: { stacked: true },
+                            y: { stacked: true }
+                        }
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error loading chart data:", error);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        loadChart("forecast"); // Load default chart
+
+        $("#showForecast").click(function () {
+            loadChart("forecast");
+        });
+
+        $("#showActual").click(function () {
+            loadChart("actual");
+        });
+    });
+
+    // cost reporting graph end
 
 </script>
 
