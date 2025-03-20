@@ -202,7 +202,7 @@
         width: 198px;
         color: rgba(138, 141, 136, 1);
         position: absolute;
-        top: 110px;
+        top: 70px;
         left: 15px;
         font-family: Plus Jakarta Sans;
         font-weight: SemiBold;
@@ -420,7 +420,7 @@
         width: 198px;
         color: rgba(138, 141, 136, 1);
         position: absolute;
-        top: 110px;
+        top: 70px;
         left: 15px;
         font-family: Plus Jakarta Sans;
         font-weight: SemiBold;
@@ -638,7 +638,7 @@
         width: 198px;
         color: rgba(138, 141, 136, 1);
         position: absolute;
-        top: 110px;
+        top: 70px;
         left: 15px;
         font-family: Plus Jakarta Sans;
         font-weight: SemiBold;
@@ -856,7 +856,7 @@
         width: 198px;
         color: rgba(138, 141, 136, 1);
         position: absolute;
-        top: 110px;
+        top: 70px;
         left: 15px;
         font-family: Plus Jakarta Sans;
         font-weight: SemiBold;
@@ -1074,7 +1074,7 @@
         width: 198px;
         color: rgba(138, 141, 136, 1);
         position: absolute;
-        top: 110px;
+        top: 70px;
         left: 15px;
         font-family: Plus Jakarta Sans;
         font-weight: SemiBold;
@@ -3380,7 +3380,7 @@
     }
 
     .v2035_16820 {
-        width: 715px;
+        width: 725px;
         height: 465px;
         background: rgba(255, 255, 255, 1);
         opacity: 1;
@@ -4751,16 +4751,16 @@
     }
 
     .v2038_15091 {
-        width: 57px;
+        width: 100%;
         color: rgba(255, 255, 255, 1);
         position: absolute;
         top: 3px;
-        left: 4px;
+        left: 0px;
         font-family: Plus Jakarta Sans;
         font-weight: SemiBold;
         font-size: 10px;
         opacity: 1;
-        text-align: left;
+        text-align: center;
     }
 
     .v2038_15092 {
@@ -4818,7 +4818,7 @@
         font-weight: Bold;
         font-size: 16px;
         opacity: 1;
-        text-align: left;
+        text-align: center;
     }
 
     .v2038_15097 {
@@ -4848,7 +4848,7 @@
         font-weight: SemiBold;
         font-size: 10px;
         opacity: 1;
-        text-align: left;
+        text-align: center;
     }
 
     .v2038_15099 {
@@ -4927,6 +4927,7 @@
         font-size: 11px;
         opacity: 1;
         text-align: left;
+        cursor: pointer;
     }
 
     .v2038_15106 {
@@ -4966,6 +4967,7 @@
         font-size: 11px;
         opacity: 1;
         text-align: left;
+        cursor: pointer;
     }
 
     .v2038_15109 {
@@ -6654,6 +6656,7 @@
 
         .item {
             width: 200px;
+            text-align: left;
         }
 
         .item input {
@@ -6757,7 +6760,7 @@
                     <thead>
                         <tr>
                             <th>Ref:</th>
-                            <th class="item">Item</th>
+                            <th class="item" style="text-align: center;">Item</th>
                             <th>Contract Sum</th>
                             <th>Certified Payments</th>
                             <th>Accrued Payments</th>
@@ -6808,7 +6811,7 @@
                 <thead>
                     <tr>
                         <th>Ref:</th>
-                        <th class="item">Item</th>
+                        <th class="item" style="text-align: center;">Item</th>
                         <th>Contract Sum</th>
                         <th>Certified Payments</th>
                         <th>Actions</th>
@@ -6846,7 +6849,7 @@
     </div>
     <div class="v2038_14920">
         <div class="v2038_14921"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
-        <div class="name"></div><span class="v2038_14999">Cost Reporting</span>
+        <div class="name"></div><span class="v2038_14999">Cashflow</span>
         <div class="v2038_15087">
             <div class="v2038_15088"><span class="v2038_15089">£{{ forecast_monthly }}</span>
                 <div class="v2038_15090"><span class="v2038_15091">£{{ forecast_monthly }}</span></div>
@@ -6860,10 +6863,10 @@
         <div class="v2038_15101">
             <div class="v2038_15102">
                 <div class="v2038_15103">
-                    <div class="v2038_15104"></div><span class="v2038_15105">Forecast</span>
+                    <div class="v2038_15104"></div><span class="v2038_15105 forecast_graph">Forecast</span>
                 </div>
                 <div class="v2038_15106">
-                    <div class="v2038_15107"></div><span class="v2038_15108">Actual</span>
+                    <div class="v2038_15107"></div><span class="v2038_15108 actual_graph">Actual</span>
                 </div>
                 <img class="cost_reporting_graph" src="data:image/png;base64,{{ cost_reporting_graph }}" alt="Graph">
             </div>
@@ -6878,7 +6881,7 @@
                     <thead>
                         <tr>
                             <th>Ref:</th>
-                            <th class="item">Item</th>
+                            <th class="item" style="text-align: center;">Item</th>
                             <th>Certified Payments</th>
                             <th>Total Expenditure</th>
                             <th>Variance Total</th>

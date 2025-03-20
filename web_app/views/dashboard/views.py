@@ -276,82 +276,44 @@ class CostDashboardView(ViewBase):
             except Exception:
                 pass
 
+        
+        # new cost reporting sheet
 
-        # if "NEW Contract Sum" not in wb.sheetnames:
-        #     return JsonResponse({"error": "Sheet 'NEW Contract Sum' not found"}, status=400)
+        if "New Cost Reporting " not in wb.sheetnames:
+            return JsonResponse({"error": "Sheet 'New Cost Reporting' not found"}, status=400)
 
-        # new_contract_sum_sheet = wb["NEW Contract Sum"]
+        new_cost_reporting_sheet = wb["New Cost Reporting "]
 
-        # headers = [cell.value for cell in new_contract_sum_sheet[1]]
+        new_cost_reporting_required_columns = {"Interim Payments", "Month", "Forecast Monthly", "Actual Monthly", "Forecast Cumulative", "Actual Cumulative"}
 
-        # required_columns = ["Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE"]
-        # required_indexes = [headers.index(col) for col in required_columns if col in headers]
+        new_cost_reporting_headers = [cell.value for cell in new_cost_reporting_sheet[1]]
 
-        # items = []
-        # for row in new_contract_sum_sheet.iter_rows(min_row=3, values_only=True):
-        #     if all(row[i] not in [None, ""] for i in required_indexes):
-        #         item = {headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else "0") for i in range(len(headers))}
-        #         new_contract_sum_table.put_item(Item=item)
-        #         items.append(item)
+        new_cost_reporting_missing_columns = new_cost_reporting_required_columns - set(new_cost_reporting_headers)
+        if new_cost_reporting_missing_columns:
+            return JsonResponse(
+                {"error": f"Invalid format for Sheet 'New Cost Reporting': Missing columns - {', '.join(new_cost_reporting_missing_columns)}"},
+                status=400
+            )
 
+        for row in new_cost_reporting_sheet.iter_rows(min_row=2, values_only=True):
+            item = {
+                new_cost_reporting_headers[i]: str(row[i]) if isinstance(row[i], (int, float)) 
+                else (row[i] if row[i] not in [None, "", "#REF!"] else 0.0)
+                for i in range(len(new_cost_reporting_headers))
+            }
 
-        # if "NEW EAChange" not in wb.sheetnames:
-        #     return JsonResponse({"error": "Sheet 'NEW EAChange' not found"}, status=400)
-
-        # new_change_sheet = wb["NEW EAChange"]
-
-        # headers = [cell.value for cell in new_change_sheet[1]]
-
-        # required_columns = ["CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE", "VARIANCE - TOTAL", "VARIANCE - IN PERIOD"]
-        # required_indexes = [headers.index(col) for col in required_columns if col in headers]
-
-        # items = []
-        # for row in new_change_sheet.iter_rows(min_row=3, values_only=True):
-        #     if not any(row[i] not in [None, ""] for i in required_indexes):
-        #         continue
-            
-        #     item = {headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else "0") for i in range(len(headers))}
-        #     new_change_table.put_item(Item=item)
-        #     items.append(item)
-
-        # if "New Cost Reporting " not in wb.sheetnames:
-        #     return JsonResponse({"error": "Sheet 'New Cost Reporting' not found"}, status=400)
-
-        # new_cost_reporting_sheet = wb["New Cost Reporting "]
-
-        # headers = [cell.value for cell in new_cost_reporting_sheet[1]]
-
-        # required_columns = ["Interim Payments", "Month", "Forecast Monthly", "Actual Monthly", "Forecast Cumulative", "Actual Cumulative"]
-        # required_indexes = {col: headers.index(col) for col in required_columns if col in headers}
-
-        # items = []
-        # for row in new_cost_reporting_sheet.iter_rows(min_row=2, values_only=True):
-        #     if all(row[i] not in [None, "", "#REF!"] for i in required_indexes.values()):
-        #         item = {}
-        #         for col, i in required_indexes.items():
-        #             value = row[i]
-
-        #             if col == "Month":
-        #                 if isinstance(value, datetime):
-        #                     value = value.strftime("%b")
-        #                 elif isinstance(value, str) and value.strip():
-        #                     try:
-        #                         value = datetime.strptime(value, "%m/%d/%Y").strftime("%b")
-        #                     except ValueError:
-        #                         value = ""
-        #                 else:
-        #                     value = ""
-
-        #             elif isinstance(value, float):
-        #                 value = Decimal(str(value))
-
-        #             else:
-        #                 value = str(value) if value not in [None, ""] else "0"
-
-        #             item[col] = value
-
-        #         new_cost_reporting_table.put_item(Item=item)
-        #         items.append(item)
+            try:
+                models.CostReporting.objects.create(
+                    _id=str(ObjectId()),
+                    interim_payments=item['Interim Payments'],
+                    month=item['Month'],
+                    forecast_monthly=item['Forecast Monthly'],
+                    actual_monthly=item['Actual Monthly'],
+                    forecast_comulative=item['Forecast Cumulative'],
+                    actual_comulative=item['Actual Cumulative']
+                )
+            except Exception:
+                pass
 
         return JsonResponse({"message": "File processed successfully"}, status=201)
     
