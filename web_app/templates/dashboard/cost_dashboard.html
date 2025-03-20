@@ -12,7 +12,7 @@
 
     .v2011_16830 {
         width: 100%;
-        height: 1300px;
+        height: 1400px;
         background: rgba(250, 250, 250, 1);
         opacity: 1;
         position: relative;
@@ -4652,7 +4652,7 @@
 
     .v2038_14920 {
         width: 55%;
-        height: 465px;
+        height: 555px;
         background: rgba(255, 255, 255, 1);
         opacity: 1;
         position: absolute;
@@ -4697,8 +4697,8 @@
         margin: 10px;
         opacity: 1;
         position: absolute;
-        top: 88px;
-        left: 875px;
+        top: 155px;
+        left: 880px;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
         border-bottom-left-radius: 10px;
@@ -4785,8 +4785,8 @@
         margin: 10px;
         opacity: 1;
         position: absolute;
-        top: 199px;
-        left: 875px;
+        top: 300px;
+        left: 880px;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
         border-bottom-left-radius: 10px;
@@ -4840,11 +4840,11 @@
     }
 
     .v2038_15098 {
-        width: 57px;
+        width: 100%;
         color: rgba(255, 255, 255, 1);
         position: absolute;
         top: 3px;
-        left: 4px;
+        left: 0;
         font-family: Plus Jakarta Sans;
         font-weight: SemiBold;
         font-size: 10px;
@@ -4870,8 +4870,8 @@
         height: 28px;
         margin: 23px;
         opacity: 1;
-        position: absolute;
-        top: 19px;
+        position: relative;
+        top: -33px;
         left: 424px;
         /* overflow: hidden; */;
     }
@@ -5049,7 +5049,7 @@
 
     .v2038_21390 {
         width: 100%;
-        height: 465px;
+        height: 555px;
         background: rgba(255, 255, 255, 1);
         opacity: 1;
         position: absolute;
@@ -6562,7 +6562,7 @@
         right: 430px;
         width: 867px;
         height: 500px;
-        top: 38px;
+        top: 80px;
     }
 
     .top_graph {
@@ -6853,13 +6853,13 @@
         <div class="v2038_14921"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
         <div class="name"></div><span class="v2038_14999">Cashflow</span>
         <div class="v2038_15087">
-            <div class="v2038_15088"><span class="v2038_15089">£{{ forecast_monthly }}</span>
-                <div class="v2038_15090"><span class="v2038_15091">£{{ forecast_monthly }}</span></div>
+            <div class="v2038_15088"><span class="v2038_15089">£{{ total_forecast_monthly }}</span>
+                <div class="v2038_15090"><span class="v2038_15091">£{{ total_forecast_comulative }}</span></div>
             </div><span class="v2038_15092">Forecast Monthly</span>
         </div>
         <div class="v2038_15094">
-            <div class="v2038_15095"><span class="v2038_15096">£{{ actual_monthly }}</span>
-                <div class="v2038_15097"><span class="v2038_15098">£{{ actual_monthly }}</span></div>
+            <div class="v2038_15095"><span class="v2038_15096">£{{ total_actual_monthly }}</span>
+                <div class="v2038_15097"><span class="v2038_15098">£{{ total_actual_comulative }}</span></div>
             </div><span class="v2038_15099">Actual Monthly</span>
         </div>
         <div class="v2038_15101">
@@ -6879,7 +6879,7 @@
         <div class="v2038_21390"><span class="v2038_21391">Change Breakdown</span>
             <div class="v2038_21392" onclick="changeBreakDownAddNewSection()"><img class="img-fluid" src="{% static 'img/add_section.svg' %}" alt=""></div>
             <div class="v2038_21393"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
-            <div class="table-container mt-3">
+            <div class="table-container mt-3" style="max-height: 425px;">
                 <table id="changeBreakDownTable">
                     <thead>
                         <tr>
@@ -6929,7 +6929,20 @@
 
 {% block extra_script %}
 <script>
-    $("#projects").show();
+
+    $(document).ready(function () {
+        loadChart("forecast");
+
+        $("#showForecast").click(function () {
+            loadChart("forecast");
+        });
+
+        $("#showActual").click(function () {
+            loadChart("actual");
+        });
+
+        $("#projects").show();
+    });
 
     function adjustZoom() {
         let screenWidth = window.innerWidth;
@@ -7724,11 +7737,11 @@
 
     // cost reporting graph start
 
-    let costChart; // Chart instance
+    let costChart;
 
     function loadChart(type) {
         $.ajax({
-            url: "/dashboard/cost-chart-data/",  // Django API ka endpoint
+            url: "/dashboard/cost-chart-data/",
             type: "GET",
             dataType: "json",
             success: function (data) {
@@ -7742,17 +7755,17 @@
                         {
                             type: "bar",
                             label: "Forecast Monthly",
-                            data: data.datasets[0].data, // Forecast Monthly
-                            backgroundColor: "rgba(54, 162, 235, 0.5)",
-                            borderColor: "rgba(54, 162, 235, 1)",
+                            data: data.datasets[0].data,
+                            backgroundColor: data.datasets[0].backgroundColor,
+                            borderColor: data.datasets[0].borderColor,
                             borderWidth: 1,
                             stack: "Stack 0"
                         },
                         {
                             type: "line",
                             label: "Forecast Cumulative",
-                            data: data.datasets[2].data, // Forecast Cumulative
-                            borderColor: "rgba(75, 192, 192, 1)",
+                            data: data.datasets[2].data,
+                            borderColor: data.datasets[2].borderColor,
                             borderWidth: 2,
                             fill: false
                         }
@@ -7762,17 +7775,17 @@
                         {
                             type: "bar",
                             label: "Actual Monthly",
-                            data: data.datasets[1].data, // Actual Monthly
-                            backgroundColor: "rgba(255, 159, 64, 0.5)",
-                            borderColor: "rgba(255, 159, 64, 1)",
+                            data: data.datasets[1].data,
+                            backgroundColor: data.datasets[1].backgroundColor,
+                            borderColor: data.datasets[1].borderColor,
                             borderWidth: 1,
                             stack: "Stack 0"
                         },
                         {
                             type: "line",
                             label: "Actual Cumulative",
-                            data: data.datasets[3].data, // Actual Cumulative
-                            borderColor: "rgba(153, 102, 255, 1)",
+                            data: data.datasets[3].data,
+                            borderColor: data.datasets[3].borderColor,
                             borderWidth: 2,
                             fill: false
                         }
@@ -7801,18 +7814,6 @@
             }
         });
     }
-
-    $(document).ready(function () {
-        loadChart("forecast"); // Load default chart
-
-        $("#showForecast").click(function () {
-            loadChart("forecast");
-        });
-
-        $("#showActual").click(function () {
-            loadChart("actual");
-        });
-    });
 
     // cost reporting graph end
 

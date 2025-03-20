@@ -173,10 +173,10 @@ class CostReporting(models.Model):
     _id = models.CharField(max_length=24, primary_key=True)
     interim_payments = models.CharField(max_length=50)
     month = models.DateTimeField(blank=True, null=True)
-    forecast_monthly = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    actual_monthly = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    forecast_comulative = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    actual_comulative = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    forecast_monthly = models.FloatField(blank=True, null=True)
+    actual_monthly = models.FloatField(blank=True, null=True)
+    forecast_comulative = models.FloatField(blank=True, null=True)
+    actual_comulative = models.FloatField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.interim_payments} - {self.month}"

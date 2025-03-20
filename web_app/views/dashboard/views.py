@@ -59,12 +59,12 @@ class CostDashboardView(ViewBase):
     def get(self, request, *args, **kwargs):
         # top card counts
         cost_summary = models.CostSummary.objects.all()
-        total_contract_sum = sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum)
-        certified_payments_sum = sum(Decimal(str(obj.certified_payments)) for obj in cost_summary if obj.certified_payments)
-        anticipated_payments_sum = sum(Decimal(str(obj.accrued_payments)) for obj in cost_summary if obj.accrued_payments)
-        forecast_expenditures_sum = sum(Decimal(str(obj.total_expenditure)) for obj in cost_summary if obj.total_expenditure)
-        total_variance_sum = sum(Decimal(str(obj.variance_total)) for obj in cost_summary if obj.variance_total)
-        total_variance_period_sum = sum(Decimal(str(obj.variance_period)) for obj in cost_summary if obj.variance_period)
+        total_contract_sum = round(sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum), 2)
+        certified_payments_sum = round(sum(Decimal(str(obj.certified_payments)) for obj in cost_summary if obj.certified_payments), 2)
+        anticipated_payments_sum = round(sum(Decimal(str(obj.accrued_payments)) for obj in cost_summary if obj.accrued_payments), 2)
+        forecast_expenditures_sum = round(sum(Decimal(str(obj.total_expenditure)) for obj in cost_summary if obj.total_expenditure), 2)
+        total_variance_sum = round(sum(Decimal(str(obj.variance_total)) for obj in cost_summary if obj.variance_total), 2)
+        total_variance_period_sum = round(sum(Decimal(str(obj.variance_period)) for obj in cost_summary if obj.variance_period), 2)
 
         # cost summary table
         total_new_cost_summary_sections = models.CostSummarySection.objects.count()
@@ -127,6 +127,15 @@ class CostDashboardView(ViewBase):
                 section_dict["rows"].append(change_breakdown_dict)
 
             new_change_breakdown_data.append(section_dict)
+
+
+        # cost reporting graph sum values
+
+        cost_reporting = models.CostReporting.objects.all()
+        total_forecast_monthly = round(sum(Decimal(str(obj.forecast_monthly)) for obj in cost_reporting if obj.forecast_monthly), 2)
+        total_actual_monthly = round(sum(Decimal(str(obj.actual_monthly)) for obj in cost_reporting if obj.actual_monthly), 2)
+        total_forecast_comulative = round(sum(Decimal(str(obj.forecast_comulative)) for obj in cost_reporting if obj.forecast_comulative), 2)
+        total_actual_comulative = round(sum(Decimal(str(obj.actual_comulative)) for obj in cost_reporting if obj.actual_comulative), 2)
         
         context = {
             'new_cost_summary_data': new_cost_summary_data,
@@ -140,7 +149,11 @@ class CostDashboardView(ViewBase):
             'anticipated_payments_sum': anticipated_payments_sum,
             'forecast_expenditures_sum': forecast_expenditures_sum,
             'total_variance_sum': total_variance_sum,
-            'total_variance_period_sum': total_variance_period_sum
+            'total_variance_period_sum': total_variance_period_sum,
+            'total_forecast_monthly': total_forecast_monthly,
+            'total_actual_monthly': total_actual_monthly,
+            'total_forecast_comulative': total_forecast_comulative,
+            'total_actual_comulative': total_actual_comulative
         }
 
         return self.render(context)
@@ -662,22 +675,17 @@ class getCostChartDataView(ViewBase):
         actual_cumulative_data = []
 
         for month in months:
-            cost_reporting = models.CostReporting.objects.all()
-            forecast_monthly = sum(Decimal(str(obj.forecast_monthly)) for obj in cost_reporting if obj.forecast_monthly)
-            actual_monthly = sum(Decimal(str(obj.actual_monthly)) for obj in cost_reporting if obj.actual_monthly)
-            forecast_cumulative = sum(Decimal(str(obj.forecast_comulative)) for obj in cost_reporting if obj.forecast_comulative)
-            actual_cumulative = sum(Decimal(str(obj.actual_comulative)) for obj in cost_reporting if obj.actual_comulative)
-
-            # forecast_monthly = models.CostReporting.objects.filter(month__startswith=month).aggregate(Sum("forecast_monthly"))["forecast_monthly__sum"] or 0
-            # actual_monthly = models.CostReporting.objects.filter(month__startswith=month).aggregate(Sum("actual_monthly"))["actual_monthly__sum"] or 0
-            # forecast_cumulative = models.CostReporting.objects.filter(month__lte=month).aggregate(Sum("forecast_comulative"))["forecast_comulative__sum"] or 0
-            # actual_cumulative = models.CostReporting.objects.filter(month__lte=month).aggregate(Sum("actual_comulative"))["actual_comulative__sum"] or 0
-            
+            forecast_monthly = models.CostReporting.objects.filter(month=month).aggregate(Sum("forecast_monthly"))["forecast_monthly__sum"] or 0
+            actual_monthly = models.CostReporting.objects.filter(month=month).aggregate(Sum("actual_monthly"))["actual_monthly__sum"] or 0
+            forecast_cumulative = models.CostReporting.objects.filter(month=month).aggregate(Sum("forecast_comulative"))["forecast_comulative__sum"] or 0
+            actual_cumulative = models.CostReporting.objects.filter(month=month).aggregate(Sum("actual_comulative"))["actual_comulative__sum"] or 0
 
             forecast_monthly_data.append(forecast_monthly)
             actual_monthly_data.append(actual_monthly)
             forecast_cumulative_data.append(forecast_cumulative)
             actual_cumulative_data.append(actual_cumulative)
+
+        months = [date.strftime("%b %y") for date in months]
 
         chart_data = {
             "labels": months,
@@ -686,8 +694,8 @@ class getCostChartDataView(ViewBase):
                     "type": "bar",
                     "label": "Forecast Monthly",
                     "data": forecast_monthly_data,
-                    "backgroundColor": "rgba(54, 162, 235, 0.5)",
-                    "borderColor": "rgba(54, 162, 235, 1)",
+                    "backgroundColor": "rgba(133, 204, 87, 1)",
+                    "borderColor": "rgba(101, 225, 193, 1)",
                     "borderWidth": 1,
                     "stack": "Stack 0"
                 },
@@ -695,8 +703,8 @@ class getCostChartDataView(ViewBase):
                     "type": "bar",
                     "label": "Actual Monthly",
                     "data": actual_monthly_data,
-                    "backgroundColor": "rgba(255, 159, 64, 0.5)",
-                    "borderColor": "rgba(255, 159, 64, 1)",
+                    "backgroundColor": "rgba(133, 204, 87, 1)",
+                    "borderColor": "rgba(101, 225, 193, 1)",
                     "borderWidth": 1,
                     "stack": "Stack 0"
                 },
@@ -704,7 +712,7 @@ class getCostChartDataView(ViewBase):
                     "type": "line",
                     "label": "Forecast Cumulative",
                     "data": forecast_cumulative_data,
-                    "borderColor": "rgba(75, 192, 192, 1)",
+                    "borderColor": "rgba(101, 225, 193, 1)",
                     "borderWidth": 2,
                     "fill": False
                 },
@@ -712,7 +720,7 @@ class getCostChartDataView(ViewBase):
                     "type": "line",
                     "label": "Actual Cumulative",
                     "data": actual_cumulative_data,
-                    "borderColor": "rgba(153, 102, 255, 1)",
+                    "borderColor": "rgba(101, 225, 193, 1)",
                     "borderWidth": 2,
                     "fill": False
                 }
