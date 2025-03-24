@@ -6777,6 +6777,7 @@
                             <tr class="section-header" data-id="{{ cost.section_id }}">
                                 <th colspan="8" onclick="costSummaryMakeEditable(this)">{{ cost.section_name }}</th>
                                 <th>
+                                    <button class="add-btn" onclick="costSummaryAddNewRow('{{ cost.section_id }}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
                                     <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></button>
                                     <button class="delete-btn" onclick="costSummaryDeleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
                                 </th>
@@ -6802,7 +6803,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="v2035_16819" onclick="costSummaryAddNewRow()"><img class="img-fluid" src="{% static 'img/add_row.svg' %}" alt=""></div>
+            <!-- <div class="v2035_16819" onclick="costSummaryAddNewRow()"><img class="img-fluid" src="{% static 'img/add_row.svg' %}" alt=""></div> -->
         </div>
     </div>
     <div class="v2035_16820"><span class="v2035_16821">Contract Sum Breakdown</span>
@@ -7021,52 +7022,54 @@
         let table = document.getElementById("costSummaryTable").getElementsByTagName('tbody')[0];
         let sectionHeader = document.createElement("tr");
         sectionHeader.classList.add("section-header");
+        sectionHeader.setAttribute("data-tempid", Math.random().toString(16).substr(2, 24));
         sectionHeader.innerHTML = `
     <th colspan="8" onclick="costSummaryMakeEditable(this)">${costSummarySectionCount}</th>
     <th>
+        <button class="add-btn" onclick="costSummaryAddNewRow('${sectionHeader.getAttribute("data-tempid")}', ${costSummarySectionCount})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
         <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
         <button class="delete-btn" onclick="costSummaryDeleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
     </th>
 `;
         table.appendChild(sectionHeader);
-        costSummaryAddNewRow(costSummarySectionCount);
+        costSummaryAddNewRow(sectionHeader.getAttribute("data-tempid"), costSummarySectionCount);
         $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
     }
 
-    function costSummaryAddNewRow(sectionNum = null) {
-        if (costSummarySectionCount === 0) {
-            alert("Please add a section first!");
-            return;
-        }
+//     function costSummaryAddNewRow(sectionNum = null) {
+//         if (costSummarySectionCount === 0) {
+//             alert("Please add a section first!");
+//             return;
+//         }
 
-        let table = document.getElementById("costSummaryTable").getElementsByTagName('tbody')[0];
-        let lastRows = table.querySelectorAll("tr:not(.section-header)");
-        let newRowIndex = 1;
-        if (lastRows.length > 0) {
-            let lastRef = lastRows[lastRows.length - 1].children[0].innerText;
-            let [lastSection, lastRow] = lastRef.split(".").map(Number);
-            newRowIndex = sectionNum ? 1 : lastRow + 1;
-            sectionNum = sectionNum || lastSection;
-        }
+//         let table = document.getElementById("costSummaryTable").getElementsByTagName('tbody')[0];
+//         let lastRows = table.querySelectorAll("tr:not(.section-header)");
+//         let newRowIndex = 1;
+//         if (lastRows.length > 0) {
+//             let lastRef = lastRows[lastRows.length - 1].children[0].innerText;
+//             let [lastSection, lastRow] = lastRef.split(".").map(Number);
+//             newRowIndex = sectionNum ? 1 : lastRow + 1;
+//             sectionNum = sectionNum || lastSection;
+//         }
 
-        let newRow = document.createElement("tr");
-        newRow.innerHTML = `
-    <td>${sectionNum}.${newRowIndex}</td>
-    <td class="item" onclick="costSummaryMakeEditable(this)"></td>
-    <td onclick="costSummaryMakeEditable(this)"></td>
-    <td onclick="costSummaryMakeEditable(this)"></td>
-    <td onclick="costSummaryMakeEditable(this)"></td>
-    <td onclick="costSummaryMakeEditable(this)"></td>
-    <td onclick="costSummaryMakeEditable(this)"></td>
-    <td onclick="costSummaryMakeEditable(this)"></td>
-    <td>
-        <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
-        <button class="delete-btn" onclick="costSummaryDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
-    </td>
-`;
-        table.appendChild(newRow);
-        $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
-    }
+//         let newRow = document.createElement("tr");
+//         newRow.innerHTML = `
+//     <td>${sectionNum}.${newRowIndex}</td>
+//     <td class="item" onclick="costSummaryMakeEditable(this)"></td>
+//     <td onclick="costSummaryMakeEditable(this)"></td>
+//     <td onclick="costSummaryMakeEditable(this)"></td>
+//     <td onclick="costSummaryMakeEditable(this)"></td>
+//     <td onclick="costSummaryMakeEditable(this)"></td>
+//     <td onclick="costSummaryMakeEditable(this)"></td>
+//     <td onclick="costSummaryMakeEditable(this)"></td>
+//     <td>
+//         <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+//         <button class="delete-btn" onclick="costSummaryDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+//     </td>
+// `;
+//         table.appendChild(newRow);
+//         $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
+//     }
 
     function costSummaryMakeEditable(cell) {
         if (cell.querySelector("input")) return;
@@ -7110,7 +7113,7 @@
                     console.log("Response:", response);
                     if (response.message) {
                         console.log('Deleted successfully')
-
+                        console.log(response)
                         $(".v2032_16022").html(`£${response.total_contract_sum}`);
                         $(".v2032_15965").html(`£${response.certified_payments_sum}`);
                         $(".v2033_16102").html(`£${response.anticipated_payments_sum}`);
@@ -7268,6 +7271,73 @@
         }
 
         console.log("Sending data:", data);
+    }
+
+    function costSummaryAddNewRow(sectionId, sectionNum = null) {
+        let sectionHeader;
+
+        if (costSummarySectionCount === 0) {
+            alert("Please add a section first!");
+            return;
+        }
+
+        if (sectionNum) {
+            sectionHeader = document.querySelector(`.section-header[data-tempid="${sectionId}"]`);
+        }
+        else {
+            sectionHeader = document.querySelector(`.section-header[data-id="${sectionId}"]`);
+        }
+        
+        if (!sectionHeader) {
+            alert("Invalid section number!");
+            return;
+        }
+
+        let sectionRows = [];
+        let currentRow = sectionHeader.nextElementSibling;
+
+        while (currentRow && !currentRow.classList.contains("section-header")) {
+            sectionRows.push(currentRow);
+            currentRow = currentRow.nextElementSibling;
+        }
+
+        let newRowSectionNum;
+        let newRowIndex = 1;
+        if (sectionRows.length > 0) {
+            let lastRowRef = sectionRows[sectionRows.length - 1].children[0].innerText;
+            console.log(lastRowRef)
+            let [lastSection, lastRow] = lastRowRef.split(".").map(Number);
+            newRowIndex = lastRow + 1;
+            newRowSectionNum = lastSection;
+        }
+
+        if (sectionNum) {
+            newRowSectionNum = sectionNum
+        }
+
+        let newRow = document.createElement("tr");
+        newRow.innerHTML = `
+            <td>${newRowSectionNum}.${newRowIndex}</td>
+            <td class="item" onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td>
+                <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+                <button class="delete-btn" onclick="costSummaryDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+            </td>
+        `;
+
+        if (sectionRows.length > 0) {
+            sectionRows[sectionRows.length - 1].after(newRow);
+        } else {
+            sectionHeader.after(newRow);
+        }
+
+        $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
     }
 
     // cost summary table end
