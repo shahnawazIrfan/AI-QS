@@ -6826,6 +6826,7 @@
                         <tr class="section-header" data-id="{{ contract.section_id }}">
                             <th colspan="4" onclick="contractSumMakeEditable(this)">{{ contract.section_name }}</th>
                             <th>
+                                <button class="add-btn" onclick="contractSumAddNewRow('{{ contract.section_id }}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
                                 <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></button>
                                 <button class="delete-btn" onclick="contractSumDeleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
                             </th>
@@ -6848,7 +6849,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="v2036_14924" onclick="contractSumAddNewRow()"><img class="img-fluid" src="{% static 'img/add_row.svg' %}" alt=""></div>
+        <!-- <div class="v2036_14924" onclick="contractSumAddNewRow()"><img class="img-fluid" src="{% static 'img/add_row.svg' %}" alt=""></div> -->
     </div>
     <div class="v2038_14920">
         <div class="v2038_14921"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
@@ -6898,6 +6899,7 @@
                             <tr class="section-header" data-id="{{ change.section_id }}">
                                 <th colspan="6" onclick="changeBreakDownMakeEditable(this)">{{ change.section_name }}</th>
                                 <th>
+                                    <button class="add-btn" onclick="changeBreakDownAddNewRow('{{ change.section_id }}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
                                     <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></button>
                                     <button class="delete-btn" onclick="changeBreakDownDeleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
                                 </th>
@@ -6921,7 +6923,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="v2038_21394" onclick="changeBreakDownAddNewRow()"><img class="img-fluid" src="{% static 'img/add_row.svg' %}" alt=""></div>
+            <!-- <div class="v2038_21394" onclick="changeBreakDownAddNewRow()"><img class="img-fluid" src="{% static 'img/add_row.svg' %}" alt=""></div> -->
         </div>
     </div>
 </div>
@@ -7036,40 +7038,71 @@
         $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
     }
 
-//     function costSummaryAddNewRow(sectionNum = null) {
-//         if (costSummarySectionCount === 0) {
-//             alert("Please add a section first!");
-//             return;
-//         }
+    function costSummaryAddNewRow(sectionId, sectionNum = null) {
+        let sectionHeader;
 
-//         let table = document.getElementById("costSummaryTable").getElementsByTagName('tbody')[0];
-//         let lastRows = table.querySelectorAll("tr:not(.section-header)");
-//         let newRowIndex = 1;
-//         if (lastRows.length > 0) {
-//             let lastRef = lastRows[lastRows.length - 1].children[0].innerText;
-//             let [lastSection, lastRow] = lastRef.split(".").map(Number);
-//             newRowIndex = sectionNum ? 1 : lastRow + 1;
-//             sectionNum = sectionNum || lastSection;
-//         }
+        if (costSummarySectionCount === 0) {
+            alert("Please add a section first!");
+            return;
+        }
 
-//         let newRow = document.createElement("tr");
-//         newRow.innerHTML = `
-//     <td>${sectionNum}.${newRowIndex}</td>
-//     <td class="item" onclick="costSummaryMakeEditable(this)"></td>
-//     <td onclick="costSummaryMakeEditable(this)"></td>
-//     <td onclick="costSummaryMakeEditable(this)"></td>
-//     <td onclick="costSummaryMakeEditable(this)"></td>
-//     <td onclick="costSummaryMakeEditable(this)"></td>
-//     <td onclick="costSummaryMakeEditable(this)"></td>
-//     <td onclick="costSummaryMakeEditable(this)"></td>
-//     <td>
-//         <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
-//         <button class="delete-btn" onclick="costSummaryDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
-//     </td>
-// `;
-//         table.appendChild(newRow);
-//         $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
-//     }
+        if (sectionNum) {
+            sectionHeader = document.querySelector(`.section-header[data-tempid="${sectionId}"]`);
+        }
+        else {
+            sectionHeader = document.querySelector(`.section-header[data-id="${sectionId}"]`);
+        }
+        
+        if (!sectionHeader) {
+            alert("Invalid section number!");
+            return;
+        }
+
+        let sectionRows = [];
+        let currentRow = sectionHeader.nextElementSibling;
+
+        while (currentRow && !currentRow.classList.contains("section-header")) {
+            sectionRows.push(currentRow);
+            currentRow = currentRow.nextElementSibling;
+        }
+
+        let newRowSectionNum;
+        let newRowIndex = 1;
+        if (sectionRows.length > 0) {
+            let lastRowRef = sectionRows[sectionRows.length - 1].children[0].innerText;
+            let [lastSection, lastRow] = lastRowRef.split(".").map(Number);
+            newRowIndex = lastRow + 1;
+            newRowSectionNum = lastSection;
+        }
+
+        if (sectionNum) {
+            newRowSectionNum = sectionNum
+        }
+
+        let newRow = document.createElement("tr");
+        newRow.innerHTML = `
+            <td>${newRowSectionNum}.${newRowIndex}</td>
+            <td class="item" onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td>
+                <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+                <button class="delete-btn" onclick="costSummaryDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+            </td>
+        `;
+
+        if (sectionRows.length > 0) {
+            sectionRows[sectionRows.length - 1].after(newRow);
+        } else {
+            sectionHeader.after(newRow);
+        }
+
+        $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
+    }
 
     function costSummaryMakeEditable(cell) {
         if (cell.querySelector("input")) return;
@@ -7107,13 +7140,11 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token,
                 },
                 success: function(response) {
-                    console.log("Response:", response);
                     if (response.message) {
-                        console.log('Deleted successfully')
-                        console.log(response)
+                        
                         $(".v2032_16022").html(`£${response.total_contract_sum}`);
                         $(".v2032_15965").html(`£${response.certified_payments_sum}`);
                         $(".v2033_16102").html(`£${response.anticipated_payments_sum}`);
@@ -7156,12 +7187,10 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token,
                 },
                 success: function(response) {
-                    console.log("Response:", response);
                     if (response.message) {
-                        console.log('Deleted successfully')
 
                         $(".v2032_16022").html(`£${response.total_contract_sum}`);
                         $(".v2032_15965").html(`£${response.certified_payments_sum}`);
@@ -7208,12 +7237,11 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token,
                 },
                 success: function(response) {
-                    console.log("Response:", response);
                     if (response.message) {
-                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        button.style.display = "none";
                         row.setAttribute("data-id", response.id);
                     } else {
                         alert("Error saving data: " + response.error);
@@ -7244,12 +7272,11 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token, 
                 },
                 success: function(response) {
-                    console.log("Response:", response);
                     if (response.message) {
-                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        button.style.display = "none"; 
                         row.setAttribute("data-id", response.id);
 
                         $(".v2032_16022").html(`£${response.total_contract_sum}`);
@@ -7269,14 +7296,38 @@
                 }
             });
         }
-
-        console.log("Sending data:", data);
     }
 
-    function costSummaryAddNewRow(sectionId, sectionNum = null) {
+    // cost summary table end
+
+
+    // contract sum table start
+
+    let contractSumSectionCount = {{total_new_contract_sum_sections}};
+
+    function contractSumAddNewSection() {
+        contractSumSectionCount++;
+        let table = document.getElementById("contractSumTable").getElementsByTagName('tbody')[0];
+        let sectionHeader = document.createElement("tr");
+        sectionHeader.classList.add("section-header");
+        sectionHeader.setAttribute("data-tempid", Math.random().toString(16).substr(2, 24));
+        sectionHeader.innerHTML = `
+    <th colspan="4" onclick="contractSumMakeEditable(this)">${contractSumSectionCount}</th>
+    <th>
+        <button class="add-btn" onclick="contractSumAddNewRow('${sectionHeader.getAttribute("data-tempid")}', ${contractSumSectionCount})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+        <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+        <button class="delete-btn" onclick="contractSumDeleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+    </th>
+    `;
+        table.appendChild(sectionHeader);
+        contractSumAddNewRow(sectionHeader.getAttribute("data-tempid"), contractSumSectionCount);
+        $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
+    }
+
+    function contractSumAddNewRow(sectionId, sectionNum = null) {
         let sectionHeader;
 
-        if (costSummarySectionCount === 0) {
+        if (contractSumSectionCount === 0) {
             alert("Please add a section first!");
             return;
         }
@@ -7305,7 +7356,6 @@
         let newRowIndex = 1;
         if (sectionRows.length > 0) {
             let lastRowRef = sectionRows[sectionRows.length - 1].children[0].innerText;
-            console.log(lastRowRef)
             let [lastSection, lastRow] = lastRowRef.split(".").map(Number);
             newRowIndex = lastRow + 1;
             newRowSectionNum = lastSection;
@@ -7318,16 +7368,12 @@
         let newRow = document.createElement("tr");
         newRow.innerHTML = `
             <td>${newRowSectionNum}.${newRowIndex}</td>
-            <td class="item" onclick="costSummaryMakeEditable(this)"></td>
-            <td onclick="costSummaryMakeEditable(this)"></td>
-            <td onclick="costSummaryMakeEditable(this)"></td>
-            <td onclick="costSummaryMakeEditable(this)"></td>
-            <td onclick="costSummaryMakeEditable(this)"></td>
-            <td onclick="costSummaryMakeEditable(this)"></td>
-            <td onclick="costSummaryMakeEditable(this)"></td>
+            <td class="item" onclick="contractSumMakeEditable(this)"></td>
+            <td onclick="contractSumMakeEditable(this)"></td>
+            <td onclick="contractSumMakeEditable(this)"></td>
             <td>
-                <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
-                <button class="delete-btn" onclick="costSummaryDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+                <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+                <button class="delete-btn" onclick="contractSumDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
             </td>
         `;
 
@@ -7337,62 +7383,6 @@
             sectionHeader.after(newRow);
         }
 
-        $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
-    }
-
-    // cost summary table end
-
-
-    // contract sum table start
-
-    let contractSumSectionCount = {{total_new_contract_sum_sections}};
-
-    function contractSumAddNewSection() {
-        contractSumSectionCount++;
-        let table = document.getElementById("contractSumTable").getElementsByTagName('tbody')[0];
-        let sectionHeader = document.createElement("tr");
-        sectionHeader.classList.add("section-header");
-        sectionHeader.innerHTML = `
-    <th colspan="4" onclick="contractSumMakeEditable(this)">${contractSumSectionCount}</th>
-    <th>
-        <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
-        <button class="delete-btn" onclick="contractSumDeleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
-    </th>
-    `;
-        table.appendChild(sectionHeader);
-        contractSumAddNewRow(contractSumSectionCount);
-        $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
-    }
-
-    function contractSumAddNewRow(sectionNum = null) {
-        if (contractSumSectionCount === 0) {
-            alert("Please add a section first!");
-            return;
-        }
-
-        let table = document.getElementById("contractSumTable").getElementsByTagName('tbody')[0];
-        let lastRows = table.querySelectorAll("tr:not(.section-header)");
-        let newRowIndex = 1;
-        if (lastRows.length > 0) {
-            let lastRef = lastRows[lastRows.length - 1].children[0].innerText;
-            let [lastSection, lastRow] = lastRef.split(".").map(Number);
-            newRowIndex = sectionNum ? 1 : lastRow + 1;
-            sectionNum = sectionNum || lastSection;
-        }
-
-        let newRow = document.createElement("tr");
-        newRow.innerHTML = `
-    <td>${sectionNum}.${newRowIndex}</td>
-    <td class="item" onclick="contractSumMakeEditable(this)"></td>
-    <td onclick="contractSumMakeEditable(this)"></td>
-    <td onclick="contractSumMakeEditable(this)"></td>
-    <td>
-        <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
-        <button class="delete-btn" onclick="contractSumDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
-    </td>
-    <td><span id="contract_sum_forecast">£0</span></td>
-    `;
-        table.appendChild(newRow);
         $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
     }
 
@@ -7432,15 +7422,10 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token, 
                 },
                 success: function(response) {
-                    console.log("Response:", response);
-                    if (response.message) {
-                        console.log('Deleted successfully')
-                    } else {
-                        alert("Error deleting data: " + response.error);
-                    }
+                    
                 },
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
@@ -7473,15 +7458,10 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token, 
                 },
                 success: function(response) {
-                    console.log("Response:", response);
-                    if (response.message) {
-                        console.log('Deleted successfully')
-                    } else {
-                        alert("Error deleting data: " + response.error);
-                    }
+                    
                 },
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
@@ -7517,12 +7497,11 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token, 
                 },
                 success: function(response) {
-                    console.log("Response:", response);
                     if (response.message) {
-                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        button.style.display = "none"; 
                         row.setAttribute("data-id", response.id);
                     } else {
                         alert("Error saving data: " + response.error);
@@ -7549,12 +7528,11 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token, 
                 },
                 success: function(response) {
-                    console.log("Response:", response);
                     if (response.message) {
-                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        button.style.display = "none"; 
                         row.setAttribute("data-id", response.id);
                     } else {
                         alert("Error saving data: " + response.error);
@@ -7566,8 +7544,6 @@
                 }
             });
         }
-
-        console.log("Sending data:", data);
     }
 
     // contract sum table end
@@ -7582,48 +7558,81 @@
         let table = document.getElementById("changeBreakDownTable").getElementsByTagName('tbody')[0];
         let sectionHeader = document.createElement("tr");
         sectionHeader.classList.add("section-header");
+        sectionHeader.setAttribute("data-tempid", Math.random().toString(16).substr(2, 24));
         sectionHeader.innerHTML = `
     <th colspan="6" onclick="changeBreakDownMakeEditable(this)">${changeBreakDownSectionCount}</th>
     <th>
+        <button class="add-btn" onclick="changeBreakDownAddNewRow('${sectionHeader.getAttribute("data-tempid")}', ${changeBreakDownSectionCount})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
         <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
         <button class="delete-btn" onclick="changeBreakDownDeleteSection(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
     </th>
     `;
         table.appendChild(sectionHeader);
-        changeBreakDownAddNewRow(changeBreakDownSectionCount);
+        changeBreakDownAddNewRow(sectionHeader.getAttribute("data-tempid"), changeBreakDownSectionCount);
         $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
     }
 
-    function changeBreakDownAddNewRow(sectionNum = null) {
+    function changeBreakDownAddNewRow(sectionId, sectionNum = null) {
+        let sectionHeader;
+
         if (changeBreakDownSectionCount === 0) {
             alert("Please add a section first!");
             return;
         }
 
-        let table = document.getElementById("changeBreakDownTable").getElementsByTagName('tbody')[0];
-        let lastRows = table.querySelectorAll("tr:not(.section-header)");
+        if (sectionNum) {
+            sectionHeader = document.querySelector(`.section-header[data-tempid="${sectionId}"]`);
+        }
+        else {
+            sectionHeader = document.querySelector(`.section-header[data-id="${sectionId}"]`);
+        }
+        
+        if (!sectionHeader) {
+            alert("Invalid section number!");
+            return;
+        }
+
+        let sectionRows = [];
+        let currentRow = sectionHeader.nextElementSibling;
+
+        while (currentRow && !currentRow.classList.contains("section-header")) {
+            sectionRows.push(currentRow);
+            currentRow = currentRow.nextElementSibling;
+        }
+
+        let newRowSectionNum;
         let newRowIndex = 1;
-        if (lastRows.length > 0) {
-            let lastRef = lastRows[lastRows.length - 1].children[0].innerText;
-            let [lastSection, lastRow] = lastRef.split(".").map(Number);
-            newRowIndex = sectionNum ? 1 : lastRow + 1;
-            sectionNum = sectionNum || lastSection;
+        if (sectionRows.length > 0) {
+            let lastRowRef = sectionRows[sectionRows.length - 1].children[0].innerText;
+            let [lastSection, lastRow] = lastRowRef.split(".").map(Number);
+            newRowIndex = lastRow + 1;
+            newRowSectionNum = lastSection;
+        }
+
+        if (sectionNum) {
+            newRowSectionNum = sectionNum
         }
 
         let newRow = document.createElement("tr");
         newRow.innerHTML = `
-    <td>${sectionNum}.${newRowIndex}</td>
-    <td class="item" onclick="changeBreakDownMakeEditable(this)"></td>
-    <td onclick="changeBreakDownMakeEditable(this)"></td>
-    <td onclick="changeBreakDownMakeEditable(this)"></td>
-    <td onclick="changeBreakDownMakeEditable(this)"></td>
-    <td onclick="changeBreakDownMakeEditable(this)"></td>
-    <td>
-        <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
-        <button class="delete-btn" onclick="changeBreakDownDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
-    </td>
-    `;
-        table.appendChild(newRow);
+            <td>${newRowSectionNum}.${newRowIndex}</td>
+            <td class="item" onclick="changeBreakDownMakeEditable(this)"></td>
+            <td onclick="changeBreakDownMakeEditable(this)"></td>
+            <td onclick="changeBreakDownMakeEditable(this)"></td>
+            <td onclick="changeBreakDownMakeEditable(this)"></td>
+            <td onclick="changeBreakDownMakeEditable(this)"></td>
+            <td>
+                <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check-circle"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></button>
+                <button class="delete-btn" onclick="changeBreakDownDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+            </td>
+        `;
+
+        if (sectionRows.length > 0) {
+            sectionRows[sectionRows.length - 1].after(newRow);
+        } else {
+            sectionHeader.after(newRow);
+        }
+
         $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
     }
 
@@ -7663,15 +7672,9 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token, 
                 },
                 success: function(response) {
-                    console.log("Response:", response);
-                    if (response.message) {
-                        console.log('Deleted successfully')
-                    } else {
-                        alert("Error deleting data: " + response.error);
-                    }
                 },
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
@@ -7704,15 +7707,9 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token, 
                 },
                 success: function(response) {
-                    console.log("Response:", response);
-                    if (response.message) {
-                        console.log('Deleted successfully')
-                    } else {
-                        alert("Error deleting data: " + response.error);
-                    }
                 },
                 error: function(xhr, status, error) {
                     console.error("Error:", error);
@@ -7748,12 +7745,11 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token, 
                 },
                 success: function(response) {
-                    console.log("Response:", response);
                     if (response.message) {
-                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        button.style.display = "none"; 
                         row.setAttribute("data-id", response.id);
                     } else {
                         alert("Error saving data: " + response.error);
@@ -7782,12 +7778,11 @@
                 data: JSON.stringify(data),
                 contentType: "application/json",
                 headers: {
-                    "X-CSRFToken": token, // CSRF token handle karne ke liye function
+                    "X-CSRFToken": token, 
                 },
                 success: function(response) {
-                    console.log("Response:", response);
                     if (response.message) {
-                        button.style.display = "none"; // Save hone ke baad button hide kar do
+                        button.style.display = "none"; 
                         row.setAttribute("data-id", response.id);
                     } else {
                         alert("Error saving data: " + response.error);
@@ -7799,8 +7794,6 @@
                 }
             });
         }
-
-        console.log("Sending data:", data);
     }
 
     // change breakdown table end
@@ -7863,7 +7856,7 @@
                 }
 
                 if (costChart) {
-                    costChart.destroy(); // Destroy previous chart
+                    costChart.destroy();
                 }
 
                 const ctx = document.getElementById("cost_reporting_graph").getContext("2d");
