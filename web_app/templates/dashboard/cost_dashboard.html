@@ -4907,9 +4907,9 @@
     }
 
     .v2038_15104 {
-        width: 7px;
-        height: 7px;
-        background: rgba(214, 75, 194, 1);
+        width: 14px;
+        height: 14px;
+        background: rgba(133, 204, 87, 1);
         opacity: 1;
         position: absolute;
         top: 3px;
@@ -4921,11 +4921,11 @@
         width: 41px;
         color: rgba(37, 40, 44, 1);
         position: absolute;
-        top: 1px;
-        left: 13px;
-        font-family: Alata;
-        font-weight: Regular;
-        font-size: 11px;
+        top: 0px;
+        left: 20px;
+        font-family: 'Plus Jakarta Sans';
+        font-weight: bold;
+        font-size: 16px;
         opacity: 1;
         text-align: left;
         cursor: pointer;
@@ -4947,25 +4947,25 @@
     }
 
     .v2038_15107 {
-        width: 7px;
-        height: 7px;
-        background: rgba(255, 212, 244, 1);
+        width: 14px;
+        height: 14px;
+        background: rgba(101, 225, 193, 1);
         opacity: 1;
         position: absolute;
-        top: 2px;
-        left: 0px;
+        top: 3px;
+        left: 40px;
         border-radius: 50%;
     }
 
     .v2038_15108 {
-        width: 35px;
+        width: 41px;
         color: rgba(37, 40, 44, 1);
         position: absolute;
-        top: 1px;
-        left: 13px;
-        font-family: ABeeZee;
-        font-weight: Regular;
-        font-size: 11px;
+        top: 0px;
+        left: 60px;
+        font-family: 'Plus Jakarta Sans';
+        font-weight: bold;
+        font-size: 16px;
         opacity: 1;
         text-align: left;
         cursor: pointer;
@@ -6592,7 +6592,7 @@
     }
 
     .table-container {
-        max-height: 350px;
+        max-height: 370px;
         overflow-y: scroll;
         overflow-x: hidden;
         scrollbar-width: thin;
@@ -7226,6 +7226,8 @@
         let cells = row.querySelectorAll("td, th");
         let data = {};
 
+        button.style.display = "none";
+
         if (isSection) {
             data["section_id"] = sectionRow?.getAttribute("data-id") ?? null;
             data["section_name"] = cells[0].innerText.trim();
@@ -7241,7 +7243,6 @@
                 },
                 success: function(response) {
                     if (response.message) {
-                        button.style.display = "none";
                         row.setAttribute("data-id", response.id);
                     } else {
                         alert("Error saving data: " + response.error);
@@ -7275,8 +7276,7 @@
                     "X-CSRFToken": token, 
                 },
                 success: function(response) {
-                    if (response.message) {
-                        button.style.display = "none"; 
+                    if (response.message) { 
                         row.setAttribute("data-id", response.id);
 
                         $(".v2032_16022").html(`£${response.total_contract_sum}`);
@@ -7375,6 +7375,7 @@
                 <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
                 <button class="delete-btn" onclick="contractSumDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
             </td>
+            <td><span id="contract_sum_forecast">£0</span></td>
         `;
 
         if (sectionRows.length > 0) {
@@ -7486,6 +7487,8 @@
         let cells = row.querySelectorAll("td, th");
         let data = {};
 
+        button.style.display = "none";
+
         if (isSection) {
             data["section_id"] = sectionRow?.getAttribute("data-id") ?? null;
             data["section_name"] = cells[0].innerText.trim();
@@ -7501,7 +7504,6 @@
                 },
                 success: function(response) {
                     if (response.message) {
-                        button.style.display = "none"; 
                         row.setAttribute("data-id", response.id);
                     } else {
                         alert("Error saving data: " + response.error);
@@ -7532,7 +7534,6 @@
                 },
                 success: function(response) {
                     if (response.message) {
-                        button.style.display = "none"; 
                         row.setAttribute("data-id", response.id);
                     } else {
                         alert("Error saving data: " + response.error);
@@ -7734,6 +7735,8 @@
         let cells = row.querySelectorAll("td, th");
         let data = {};
 
+        button.style.display = "none";
+
         if (isSection) {
             data["section_id"] = sectionRow?.getAttribute("data-id") ?? null;
             data["section_name"] = cells[0].innerText.trim();
@@ -7749,7 +7752,6 @@
                 },
                 success: function(response) {
                     if (response.message) {
-                        button.style.display = "none"; 
                         row.setAttribute("data-id", response.id);
                     } else {
                         alert("Error saving data: " + response.error);
@@ -7782,7 +7784,6 @@
                 },
                 success: function(response) {
                     if (response.message) {
-                        button.style.display = "none"; 
                         row.setAttribute("data-id", response.id);
                     } else {
                         alert("Error saving data: " + response.error);
