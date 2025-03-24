@@ -6881,7 +6881,7 @@
         <div class="v2038_21390"><span class="v2038_21391">Change Breakdown</span>
             <div class="v2038_21392" onclick="changeBreakDownAddNewSection()"><img class="img-fluid" src="{% static 'img/add_section.svg' %}" alt=""></div>
             <div class="v2038_21393"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
-            <div class="table-container mt-3" style="max-height: 425px;">
+            <div class="table-container mt-3" style="max-height: 450px;">
                 <table id="changeBreakDownTable">
                     <thead>
                         <tr>
@@ -6934,15 +6934,26 @@
 <script>
 
     $(document).ready(function () {
-        loadChart("forecast");
+        $.ajax({
+        url: "/dashboard/cost-chart-data/",
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            chartData = data;
+            renderChart("forecast");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error loading chart data:", error);
+        }
+    });
 
-        $("#showForecast").click(function () {
-            loadChart("forecast");
-        });
+    $("#showForecast").click(function () {
+        renderChart("forecast");
+    });
 
-        $("#showActual").click(function () {
-            loadChart("actual");
-        });
+    $("#showActual").click(function () {
+        renderChart("actual");
+    });
 
         $("#projects").show();
     });
@@ -7112,10 +7123,10 @@
         cell.innerText = "";
         cell.appendChild(input);
         input.focus();
+        costSummaryShowSaveButton(cell);
 
         input.addEventListener("blur", function () {
             cell.innerText = input.value;
-            costSummaryShowSaveButton(cell);
         });
     }
 
@@ -7395,10 +7406,10 @@
         cell.innerText = "";
         cell.appendChild(input);
         input.focus();
+        contractSumShowSaveButton(cell);
 
         input.addEventListener("blur", function () {
             cell.innerText = input.value;
-            contractSumShowSaveButton(cell);
         });
     }
 
@@ -7645,10 +7656,10 @@
         cell.innerText = "";
         cell.appendChild(input);
         input.focus();
+        changeBreakDownShowSaveButton(cell);
 
         input.addEventListener("blur", function () {
             cell.innerText = input.value;
-            changeBreakDownShowSaveButton(cell);
         });
     }
 
@@ -7801,83 +7812,73 @@
 
     // cost reporting graph start
 
-    let costChart;
+    let chartData = null;
+    let costChart = null;
 
-    function loadChart(type) {
-        $.ajax({
-            url: "/dashboard/cost-chart-data/",
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                const chartData = {
-                    labels: data.labels,
-                    datasets: []
-                };
-
-                if (type === "forecast") {
-                    chartData.datasets.push(
-                        {
-                            type: "bar",
-                            label: "Forecast Monthly",
-                            data: data.datasets[0].data,
-                            backgroundColor: data.datasets[0].backgroundColor,
-                            borderColor: data.datasets[0].borderColor,
-                            borderWidth: 1,
-                            stack: "Stack 0"
-                        },
-                        {
-                            type: "line",
-                            label: "Forecast Cumulative",
-                            data: data.datasets[2].data,
-                            borderColor: data.datasets[2].borderColor,
-                            borderWidth: 2,
-                            fill: false
-                        }
-                    );
-                } else {
-                    chartData.datasets.push(
-                        {
-                            type: "bar",
-                            label: "Actual Monthly",
-                            data: data.datasets[1].data,
-                            backgroundColor: data.datasets[1].backgroundColor,
-                            borderColor: data.datasets[1].borderColor,
-                            borderWidth: 1,
-                            stack: "Stack 0"
-                        },
-                        {
-                            type: "line",
-                            label: "Actual Cumulative",
-                            data: data.datasets[3].data,
-                            borderColor: data.datasets[3].borderColor,
-                            borderWidth: 2,
-                            fill: false
-                        }
-                    );
-                }
-
-                if (costChart) {
-                    costChart.destroy();
-                }
-
-                const ctx = document.getElementById("cost_reporting_graph").getContext("2d");
-                costChart = new Chart(ctx, {
-                    type: "bar",
-                    data: chartData,
-                    options: {
-                        responsive: true,
-                        scales: {
-                            x: { stacked: true },
-                            y: { stacked: true }
-                        }
+    function prepareChartData(type, data) {
+        return {
+            labels: data.labels,
+            datasets: type === "forecast"
+                ? [
+                    {
+                        type: "bar",
+                        label: "Forecast Monthly",
+                        data: data.datasets[0].data,
+                        backgroundColor: data.datasets[0].backgroundColor,
+                        borderColor: data.datasets[0].borderColor,
+                        borderWidth: 1,
+                        stack: "Stack 0"
+                    },
+                    {
+                        type: "line",
+                        label: "Forecast Cumulative",
+                        data: data.datasets[2].data,
+                        borderColor: data.datasets[2].borderColor,
+                        borderWidth: 2,
+                        fill: false
                     }
-                });
-            },
-            error: function (xhr, status, error) {
-                console.error("Error loading chart data:", error);
+                ]
+                : [
+                    {
+                        type: "bar",
+                        label: "Actual Monthly",
+                        data: data.datasets[1].data,
+                        backgroundColor: data.datasets[1].backgroundColor,
+                        borderColor: data.datasets[1].borderColor,
+                        borderWidth: 1,
+                        stack: "Stack 0"
+                    },
+                    {
+                        type: "line",
+                        label: "Actual Cumulative",
+                        data: data.datasets[3].data,
+                        borderColor: data.datasets[3].borderColor,
+                        borderWidth: 2,
+                        fill: false
+                    }
+                ]
+        };
+    }
+
+    function renderChart(type) {
+        if (costChart) {
+            costChart.destroy();
+        }
+
+        const ctx = document.getElementById("cost_reporting_graph").getContext("2d");
+        costChart = new Chart(ctx, {
+            type: "bar",
+            data: prepareChartData(type, chartData),
+            options: {
+                responsive: true,
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true }
+                }
             }
         });
     }
+
 
     // cost reporting graph end
 
