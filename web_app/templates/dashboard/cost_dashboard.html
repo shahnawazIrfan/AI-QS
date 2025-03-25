@@ -6758,7 +6758,9 @@
             <div class="v2034_16209"></div><span class="v2034_16210">Review Cost Report</span>
             <div class="v2034_16213">
                 <div class="v2034_16214">
-                    <img class="img-fluid" src="{% static 'img/share.svg' %}" alt="">
+                    <a href="/static/cost_report.xlsx" download="cost_report.xlsx">
+                        <img class="img-fluid" src="{% static 'img/share.svg' %}" alt="">
+                    </a>
                 </div>
             </div>
         </div>
@@ -6987,6 +6989,8 @@
         if (targetElement) {
             if (screenWidth >= 2560) { // 2560x1440, 2560x1600
                 targetElement.style.zoom = "120%";
+            } else if (screenWidth >= 2250) { // 2250x1500
+                targetElement.style.zoom = "103%";
             } else if (screenWidth >= 1920) { // 1920x1080, 1920x1200
                 targetElement.style.zoom = "87%";
             } else if (screenWidth >= 1680) { // 1680x1050
