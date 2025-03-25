@@ -137,6 +137,12 @@ class CostDashboardView(ViewBase):
         total_forecast_comulative = round(sum(Decimal(str(obj.forecast_comulative)) for obj in cost_reporting if obj.forecast_comulative), 2)
         total_actual_comulative = round(sum(Decimal(str(obj.actual_comulative)) for obj in cost_reporting if obj.actual_comulative), 2)
         
+        # cost reporting graph month values
+
+        months = models.CostReporting.objects.values("month").distinct().order_by("month")
+        months = [m["month"] for m in months if m["month"]]
+        months = [date.strftime("%b %y") for date in months]
+
         context = {
             'new_cost_summary_data': new_cost_summary_data,
             'total_new_cost_summary_sections': total_new_cost_summary_sections,
@@ -153,7 +159,8 @@ class CostDashboardView(ViewBase):
             'total_forecast_monthly': total_forecast_monthly,
             'total_actual_monthly': total_actual_monthly,
             'total_forecast_comulative': total_forecast_comulative,
-            'total_actual_comulative': total_actual_comulative
+            'total_actual_comulative': total_actual_comulative,
+            'months': months
         }
 
         return self.render(context)
