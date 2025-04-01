@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from core.mixins import UserMixin
 from constants import SITE_VERSION
-from django.contrib.auth.signals import user_logged_in
+# from django.contrib.auth.signals import user_logged_in
 from web_app import models
 
 class ViewBase(View, LoginRequiredMixin, UserMixin):
@@ -58,4 +58,4 @@ class ViewBase(View, LoginRequiredMixin, UserMixin):
             content_type=kwargs.get('content_type', None)
         )
 
-    user_logged_in.connect(user_logged_in_handler)
+    # user_logged_in.connect(user_logged_in_handler)
