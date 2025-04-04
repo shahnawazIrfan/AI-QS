@@ -18,7 +18,7 @@ from bson import ObjectId
 from django.forms.models import model_to_dict
 from django.db.models import Sum
 from django.conf import settings
-
+from openpyxl.styles import Font
 from web_app import models
 matplotlib.use('Agg')
 
@@ -740,6 +740,13 @@ class getCostChartDataView(ViewBase):
     
 
 class downloadCostReportView(ViewBase):
+
+    @staticmethod
+    def clear_sheet_except_header(sheet):
+        max_row = sheet.max_row
+        if max_row > 1:
+            sheet.delete_rows(2, max_row - 1)
+
     def post(self, request, *args, **kwargs):
         try:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -749,29 +756,81 @@ class downloadCostReportView(ViewBase):
             new_file_path = os.path.join(settings.BASE_DIR, f'static/{file_name}')
 
             wb = openpyxl.load_workbook(template_path)
-            sheet = wb["NEW Cost Summary"]
-            
+
+            # ==================== SHEET 1: NEW Cost Summary ====================
+            cost_summary_sheet = wb["NEW Cost Summary"]
+            self.clear_sheet_except_header(cost_summary_sheet)
             row = 2
             ref_counter = 1
 
             sections = models.CostSummarySection.objects.all()
-
             for section in sections:
-                sheet.cell(row=row, column=1).value = str(ref_counter)
-                sheet.cell(row=row, column=2).value = section.name
+                cost_summary_sheet.cell(row=row, column=1).value = str(ref_counter)
+                cost_summary_sheet.cell(row=row, column=2).value = section.name
+                cost_summary_sheet_cell = cost_summary_sheet.cell(row=row, column=2)
+                cost_summary_sheet_cell.font = Font(bold=True, size=12)
                 row += 1
 
                 summaries = models.CostSummary.objects.filter(section=section)
-
                 for summary in summaries:
-                    sheet.cell(row=row, column=1).value = summary.ref
-                    sheet.cell(row=row, column=2).value = summary.item
-                    sheet.cell(row=row, column=3).value = float(summary.contract_sum or 0)
-                    sheet.cell(row=row, column=4).value = float(summary.certified_payments or 0)
-                    sheet.cell(row=row, column=5).value = float(summary.accrued_payments or 0)
-                    sheet.cell(row=row, column=6).value = float(summary.total_expenditure or 0)
-                    sheet.cell(row=row, column=7).value = float(summary.variance_total or 0)
-                    sheet.cell(row=row, column=8).value = float(summary.variance_period or 0)
+                    cost_summary_sheet.cell(row=row, column=1).value = summary.ref
+                    cost_summary_sheet.cell(row=row, column=2).value = summary.item
+                    cost_summary_sheet.cell(row=row, column=3).value = float(summary.contract_sum or 0)
+                    cost_summary_sheet.cell(row=row, column=4).value = float(summary.certified_payments or 0)
+                    cost_summary_sheet.cell(row=row, column=5).value = float(summary.accrued_payments or 0)
+                    cost_summary_sheet.cell(row=row, column=6).value = float(summary.total_expenditure or 0)
+                    cost_summary_sheet.cell(row=row, column=7).value = float(summary.variance_total or 0)
+                    cost_summary_sheet.cell(row=row, column=8).value = float(summary.variance_period or 0)
+                    row += 1
+
+                ref_counter += 1
+
+            # ==================== SHEET 2: NEW Contract Sum ====================
+            contract_sum_sheet = wb["NEW Contract Sum"]
+            self.clear_sheet_except_header(contract_sum_sheet)
+            row = 2
+            ref_counter = 1
+
+            contract_sections = models.ContractSumSection.objects.all()
+            for section in contract_sections:
+                contract_sum_sheet.cell(row=row, column=1).value = str(ref_counter)
+                contract_sum_sheet.cell(row=row, column=2).value = section.name
+                contract_sum_sheet_cell = contract_sum_sheet.cell(row=row, column=2)
+                contract_sum_sheet_cell.font = Font(bold=True, size=12)
+                row += 1
+
+                items = models.ContractSum.objects.filter(section=section)
+                for item in items:
+                    contract_sum_sheet.cell(row=row, column=1).value = item.ref
+                    contract_sum_sheet.cell(row=row, column=2).value = item.item
+                    contract_sum_sheet.cell(row=row, column=3).value = float(item.contract_sum or 0)
+                    contract_sum_sheet.cell(row=row, column=4).value = float(item.certified_payments or 0)
+                    row += 1
+
+                ref_counter += 1
+
+            # ==================== SHEET 3: NEW EAChange ====================
+            change_sheet = wb["NEW EAChange"]
+            self.clear_sheet_except_header(change_sheet)
+            row = 2
+            ref_counter = 1
+
+            change_sections = models.ChangeBreakDownSection.objects.all()
+            for section in change_sections:
+                change_sheet.cell(row=row, column=1).value = str(ref_counter)
+                change_sheet.cell(row=row, column=2).value = section.name
+                change_sheet_cell = change_sheet.cell(row=row, column=2)
+                change_sheet_cell.font = Font(bold=True, size=12)
+                row += 1
+
+                changes = models.ChangeBreakDown.objects.filter(section=section)
+                for change in changes:
+                    change_sheet.cell(row=row, column=1).value = change.ref
+                    change_sheet.cell(row=row, column=2).value = change.item
+                    change_sheet.cell(row=row, column=3).value = float(change.certified_payments or 0)
+                    change_sheet.cell(row=row, column=4).value = float(change.total_expenditure or 0)
+                    change_sheet.cell(row=row, column=5).value = float(change.variance_total or 0)
+                    change_sheet.cell(row=row, column=6).value = float(change.variance_period or 0)
                     row += 1
 
                 ref_counter += 1
@@ -807,6 +866,6 @@ class downloadCostReportView(ViewBase):
             os.remove(new_file_path)
 
             return JsonResponse({'success': True, 'file_url': file_url, 'file_name': file_name})
-    
+
         except Exception as e:
-            return JsonResponse({'success': False, 'message': 'Something went wrong while exporting cost report'})
+            return JsonResponse({'success': False, 'message': 'Something went wrong while exporting cost report', 'error': str(e)})
