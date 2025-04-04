@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 import json
 import logging
@@ -328,7 +328,7 @@ class CostDashboardView(ViewBase):
                 models.CostReporting.objects.create(
                     _id=str(ObjectId()),
                     interim_payments=item['Interim Payments'],
-                    month=item['Month'],
+                    month=item['Month'] + timedelta(days=1),
                     forecast_monthly=item['Forecast Monthly'],
                     actual_monthly=item['Actual Monthly'],
                     forecast_comulative=item['Forecast Cumulative'],

@@ -6989,8 +6989,8 @@
         if (targetElement) {
             if (screenWidth >= 2560) { // 2560x1440, 2560x1600
                 targetElement.style.zoom = "120%";
-            } else if (screenWidth >= 2250) { // 2250x1500
-                targetElement.style.zoom = "103%";
+            } else if (screenWidth >= 2250 && screenHeight >= 1500) { // 2250x1500
+                targetElement.style.zoom = "175%";
             } else if (screenWidth >= 1920) { // 1920x1080, 1920x1200
                 targetElement.style.zoom = "87%";
             } else if (screenWidth >= 1680) { // 1680x1050
