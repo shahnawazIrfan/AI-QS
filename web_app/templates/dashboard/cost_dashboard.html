@@ -6755,10 +6755,10 @@
             <div class="v2034_16203"><span class="v2034_16204">Month</span></div><span class="v2034_16206">{% now "F Y" %}</span>
         </div>
         <div class="v2034_16208">
-            <div class="v2034_16209"></div><span class="v2034_16210">Review Cost Report</span>
+            <div class="v2034_16209"></div><span class="v2034_16210">Download Cost Report</span>
             <div class="v2034_16213">
                 <div class="v2034_16214">
-                    <a href="/static/cost_report.xlsx" download="cost_report.xlsx">
+                    <a href="javascript:void(0)" id="btn-excel">
                         <img class="img-fluid" src="{% static 'img/share.svg' %}" alt="">
                     </a>
                 </div>
@@ -7917,6 +7917,38 @@
     }
 
     // cost reporting graph end
+
+    // download cost report start
+
+    $("#btn-excel").click(function() {
+      $("#preloader").show();
+      $("#ctn-preloader").removeClass("loaded");
+
+      $.ajax({
+        url: "/dashboard/download-cost-report/",
+        type: 'POST',
+        contentType: "application/json",
+        headers: {
+            "X-CSRFToken": token, 
+        },
+        data: {},
+        success: function(response) {
+            if(response.success == true){
+              let fileUrl = response.file_url;
+              let a = $("<a>").attr("href", fileUrl).attr("download", response.file_name).appendTo("body");
+              a[0].click();
+              a.remove();
+              $("#preloader").hide();
+              $("#ctn-preloader").addClass("loaded");
+            }
+        },
+        catch: function(error){
+            alert("Error: " + error);
+        }
+      });
+    });
+
+    // download cost report end
 
 </script>
 

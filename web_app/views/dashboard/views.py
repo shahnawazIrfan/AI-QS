@@ -2,6 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 import json
 import logging
+import os
 import re
 import boto3
 from django.http import JsonResponse
@@ -16,6 +17,7 @@ import matplotlib
 from bson import ObjectId
 from django.forms.models import model_to_dict
 from django.db.models import Sum
+from django.conf import settings
 
 from web_app import models
 matplotlib.use('Agg')
@@ -735,3 +737,76 @@ class getCostChartDataView(ViewBase):
         }
         
         return JsonResponse(chart_data)
+    
+
+class downloadCostReportView(ViewBase):
+    def post(self, request, *args, **kwargs):
+        try:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            file_name = f'cost_report_{timestamp}.xlsx'
+
+            template_path = os.path.join(settings.BASE_DIR, 'static/cost_report_template.xlsx')
+            new_file_path = os.path.join(settings.BASE_DIR, f'static/{file_name}')
+
+            wb = openpyxl.load_workbook(template_path)
+            sheet = wb["NEW Cost Summary"]
+            
+            row = 2
+            ref_counter = 1
+
+            sections = models.CostSummarySection.objects.all()
+
+            for section in sections:
+                sheet.cell(row=row, column=1).value = str(ref_counter)
+                sheet.cell(row=row, column=2).value = section.name
+                row += 1
+
+                summaries = models.CostSummary.objects.filter(section=section)
+
+                for summary in summaries:
+                    sheet.cell(row=row, column=1).value = summary.ref
+                    sheet.cell(row=row, column=2).value = summary.item
+                    sheet.cell(row=row, column=3).value = float(summary.contract_sum or 0)
+                    sheet.cell(row=row, column=4).value = float(summary.certified_payments or 0)
+                    sheet.cell(row=row, column=5).value = float(summary.accrued_payments or 0)
+                    sheet.cell(row=row, column=6).value = float(summary.total_expenditure or 0)
+                    sheet.cell(row=row, column=7).value = float(summary.variance_total or 0)
+                    sheet.cell(row=row, column=8).value = float(summary.variance_period or 0)
+                    row += 1
+
+                ref_counter += 1
+
+            wb.save(new_file_path)
+
+            # Upload to S3
+            bucket_name = 'ai-qs'
+            s3_key = f"cost_reports/cost_report_{timestamp}.xlsx"
+
+            aws_access_key_id = ''
+            aws_secret_access_key = ''
+            region_name = 'eu-west-2'
+
+            s3 = boto3.client(
+                's3',
+                aws_access_key_id=aws_access_key_id,
+                aws_secret_access_key=aws_secret_access_key,
+                region_name=region_name
+            )
+
+            s3.upload_file(
+                Filename=new_file_path,
+                Bucket=bucket_name,
+                Key=s3_key,
+                ExtraArgs={'ContentType': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}
+            )
+
+            s3.put_object_acl(ACL='public-read', Bucket=bucket_name, Key=s3_key)
+
+            file_url = f"https://{bucket_name}.s3.{region_name}.amazonaws.com/{s3_key}"
+
+            os.remove(new_file_path)
+
+            return JsonResponse({'success': True, 'file_url': file_url, 'file_name': file_name})
+    
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': 'Something went wrong while exporting cost report'})

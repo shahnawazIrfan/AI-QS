@@ -14,4 +14,5 @@ urlpatterns = [
     path('contract-sum-operations/', views.contractSumOperationsView.as_view(), name='contract_sum_operations'),
     path('change-breakdown-operations/', views.changeBreakDownOperationsView.as_view(), name='change_breakdown_operations'),
     path("cost-chart-data/", views.getCostChartDataView.as_view(), name="cost-chart-data"),
+    path("download-cost-report/", views.downloadCostReportView.as_view(), name="download_cost_report"),
 ]

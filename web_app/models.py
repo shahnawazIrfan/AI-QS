@@ -100,12 +100,12 @@ class CostSummary(models.Model):
     _id = models.CharField(max_length=24, primary_key=True)
     ref = models.CharField(max_length=50)
     item = models.CharField(max_length=255, blank=True, null=True)
-    contract_sum = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    certified_payments = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    accrued_payments = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    total_expenditure = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    variance_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    variance_period = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    contract_sum = models.FloatField(blank=True, null=True)
+    certified_payments = models.FloatField(blank=True, null=True)
+    accrued_payments = models.FloatField(blank=True, null=True)
+    total_expenditure = models.FloatField(blank=True, null=True)
+    variance_total = models.FloatField(blank=True, null=True)
+    variance_period = models.FloatField(blank=True, null=True)
     section = models.ForeignKey(CostSummarySection, on_delete=models.CASCADE, related_name="cost_summaries")
 
     def __str__(self):
@@ -130,8 +130,8 @@ class ContractSum(models.Model):
     _id = models.CharField(max_length=24, primary_key=True)
     ref = models.CharField(max_length=50)
     item = models.CharField(max_length=255, blank=True, null=True)
-    contract_sum = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    certified_payments = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    contract_sum = models.FloatField(blank=True, null=True)
+    certified_payments = models.FloatField(blank=True, null=True)
     section = models.ForeignKey(ContractSumSection, on_delete=models.CASCADE, related_name="contract_sums")
 
     def __str__(self):
@@ -156,10 +156,10 @@ class ChangeBreakDown(models.Model):
     _id = models.CharField(max_length=24, primary_key=True)
     ref = models.CharField(max_length=50)
     item = models.CharField(max_length=255, blank=True, null=True)
-    certified_payments = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    total_expenditure = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    variance_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    variance_period = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    certified_payments = models.FloatField(blank=True, null=True)
+    total_expenditure = models.FloatField(blank=True, null=True)
+    variance_total = models.FloatField(blank=True, null=True)
+    variance_period = models.FloatField(blank=True, null=True)
     section = models.ForeignKey(ChangeBreakDownSection, on_delete=models.CASCADE, related_name="change_breakdown")
 
     def __str__(self):
