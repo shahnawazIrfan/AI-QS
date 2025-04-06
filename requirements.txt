@@ -8,3 +8,4 @@ numpy==2.0.2
 matplotlib==3.9.4
 seaborn==0.13.2
 dnspython==2.7.0
+python-dotenv==0.21.1

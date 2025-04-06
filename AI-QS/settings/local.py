@@ -17,10 +17,10 @@ ALLOWED_HOSTS = [
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'NAME': 'aiqs',
+        'NAME': 'aiqs-dev',
         'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': 'mongodb+srv://syedminhaj65:ZXC!asd123@cluster0.sm0jc.mongodb.net/aiqs',
+            'host': 'mongodb+srv://syedminhaj65:ZXC!asd123@cluster0.sm0jc.mongodb.net/aiqs-dev',
             'tls': True,
         }
     }

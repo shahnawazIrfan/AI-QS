@@ -1,11 +1,17 @@
 from pathlib import Path
 import os
 from django.urls import reverse_lazy
+from dotenv import load_dotenv
 
 #==================================================Base directory==================================================
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'web_app/templates')
 AUTH_USER_MODEL = 'web_app.UserProfile'
+
+#==================================================Environment====================================================
+load_dotenv()
+envPath = os.path.join(BASE_DIR, 'variables.env')
+load_dotenv(dotenv_path=envPath)
 
 #==================================================Secret key==================================================
 
