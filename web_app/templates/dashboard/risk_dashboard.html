@@ -5406,54 +5406,69 @@
     $("#projects").show();
 
     function adjustZoom() {
-        let screenWidth = window.innerWidth;
-        let targetElement = document.querySelector(".v2040_22477");
+      let screenWidth = window.innerWidth;
+      let targetElement = document.querySelector(".v2040_22477");
 
-        if (targetElement) {
-            if (screenWidth >= 2560) { // 2560x1440, 2560x1600
-                targetElement.style.zoom = "135%";
-            } else if (screenWidth >= 1920) { // 1920x1080, 1920x1200
-                targetElement.style.zoom = "88%";
-            } else if (screenWidth >= 1680) { // 1680x1050
-                targetElement.style.zoom = "85%";
-            } else if (screenWidth >= 1600) { // 1600x900
-                targetElement.style.zoom = "100%";
-            } else if (screenWidth >= 1440) { // 1440x900
-                targetElement.style.zoom = "95%";
-            } else if (screenWidth >= 1366) { // 1366x768
-                targetElement.style.zoom = "57%";
-            } else if (screenWidth >= 1280) { // 1280x720
-                targetElement.style.zoom = "85%";
-            } else {
-                targetElement.style.zoom = "80%";
-            }
-        }
+      if (targetElement) {
+          if (screenWidth >= 2560) { // 2560x1440, 2560x1600
+              targetElement.style.zoom = "120%";
+          } else if (screenWidth >= 2250) { // 2250x1500
+              targetElement.style.zoom = "103%";
+          } else if (screenWidth >= 2242) { // 2242x1340
+              targetElement.style.zoom = "102%";
+          } else if (screenWidth >= 1920) { // 1920x1080, 1920x1200
+              targetElement.style.zoom = "87%";
+          } else if (screenWidth >= 1680) { // 1680x1050
+              targetElement.style.zoom = "74%";
+          } else if (screenWidth >= 1600) { // 1600x900
+              targetElement.style.zoom = "70%";
+          } else if (screenWidth >= 1440) { // 1440x900
+              targetElement.style.zoom = "62%";
+          } else if (screenWidth >= 1366) { // 1366x768
+              targetElement.style.zoom = "57%";
+          } else if (screenWidth >= 1280) { // 1280x720
+              targetElement.style.zoom = "53%";
+          } else {
+              targetElement.style.zoom = "80%";
+          }
+      }
     }
 
     window.onload = adjustZoom;
     window.onresize = adjustZoom;
 
     $("#upload_btn").click(function () {
-        $("#excelFile").click();
+      $("#excelFile").click();
     });
 
 
     $("#excelFile").change(function () {
-        $("#preloader").show();
-        $("#ctn-preloader").removeClass("loaded");
+      $("#preloader").show();
+      $("#ctn-preloader").removeClass("loaded");
 
-        var fileInput = this.files[0];
-        if (!fileInput) {
-            alert("Please select a file first!");
-            return;
-        }
+      var fileInput = this.files[0];
+      if (!fileInput) {
+          alert("Please select a file first!");
+          return;
+      }
 
-        var formData = new FormData();
-        formData.append("file", fileInput);
+      var formData = new FormData();
+      formData.append("file", fileInput);
 
-        setTimeout(() => {
-            location.reload();
-        }, 2000);
+      $.ajax({
+          url: "/dashboard/risk/",
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          headers: { "X-CSRFToken": token},
+          success: function (response) {
+              location.reload();
+          },
+          error: function (xhr, status, error) {
+              alert("Error: " + error);
+          }
+      });
     });
 
 </script>

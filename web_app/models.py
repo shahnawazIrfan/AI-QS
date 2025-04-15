@@ -183,3 +183,39 @@ class CostReporting(models.Model):
 
     class Meta:
         verbose_name_plural = "Cost Reporting"
+
+
+class RiskRegisterSection(models.Model):
+    _id = models.CharField(max_length=24, primary_key=True)
+    name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name_plural = "Risk Register Section"
+
+
+class RiskRegister(models.Model):
+    _id = models.CharField(max_length=24, primary_key=True)
+    ref = models.CharField(max_length=100, blank=True, null=True)
+    risk_category = models.TextField(blank=True, null=True)
+    specific_risk = models.TextField(blank=True, null=True)
+    risk_owner = models.CharField(max_length=100, blank=True, null=True)
+    likelihood = models.IntegerField(blank=True, null=True)
+    impact = models.IntegerField(blank=True, null=True)
+    rating = models.FloatField(blank=True, null=True)
+    mitigation = models.TextField(blank=True, null=True)
+    mitigated_likelihood = models.IntegerField(blank=True, null=True)
+    mitigated_impact = models.IntegerField(blank=True, null=True)
+    mitigated_rating = models.FloatField(blank=True, null=True)
+    comments = models.TextField(blank=True, null=True)
+    cost = models.FloatField(blank=True, null=True)
+    status = models.CharField(max_length=50, blank=True, null=True)
+    section = models.ForeignKey(RiskRegisterSection, on_delete=models.CASCADE, related_name="risk_register")
+
+    def __str__(self):
+        return self.ref
+
+    class Meta:
+        verbose_name_plural = "Risk Register"
