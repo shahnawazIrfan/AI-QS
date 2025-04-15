@@ -469,30 +469,41 @@ class RiskDashboardView(ViewBase):
 
         ws = wb["13. Risk Register"]
 
-        for row in ws.iter_rows(min_row=5, values_only=True):
+        section_id = ""
+
+        for row in ws.iter_rows(min_row=4, values_only=True):
             if not row[1]:  # Skip if there's no 'Ref'
                 continue
 
-            try:
-                models.RiskRegister.objects.create(
-                    _id=str(ObjectId()),
-                    ref=row[1],
-                    risk_category=row[2],
-                    specific_risk=row[3],
-                    risk_owner=row[4],
-                    likelihood=row[5] if isinstance(row[5], int) else 0,
-                    impact=row[6] if isinstance(row[6], int) else 0,
-                    rating=row[7] if isinstance(row[7], int) else 0,
-                    mitigation=row[8],
-                    mitigated_likelihood=row[9] if isinstance(row[9], int) else 0,
-                    mitigated_impact=row[10] if isinstance(row[10], int) else 0,
-                    mitigated_rating=row[11] if isinstance(row[11], int) else 0,
-                    comments=row[12],
-                    cost=row[13] if isinstance(row[13], int) else 0,
-                    status=row[14]
-                )
-            except Exception as e:
-                return JsonResponse({"error": f"Failed to insert row {row}: {str(e)}"}, status=400)
+            if row[1] and row[14] and all(cell is None for cell in row[2:13]): # its a 'section'
+                try:
+                    section = models.RiskRegisterSection.objects.create(_id=str(ObjectId()), name=row[1])
+                    section_id = section._id
+                except Exception:
+                    pass
+
+            else:
+                try:
+                    models.RiskRegister.objects.create(
+                        _id=str(ObjectId()),
+                        ref=row[1],
+                        risk_category=row[2],
+                        specific_risk=row[3],
+                        risk_owner=row[4],
+                        likelihood=row[5] if isinstance(row[5], int) else 0,
+                        impact=row[6] if isinstance(row[6], int) else 0,
+                        rating=row[7] if isinstance(row[7], int) else 0,
+                        mitigation=row[8],
+                        mitigated_likelihood=row[9] if isinstance(row[9], int) else 0,
+                        mitigated_impact=row[10] if isinstance(row[10], int) else 0,
+                        mitigated_rating=row[11] if isinstance(row[11], int) else 0,
+                        comments=row[12],
+                        cost=row[13] if isinstance(row[13], int) else 0,
+                        status=row[14],
+                        section_id=section_id
+                    )
+                except Exception:
+                    pass
 
         return JsonResponse({"message": "File processed successfully."}, status=201)
     
