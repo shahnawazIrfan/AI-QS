@@ -20,6 +20,8 @@ from django.db.models import Sum
 from django.conf import settings
 from openpyxl.styles import Font
 from web_app import models
+from django.db.models import Q
+
 matplotlib.use('Agg')
 
 logger = logging.getLogger(__name__)
@@ -345,48 +347,15 @@ class RiskDashboardView(ViewBase):
 
     def get(self, request, *args, **kwargs):
 
-        # top graphs
-        months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"]
-
-        payment_sums = {
-            'total_risk': np.random.randint(5, 1000),
-            'total_unmitigated_risk': np.random.randint(5, 1000),
-            'total_mitigated_risk': np.random.randint(5, 1000),
-            'total_design_development_risk': np.random.randint(5, 1000),
-            'total_construction_risk': np.random.randint(5, 1000),
-            'total_employer_change_risk': np.random.randint(5, 1000),
-            'total_employer_other_risk': np.random.randint(5, 1000),
-        }
-
-        graphs = {}
-
-        for key, value in payment_sums.items():
-            values = [0, 0, value, 0, 0, 0, 0]
-            
-            x = np.linspace(0, len(values) - 1, 300)
-            y = np.interp(x, range(len(values)), values)
-
-            plt.figure(figsize=(6, 2), dpi=100)
-            plt.plot(x, y, color='#86CD57', linewidth=2)
-            plt.fill_between(x, y, min(values), color='#d3e7c7', alpha=0.4)
-
-            plt.ylim(0, 1000)
-            plt.xticks([])
-            plt.yticks([])
-            plt.gca().spines['top'].set_visible(False)
-            plt.gca().spines['right'].set_visible(False)
-            plt.gca().spines['left'].set_visible(False)
-            plt.gca().spines['bottom'].set_visible(False)
-            plt.grid(False)
-
-            buffer = BytesIO()
-            plt.savefig(buffer, format='png', bbox_inches='tight', transparent=True)
-            buffer.seek(0)
-
-            graphs[key] = base64.b64encode(buffer.getvalue()).decode()
-            buffer.close()
-            # plt.close(fig)
-
+        # top card counts
+        risk_register = models.RiskRegister.objects.all()
+        total_risk_register = risk_register.count()
+        total_mitigated_risk = risk_register.filter(mitigated_rating__isnull=False).count()
+        total_unmitigated_risk = risk_register.filter(mitigated_rating__isnull=True, rating__isnull=False).count()
+        total_design_development_risk = risk_register.filter(section__name__icontains="Design development risks").count()
+        total_construction_risk = risk_register.filter(section__name__icontains="Construction risks").count()
+        total_employer_change_risk = risk_register.filter(section__name__icontains="Employer change risks").count()
+        total_employer_other_risk = risk_register.filter(Q(section__name__icontains="Project brief") | Q(section__name__icontains="Timescales") | Q(section__name__icontains="Financial") | Q(section__name__icontains="Management") | Q(section__name__icontains="Third party") | Q(section__name__icontains="Other")).count()
 
         # pie charts
         pie_charts = {}
@@ -440,15 +409,13 @@ class RiskDashboardView(ViewBase):
             plt.close(fig)
 
         context = {
-            "graphs": {
-                'total_risk': graphs["total_risk"],
-                'total_unmitigated_risk': graphs["total_unmitigated_risk"],
-                'total_mitigated_risk': graphs["total_mitigated_risk"],
-                'total_design_development_risk': graphs["total_design_development_risk"],
-                'total_construction_risk': graphs["total_construction_risk"],
-                'total_employer_change_risk': graphs["total_employer_change_risk"],
-                'total_employer_other_risk': graphs["total_employer_other_risk"]
-            },
+            "total_risk_register": total_risk_register,
+            "total_mitigated_risk": total_mitigated_risk,
+            "total_unmitigated_risk": total_unmitigated_risk,
+            "total_design_development_risk": total_design_development_risk,
+            "total_construction_risk": total_construction_risk,
+            "total_employer_change_risk": total_employer_change_risk,
+            "total_employer_other_risk": total_employer_other_risk,
             "pie_charts": pie_charts,
             "pie_charts_values": pie_charts_values,
             "heatmaps": heatmaps
@@ -475,7 +442,14 @@ class RiskDashboardView(ViewBase):
             if not row[1]:  # Skip if there's no 'Ref'
                 continue
 
-            if row[1] and row[14] and all(cell is None for cell in row[2:13]): # its a 'section'
+            if row[1] and row[2] and all(cell is None or cell == 0 for cell in row[3:13]): # its a 'section'
+                try:
+                    section = models.RiskRegisterSection.objects.create(_id=str(ObjectId()), name=row[2])
+                    section_id = section._id
+                except Exception:
+                    pass
+            
+            elif row[1] and all(cell is None or cell == 0 for cell in row[2:13]): # its a 'section'
                 try:
                     section = models.RiskRegisterSection.objects.create(_id=str(ObjectId()), name=row[1])
                     section_id = section._id
