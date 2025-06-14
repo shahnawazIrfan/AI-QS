@@ -595,6 +595,27 @@ class costSummaryOperationsView(ViewBase):
         
 
 class contractSumOperationsView(ViewBase):
+    def updateCostSummaryFields(self, section_id):
+        sections = models.ContractSumSection.objects.all()
+        found_index = None
+        for index, section in enumerate(sections, start=1):
+            if section._id == section_id:
+                found_index = index
+                break
+
+        print("found_index", found_index)
+
+        section_contract_sum = models.ContractSum.objects.filter(section_id=section_id)
+        total_section_contract_sum = sum(Decimal(str(obj.contract_sum)) for obj in section_contract_sum if obj.contract_sum)
+        total_section_certified_payments = sum(Decimal(str(obj.certified_payments)) for obj in section_contract_sum if obj.certified_payments)
+        
+        cost_summary = models.CostSummary.objects.all()[found_index - 1]
+        cost_summary.contract_sum = total_section_contract_sum
+        cost_summary.certified_payments = total_section_certified_payments
+        cost_summary.save()
+
+        return (total_section_contract_sum, total_section_certified_payments, cost_summary._id)
+
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body)
@@ -609,19 +630,33 @@ class contractSumOperationsView(ViewBase):
 
             if type == "section" and not section_id:
                 section = models.ContractSumSection.objects.create(_id=str(ObjectId()), name=section_name)
+
                 return JsonResponse({"message": "Contract sum saved successfully", "id": section._id}, status=201)
             
             if type == "section" and section_id:
                 section = models.ContractSumSection.objects.filter(_id=section_id).update(name=section_name)
+
                 return JsonResponse({"message": "Contract sum updated successfully", "id": section_id}, status=200)
             
             if type == "row" and not row_id and section_id:
                 row = models.ContractSum.objects.create(_id=str(ObjectId()), ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, section_id=section_id)
-                return JsonResponse({"message": "Contract sum row saved successfully", "id": row._id}, status=201)
+                total_contract_sum, total_certified_payments, summary_id = self.updateCostSummaryFields(section_id)
+
+                cost_summary = models.CostSummary.objects.all()
+                cost_total_contract_sum = sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum)
+                cost_total_certified_payments_sum = sum(Decimal(str(obj.certified_payments)) for obj in cost_summary if obj.certified_payments)
+
+                return JsonResponse({"message": "Contract sum row saved successfully", "id": row._id, "total_contract_sum": total_contract_sum, "total_certified_payments": total_certified_payments, "summary_id": summary_id, "cost_total_contract_sum": cost_total_contract_sum, "cost_total_certified_payments_sum": cost_total_certified_payments_sum}, status=201)
             
             if type == "row" and row_id and section_id:
                 row = models.ContractSum.objects.filter(_id=row_id).update(ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, section_id=section_id)
-                return JsonResponse({"message": "Contract sum row updated successfully", "id": row_id}, status=200)
+                total_contract_sum, total_certified_payments, summary_id = self.updateCostSummaryFields(section_id)
+
+                cost_summary = models.CostSummary.objects.all()
+                cost_total_contract_sum = sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum)
+                cost_total_certified_payments_sum = sum(Decimal(str(obj.certified_payments)) for obj in cost_summary if obj.certified_payments)
+
+                return JsonResponse({"message": "Contract sum row updated successfully", "id": row_id, "total_contract_sum": total_contract_sum, "total_certified_payments": total_certified_payments, "summary_id": summary_id, "cost_total_contract_sum": cost_total_contract_sum, "cost_total_certified_payments_sum": cost_total_certified_payments_sum}, status=200)
 
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=400)

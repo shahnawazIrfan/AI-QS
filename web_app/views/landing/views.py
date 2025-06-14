@@ -1,6 +1,7 @@
 import logging
 from core.base import ViewBase
 from django.contrib.auth import logout
+from django.urls import reverse_lazy
 
 logger = logging.getLogger(__name__)
 
@@ -10,6 +11,8 @@ class landingView(ViewBase):
 
     def get(self, request, *args, **kwargs):
         logout(request)
+
+        return self.redirect(reverse_lazy('login_url'))
     
         context = {
             'nav': 'home',
@@ -22,6 +25,10 @@ class contactView(ViewBase):
     TEMPLATE_NAME = 'landing/contact.html'
 
     def get(self, request, *args, **kwargs):
+
+        logout(request)
+
+        return self.redirect(reverse_lazy('login_url'))
     
         context = {}
 

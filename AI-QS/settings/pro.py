@@ -6,6 +6,7 @@ DEBUG = False
 #==================================================Allowed Host==================================================
 
 ALLOWED_HOSTS = [
+    'portal.ai-qs.io',
     'ai-qs-env.eba-yphnswrv.eu-west-2.elasticbeanstalk.com'
 ]
 
