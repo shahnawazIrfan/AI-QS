@@ -108,6 +108,10 @@ class CostSummary(models.Model):
     variance_period = models.FloatField(blank=True, null=True)
     section = models.ForeignKey(CostSummarySection, on_delete=models.CASCADE, related_name="cost_summaries")
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.CharField(max_length=50)
+
     def __str__(self):
         return f"{self.section.name} - {self.ref}"
 
@@ -133,6 +137,10 @@ class ContractSum(models.Model):
     contract_sum = models.FloatField(blank=True, null=True)
     certified_payments = models.FloatField(blank=True, null=True)
     section = models.ForeignKey(ContractSumSection, on_delete=models.CASCADE, related_name="contract_sums")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.section.name} - {self.ref}"
@@ -161,6 +169,10 @@ class ChangeBreakDown(models.Model):
     variance_total = models.FloatField(blank=True, null=True)
     variance_period = models.FloatField(blank=True, null=True)
     section = models.ForeignKey(ChangeBreakDownSection, on_delete=models.CASCADE, related_name="change_breakdown")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.section.name} - {self.ref}"

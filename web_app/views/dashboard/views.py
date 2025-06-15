@@ -21,6 +21,7 @@ from django.conf import settings
 from openpyxl.styles import Font
 from web_app import models
 from django.db.models import Q
+from django.utils import timezone
 
 matplotlib.use('Agg')
 
@@ -86,6 +87,7 @@ class CostDashboardView(ViewBase):
             for cost_summary in section.cost_summaries.all():
                 cost_summary_dict = model_to_dict(cost_summary, exclude=["section"])
                 cost_summary_dict["id"] = str(cost_summary._id)
+                cost_summary_dict["updated_at"] = timezone.localtime(cost_summary.updated_at).strftime("%m/%d/%Y")
                 section_dict["rows"].append(cost_summary_dict)
 
             new_cost_summary_data.append(section_dict)
@@ -107,6 +109,7 @@ class CostDashboardView(ViewBase):
             for contract_sum in section.contract_sums.all():
                 contract_sum_dict = model_to_dict(contract_sum, exclude=["section"])
                 contract_sum_dict["id"] = str(contract_sum._id)
+                contract_sum_dict["updated_at"] = timezone.localtime(contract_sum.updated_at).strftime("%m/%d/%Y")
                 section_dict["rows"].append(contract_sum_dict)
 
             new_contract_sum_data.append(section_dict)
@@ -128,6 +131,7 @@ class CostDashboardView(ViewBase):
             for change_breakdown in section.change_breakdown.all():
                 change_breakdown_dict = model_to_dict(change_breakdown, exclude=["section"])
                 change_breakdown_dict["id"] = str(change_breakdown._id)
+                change_breakdown_dict["updated_at"] = timezone.localtime(change_breakdown.updated_at).strftime("%m/%d/%Y")
                 section_dict["rows"].append(change_breakdown_dict)
 
             new_change_breakdown_data.append(section_dict)

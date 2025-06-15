@@ -1,5 +1,6 @@
 {% extends 'portal_base.html' %}
 {% load static %}
+{% load generics %}
 {% block page_content %}
 
 <link href="https://fonts.googleapis.com/css?family=Plus+Jakarta+Sans&display=swap" rel="stylesheet" />
@@ -6781,13 +6782,15 @@
                             <th>Total Expenditure</th>
                             <th>Variance Total</th>
                             <th>Variance Period</th>
+                            <th>Updated At</th>
+                            <th>Updated By</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for cost in new_cost_summary_data %}
                             <tr class="section-header" data-id="{{ cost.section_id }}">
-                                <th colspan="8" onclick="costSummaryMakeEditable(this)">{{ cost.section_name }}</th>
+                                <th colspan="10" onclick="costSummaryMakeEditable(this)">{{ cost.section_name }}</th>
                                 <th>
                                     <button class="add-btn" onclick="costSummaryAddNewRow('{{ cost.section_id }}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
                                     <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
@@ -6804,6 +6807,8 @@
                                     <td onclick="costSummaryMakeEditable(this)">£{{ row.total_expenditure }}</td>
                                     <td onclick="costSummaryMakeEditable(this)">£{{ row.variance_total }}</td>
                                     <td onclick="costSummaryMakeEditable(this)">£{{ row.variance_period }}</td>
+                                    <td>{{ row.updated_at }}</td>
+                                    <td>{{ row.updated_by }}</td>
                                     <td>
                                         <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
                                         <button class="delete-btn" onclick="costSummaryDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
@@ -6829,6 +6834,8 @@
                         <th class="item" style="text-align: center;">Item</th>
                         <th>Contract Sum</th>
                         <th>Certified Payments</th>
+                        <th>Updated At</th>
+                        <th>Updated By</th>
                         <th>Actions</th>
                         <th></th>
                     </tr>
@@ -6836,7 +6843,7 @@
                 <tbody>
                     {% for contract in new_contract_sum_data %}
                         <tr class="section-header" data-id="{{ contract.section_id }}">
-                            <th colspan="4" onclick="contractSumMakeEditable(this)">{{ contract.section_name }}</th>
+                            <th colspan="6" onclick="contractSumMakeEditable(this)">{{ contract.section_name }}</th>
                             <th>
                                 <button class="add-btn" onclick="contractSumAddNewRow('{{ contract.section_id }}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
                                 <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
@@ -6849,11 +6856,13 @@
                                 <td class="item" onclick="contractSumMakeEditable(this)">{{ row.item }}</td>
                                 <td onclick="contractSumMakeEditable(this)">£{{ row.contract_sum }}</td>
                                 <td onclick="contractSumMakeEditable(this)">£{{ row.certified_payments }}</td>
+                                <td>{{ row.updated_at }}</td>
+                                <td>{{ row.updated_by }}</td>
                                 <td>
                                     <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
                                     <button class="delete-btn" onclick="contractSumDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
                                 </td>
-                                <td><span id="contract_sum_forecast">£{{ row.certified_payments }}</span></td>
+                                <td><span id="contract_sum_forecast">£{{ row.contract_sum|subtract:row.certified_payments }}</span></td>
                             </tr>
                         {% endfor %}
 
@@ -6910,13 +6919,15 @@
                             <th>Total Expenditure</th>
                             <th>Variance Total</th>
                             <th>Variance Period</th>
+                            <th>Updated At</th>
+                            <th>Updated By</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for change in new_change_breakdown_data %}
                             <tr class="section-header" data-id="{{ change.section_id }}">
-                                <th colspan="6" onclick="changeBreakDownMakeEditable(this)">{{ change.section_name }}</th>
+                                <th colspan="8" onclick="changeBreakDownMakeEditable(this)">{{ change.section_name }}</th>
                                 <th>
                                     <button class="add-btn" onclick="changeBreakDownAddNewRow('{{ change.section_id }}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
                                     <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
@@ -6931,6 +6942,8 @@
                                     <td onclick="changeBreakDownMakeEditable(this)">£{{ row.total_expenditure }}</td>
                                     <td onclick="changeBreakDownMakeEditable(this)">£{{ row.variance_total }}</td>
                                     <td onclick="changeBreakDownMakeEditable(this)">£{{ row.variance_period }}</td>
+                                    <td>{{ row.updated_at }}</td>
+                                    <td>{{ row.updated_by }}</td>
                                     <td>
                                         <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
                                         <button class="delete-btn" onclick="changeBreakDownDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
@@ -7065,7 +7078,7 @@
         sectionHeader.classList.add("section-header");
         sectionHeader.setAttribute("data-tempid", Math.random().toString(16).substr(2, 24));
         sectionHeader.innerHTML = `
-    <th colspan="8" onclick="costSummaryMakeEditable(this)">${costSummarySectionCount}</th>
+    <th colspan="10" onclick="costSummaryMakeEditable(this)">${costSummarySectionCount}</th>
     <th>
         <button class="add-btn" onclick="costSummaryAddNewRow('${sectionHeader.getAttribute("data-tempid")}', ${costSummarySectionCount})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
         <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
@@ -7128,6 +7141,8 @@
             <td onclick="costSummaryMakeEditable(this)"></td>
             <td onclick="costSummaryMakeEditable(this)"></td>
             <td onclick="costSummaryMakeEditable(this)"></td>
+            <td></td>
+            <td></td>
             <td>
                 <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
                 <button class="delete-btn" onclick="costSummaryDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
@@ -7351,7 +7366,7 @@
         sectionHeader.classList.add("section-header");
         sectionHeader.setAttribute("data-tempid", Math.random().toString(16).substr(2, 24));
         sectionHeader.innerHTML = `
-    <th colspan="4" onclick="contractSumMakeEditable(this)">${contractSumSectionCount}</th>
+    <th colspan="6" onclick="contractSumMakeEditable(this)">${contractSumSectionCount}</th>
     <th>
         <button class="add-btn" onclick="contractSumAddNewRow('${sectionHeader.getAttribute("data-tempid")}', ${contractSumSectionCount})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
         <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
@@ -7410,6 +7425,8 @@
             <td class="item" onclick="contractSumMakeEditable(this)"></td>
             <td onclick="contractSumMakeEditable(this)"></td>
             <td onclick="contractSumMakeEditable(this)"></td>
+            <td></td>
+            <td></td>
             <td>
                 <button class="save-btn" onclick="contractSumSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
                 <button class="delete-btn" onclick="contractSumDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
@@ -7605,7 +7622,7 @@
         sectionHeader.classList.add("section-header");
         sectionHeader.setAttribute("data-tempid", Math.random().toString(16).substr(2, 24));
         sectionHeader.innerHTML = `
-    <th colspan="6" onclick="changeBreakDownMakeEditable(this)">${changeBreakDownSectionCount}</th>
+    <th colspan="8" onclick="changeBreakDownMakeEditable(this)">${changeBreakDownSectionCount}</th>
     <th>
         <button class="add-btn" onclick="changeBreakDownAddNewRow('${sectionHeader.getAttribute("data-tempid")}', ${changeBreakDownSectionCount})"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
         <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
@@ -7666,6 +7683,8 @@
             <td onclick="changeBreakDownMakeEditable(this)"></td>
             <td onclick="changeBreakDownMakeEditable(this)"></td>
             <td onclick="changeBreakDownMakeEditable(this)"></td>
+            <td></td>
+            <td></td>
             <td>
                 <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
                 <button class="delete-btn" onclick="changeBreakDownDeleteRow(this)"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash-2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
