@@ -1356,14 +1356,11 @@
     }
 
     .v2035_16816 {
-        width: 16px;
-        height: 18px;
-        background: url("../images/v2035_16816.png");
         opacity: 1;
         position: absolute;
-        top: 285px;
-        left: 851px;
-        border: 1.5px solid rgba(133, 204, 87, 1);
+        top: 18px;
+        left: 1077px;
+        cursor: pointer;
     }
 
     .v2035_16656 {
@@ -3362,7 +3359,7 @@
         opacity: 1;
         position: relative;
         top: 8px;
-        left: 915px;
+        left: 875px;
         cursor: pointer;
     }
 
@@ -4455,8 +4452,8 @@
     .v2036_14924 {
         opacity: 1;
         position: absolute;
-        bottom: 8px;
-        left: 350px;
+        top: 19px;
+        left: 630px;
         cursor: pointer;
     }
 
@@ -5093,7 +5090,7 @@
         opacity: 1;
         position: relative;
         top: 8px;
-        left: 580px;
+        left: 545px;
         cursor: pointer;
     }
 
@@ -5107,8 +5104,8 @@
     .v2038_21394 {
         opacity: 1;
         position: absolute;
-        bottom: 9px;
-        left: 400px;
+        top: 20px;
+        left: 745px;
         cursor: pointer;
     }
 
@@ -6584,7 +6581,7 @@
         opacity: 1;
         position: relative;
         top: 8px;
-        left: 465px;
+        left: 430px;
         cursor: pointer;
     }
 
@@ -6769,6 +6766,7 @@
     <div class="v2035_16656">
         <div class="v2035_16657"><span class="v2035_16658">Cost Summary Breakdown</span>
             <div class="v2035_16817" onclick="costSummaryAddNewSection()"><img class="img-fluid" src="{% static 'img/add_section.svg' %}" alt=""></div>
+            <div class="v2035_16816" onclick="toggleFullscreen('costSummaryTable')"><img class="img-fluid" src="{% static 'img/maximize.svg' %}" alt=""></div>
             <div class="v2035_16818"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
             <div class="table-container mt-3">
                 <table id="costSummaryTable">
@@ -6825,6 +6823,7 @@
     </div>
     <div class="v2035_16820"><span class="v2035_16821">Contract Sum Breakdown</span>
         <div class="v2036_14922" onclick="contractSumAddNewSection()"><img class="img-fluid" src="{% static 'img/add_section.svg' %}" alt=""></div>
+        <div class="v2036_14924" onclick="toggleFullscreen('contractSumTable')"><img class="img-fluid" src="{% static 'img/maximize.svg' %}" alt=""></div>
         <div class="v2036_14923"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
         <div class="table-container mt-3">
             <table id="contractSumTable">
@@ -6908,6 +6907,7 @@
     <div class="v2038_21389">
         <div class="v2038_21390"><span class="v2038_21391">Change Breakdown</span>
             <div class="v2038_21392" onclick="changeBreakDownAddNewSection()"><img class="img-fluid" src="{% static 'img/add_section.svg' %}" alt=""></div>
+            <div class="v2038_21394" onclick="toggleFullscreen('changeBreakDownTable')"><img class="img-fluid" src="{% static 'img/maximize.svg' %}" alt=""></div>
             <div class="v2038_21393"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
             <div class="table-container mt-3" style="max-height: 450px;">
                 <table id="changeBreakDownTable">
@@ -7975,6 +7975,34 @@
     });
 
     // download cost report end
+
+    // toggle full screen mode for tables
+
+    function toggleFullscreen(tableId) {
+        const table = document.getElementById(tableId);
+        const container = table.parentElement.previousSibling.previousSibling.previousSibling.parentElement;
+
+        if (!document.fullscreenElement &&
+            !document.webkitFullscreenElement &&
+            !document.msFullscreenElement) {
+
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            } else if (container.msRequestFullscreen) {
+                container.msRequestFullscreen();
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+    }
 
 </script>
 
