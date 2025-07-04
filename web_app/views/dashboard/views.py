@@ -188,7 +188,7 @@ class CostDashboardView(ViewBase):
 
         new_cost_summary_sheet = wb["NEW Cost Summary"]
 
-        new_cost_summary_required_columns = {"Ref", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE", "VARIANCE - TOTAL ", "VARIANCE - IN PERIOD"}
+        new_cost_summary_required_columns = {"ICMS2", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE", "VARIANCE - TOTAL ", "VARIANCE - IN PERIOD"}
 
         new_cost_summary_headers = [cell.value for cell in new_cost_summary_sheet[1]]
 
@@ -202,12 +202,12 @@ class CostDashboardView(ViewBase):
             item = {new_cost_summary_headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else 0.0) for i in range(len(new_cost_summary_headers))}
             
             try:
-                if "." not in item['Ref'] and item['Item'] != "" and all(v == 0.0 for k, v in item.items() if k not in ["Ref", "Item"]):
+                if "." not in item['ICMS2'] and item['Item'] != "":
                     section = models.CostSummarySection.objects.create(_id=str(ObjectId()), name=item['Item'])
                     new_cost_summary_section_id = section._id
 
-                elif "." in item['Ref'] and any(v not in [0.0, ""] for k, v in item.items() if k != "Ref"):
-                    row = models.CostSummary.objects.create(_id=str(ObjectId()), ref=item['Ref'], item=item['Item'], contract_sum=item['CONTRACT SUM'], certified_payments=item['CERTIFIED PAYMENTS TO CONTRACTOR'], accrued_payments=item['ACCRUED & ANTICIPATED PAYMENTS'], total_expenditure=item['TOTAL FORECAST EXPENDITURE'], variance_total=item['VARIANCE - TOTAL '], variance_period=item['VARIANCE - IN PERIOD'], section_id=new_cost_summary_section_id)
+                elif "." in item['ICMS2'] and item['Item'] != "":
+                    row = models.CostSummary.objects.create(_id=str(ObjectId()), ref=item['ICMS2'], item=item['Item'], contract_sum=item['CONTRACT SUM'], certified_payments=item['CERTIFIED PAYMENTS TO CONTRACTOR'], accrued_payments=item['ACCRUED & ANTICIPATED PAYMENTS'], total_expenditure=item['TOTAL FORECAST EXPENDITURE'], variance_total=item['VARIANCE - TOTAL '], variance_period=item['VARIANCE - IN PERIOD'], section_id=new_cost_summary_section_id)
 
             except Exception as e:
                 print(e)
@@ -221,7 +221,7 @@ class CostDashboardView(ViewBase):
 
         new_contract_sum_sheet = wb["NEW Contract Sum"]
 
-        new_contract_sum_required_columns = {"Ref", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR"}
+        new_contract_sum_required_columns = {"ICMS2", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR"}
 
         new_contract_sum_headers = [cell.value for cell in new_contract_sum_sheet[1]]
 
@@ -241,14 +241,14 @@ class CostDashboardView(ViewBase):
             }
 
             try:
-                if "." not in item['Ref'] and item['Item'] != "" and all(v == 0.0 for k, v in item.items() if k not in ["Ref", "Item"]):
+                if "." not in item['ICMS2'] and item['Item'] != "":
                     section = models.ContractSumSection.objects.create(_id=str(ObjectId()), name=item['Item'])
                     new_contract_sum_section_id = section._id
 
-                elif "." in item['Ref'] and any(v not in [0.0, ""] for k, v in item.items() if k != "Ref"):
+                elif "." in item['ICMS2'] and item['Item'] != "":
                     row = models.ContractSum.objects.create(
                         _id=str(ObjectId()),
-                        ref=item['Ref'],
+                        ref=item['ICMS2'],
                         item=item['Item'],
                         contract_sum=item['CONTRACT SUM'],
                         certified_payments=item['CERTIFIED PAYMENTS TO CONTRACTOR'],
@@ -285,11 +285,11 @@ class CostDashboardView(ViewBase):
             }
 
             try:
-                if "." not in item['Ref'] and item['Item'] != "" and all(v == 0.0 for k, v in item.items() if k not in ["Ref", "Item"]):
+                if "." not in item['Ref'] and item['Item'] != "":
                     section = models.ChangeBreakDownSection.objects.create(_id=str(ObjectId()), name=item['Item'])
                     new_change_breakdown_section_id = section._id
 
-                elif "." in item['Ref'] and any(v not in [0.0, ""] for k, v in item.items() if k != "Ref"):
+                elif "." in item['Ref'] and item['Item'] != "":
                     row = models.ChangeBreakDown.objects.create(
                         _id=str(ObjectId()),
                         ref=item['Ref'],
