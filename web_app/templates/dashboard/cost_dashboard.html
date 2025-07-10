@@ -6601,6 +6601,12 @@
         scrollbar-color: rgb(227 227 227) transparent;
     }
 
+    .fullscreen-active {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        overflow: unset !important;
+    }
+
     table {
         width: 97%;
         border-collapse: collapse;
@@ -7982,10 +7988,11 @@
         const table = document.getElementById(tableId);
         const container = table.parentElement.previousSibling.previousSibling.previousSibling.parentElement;
 
-        if (!document.fullscreenElement &&
+        if (
+            !document.fullscreenElement &&
             !document.webkitFullscreenElement &&
-            !document.msFullscreenElement) {
-
+            !document.msFullscreenElement
+        ) {
             if (container.requestFullscreen) {
                 container.requestFullscreen();
             } else if (container.webkitRequestFullscreen) {
@@ -7993,6 +8000,8 @@
             } else if (container.msRequestFullscreen) {
                 container.msRequestFullscreen();
             }
+
+            table.parentElement.classList.add("fullscreen-active");
         } else {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
@@ -8001,8 +8010,11 @@
             } else if (document.msExitFullscreen) {
                 document.msExitFullscreen();
             }
+
+            table.parentElement.classList.remove("fullscreen-active");
         }
     }
+
 
 </script>
 

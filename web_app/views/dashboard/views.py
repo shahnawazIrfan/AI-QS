@@ -22,6 +22,8 @@ from openpyxl.styles import Font
 from web_app import models
 from django.db.models import Q
 from django.utils import timezone
+from django.db import transaction
+
 
 matplotlib.use('Agg')
 
@@ -178,172 +180,160 @@ class CostDashboardView(ViewBase):
             return JsonResponse({"error": "No file uploaded"}, status=400)
 
         file = request.FILES["file"]
-
         wb = openpyxl.load_workbook(file, data_only=True)
 
-        # new cost summary sheet
-        
-        if "NEW Cost Summary" not in wb.sheetnames:
-            return JsonResponse({"error": "Sheet 'NEW Cost Summary' not found"}, status=400)
+        try:
+            with transaction.atomic():
 
-        new_cost_summary_sheet = wb["NEW Cost Summary"]
+                # === NEW COST SUMMARY ===
+                if "NEW Cost Summary" not in wb.sheetnames:
+                    return JsonResponse({"error": "Sheet 'NEW Cost Summary' not found"}, status=400)
 
-        new_cost_summary_required_columns = {"ICMS2", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE", "VARIANCE - TOTAL ", "VARIANCE - IN PERIOD"}
+                sheet = wb["NEW Cost Summary"]
+                headers = [cell.value for cell in sheet[1]]
+                required = {"ICMS2", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE", "VARIANCE - TOTAL ", "VARIANCE - IN PERIOD"}
+                if missing := required - set(headers):
+                    return JsonResponse({"error": f"Missing columns in 'NEW Cost Summary': {', '.join(missing)}"}, status=400)
 
-        new_cost_summary_headers = [cell.value for cell in new_cost_summary_sheet[1]]
+                cs_sections, cs_items = [], []
+                cs_section_id = None
+                for row in sheet.iter_rows(min_row=2, values_only=True):
+                    data = {
+                        headers[i]: str(row[i]) if headers[i] == "ICMS2" else (row[i] if row[i] not in [None, ""] else 0.0)
+                        for i in range(len(headers))
+                    }
+                    if "." not in str(data["ICMS2"]) and data["Item"]:
+                        section = models.CostSummarySection(_id=str(ObjectId()), name=data["Item"])
+                        cs_sections.append(section)
+                        cs_section_id = section._id
+                    elif "." in str(data["ICMS2"]) and data["Item"]:
+                        cs_items.append(models.CostSummary(
+                            _id=str(ObjectId()),
+                            ref=data["ICMS2"],
+                            item=data["Item"],
+                            contract_sum=data["CONTRACT SUM"],
+                            certified_payments=data["CERTIFIED PAYMENTS TO CONTRACTOR"],
+                            accrued_payments=data["ACCRUED & ANTICIPATED PAYMENTS"],
+                            total_expenditure=data["TOTAL FORECAST EXPENDITURE"],
+                            variance_total=data["VARIANCE - TOTAL "],
+                            variance_period=data["VARIANCE - IN PERIOD"],
+                            section_id=cs_section_id
+                        ))
 
-        new_cost_summary_missing_columns = new_cost_summary_required_columns - set(new_cost_summary_headers)
-        if new_cost_summary_missing_columns:
-            return JsonResponse({"error": f"Invalid format for Sheet 'NEW Cost Summary': Missing columns - {', '.join(new_cost_summary_missing_columns)}"}, status=400)
+                models.CostSummarySection.objects.bulk_create(cs_sections)
+                models.CostSummary.objects.bulk_create(cs_items)
 
-        new_cost_summary_section_id = ""
+                # === NEW CONTRACT SUM ===
+                if "NEW Contract Sum" not in wb.sheetnames:
+                    return JsonResponse({"error": "Sheet 'NEW Contract Sum' not found"}, status=400)
 
-        for row in new_cost_summary_sheet.iter_rows(min_row=2, values_only=True):
-            item = {new_cost_summary_headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else 0.0) for i in range(len(new_cost_summary_headers))}
-            
-            try:
-                if "." not in item['ICMS2'] and item['Item'] != "":
-                    section = models.CostSummarySection.objects.create(_id=str(ObjectId()), name=item['Item'])
-                    new_cost_summary_section_id = section._id
+                sheet = wb["NEW Contract Sum"]
+                headers = [cell.value for cell in sheet[1]]
+                required = {"ICMS2", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR"}
+                if missing := required - set(headers):
+                    return JsonResponse({"error": f"Missing columns in 'NEW Contract Sum': {', '.join(missing)}"}, status=400)
 
-                elif "." in item['ICMS2'] and item['Item'] != "":
-                    row = models.CostSummary.objects.create(_id=str(ObjectId()), ref=item['ICMS2'], item=item['Item'], contract_sum=item['CONTRACT SUM'], certified_payments=item['CERTIFIED PAYMENTS TO CONTRACTOR'], accrued_payments=item['ACCRUED & ANTICIPATED PAYMENTS'], total_expenditure=item['TOTAL FORECAST EXPENDITURE'], variance_total=item['VARIANCE - TOTAL '], variance_period=item['VARIANCE - IN PERIOD'], section_id=new_cost_summary_section_id)
+                csum_sections, csum_items = [], []
+                csum_section_id = None
+                for row in sheet.iter_rows(min_row=2, values_only=True):
+                    data = {
+                        headers[i]: str(row[i]) if headers[i] == "ICMS2" else (row[i] if row[i] not in [None, ""] else 0.0)
+                        for i in range(len(headers))
+                    }
+                    if "." not in str(data["ICMS2"]) and data["Item"]:
+                        section = models.ContractSumSection(_id=str(ObjectId()), name=data["Item"])
+                        csum_sections.append(section)
+                        csum_section_id = section._id
+                    elif "." in str(data["ICMS2"]) and data["Item"]:
+                        csum_items.append(models.ContractSum(
+                            _id=str(ObjectId()),
+                            ref=data["ICMS2"],
+                            item=data["Item"],
+                            contract_sum=data["CONTRACT SUM"],
+                            certified_payments=data["CERTIFIED PAYMENTS TO CONTRACTOR"],
+                            section_id=csum_section_id
+                        ))
 
-            except Exception as e:
-                print(e)
-                pass
+                models.ContractSumSection.objects.bulk_create(csum_sections)
+                models.ContractSum.objects.bulk_create(csum_items)
 
+                # === NEW EAChange ===
+                if "NEW EAChange" not in wb.sheetnames:
+                    return JsonResponse({"error": "Sheet 'NEW EAChange' not found"}, status=400)
 
-        # new contract sum sheet
+                sheet = wb["NEW EAChange"]
+                headers = [cell.value for cell in sheet[1]]
+                required = {"Ref", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE", "VARIANCE - TOTAL ", "VARIANCE - IN PERIOD"}
+                if missing := required - set(headers):
+                    return JsonResponse({"error": f"Missing columns in 'NEW EAChange': {', '.join(missing)}"}, status=400)
 
-        if "NEW Contract Sum" not in wb.sheetnames:
-            return JsonResponse({"error": "Sheet 'NEW Contract Sum' not found"}, status=400)
+                ea_sections, ea_items = [], []
+                ea_section_id = None
+                for row in sheet.iter_rows(min_row=2, values_only=True):
+                    data = {
+                        headers[i]: str(row[i]) if headers[i] == "Ref" else (row[i] if row[i] not in [None, ""] else 0.0)
+                        for i in range(len(headers))
+                    }
+                    if "." not in str(data["Ref"]) and data["Item"]:
+                        section = models.ChangeBreakDownSection(_id=str(ObjectId()), name=data["Item"])
+                        ea_sections.append(section)
+                        ea_section_id = section._id
+                    elif "." in str(data["Ref"]) and data["Item"]:
+                        ea_items.append(models.ChangeBreakDown(
+                            _id=str(ObjectId()),
+                            ref=data["Ref"],
+                            item=data["Item"],
+                            certified_payments=data["CERTIFIED PAYMENTS TO CONTRACTOR"],
+                            total_expenditure=data["TOTAL FORECAST EXPENDITURE"],
+                            variance_total=data["VARIANCE - TOTAL "],
+                            variance_period=data["VARIANCE - IN PERIOD"],
+                            section_id=ea_section_id
+                        ))
 
-        new_contract_sum_sheet = wb["NEW Contract Sum"]
+                models.ChangeBreakDownSection.objects.bulk_create(ea_sections)
+                models.ChangeBreakDown.objects.bulk_create(ea_items)
 
-        new_contract_sum_required_columns = {"ICMS2", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR"}
+            # === NEW COST REPORTING ===
+            if "New Cost Reporting " not in wb.sheetnames:
+                return JsonResponse({"error": "Sheet 'New Cost Reporting' not found"}, status=400)
 
-        new_contract_sum_headers = [cell.value for cell in new_contract_sum_sheet[1]]
+            new_cost_reporting_sheet = wb["New Cost Reporting "]
 
-        new_contract_sum_missing_columns = new_contract_sum_required_columns - set(new_contract_sum_headers)
-        if new_contract_sum_missing_columns:
-            return JsonResponse(
-                {"error": f"Invalid format for Sheet 'NEW Contract Sum': Missing columns - {', '.join(new_contract_sum_missing_columns)}"},
-                status=400
-            )
+            new_cost_reporting_required_columns = {"Interim Payments", "Month", "Forecast Monthly", "Actual Monthly", "Forecast Cumulative", "Actual Cumulative"}
 
-        new_contract_sum_section_id = ""
+            new_cost_reporting_headers = [cell.value for cell in new_cost_reporting_sheet[1]]
 
-        for row in new_contract_sum_sheet.iter_rows(min_row=2, values_only=True):
-            item = {
-                new_contract_sum_headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else 0.0)
-                for i in range(len(new_contract_sum_headers))
-            }
-
-            try:
-                if "." not in item['ICMS2'] and item['Item'] != "":
-                    section = models.ContractSumSection.objects.create(_id=str(ObjectId()), name=item['Item'])
-                    new_contract_sum_section_id = section._id
-
-                elif "." in item['ICMS2'] and item['Item'] != "":
-                    row = models.ContractSum.objects.create(
-                        _id=str(ObjectId()),
-                        ref=item['ICMS2'],
-                        item=item['Item'],
-                        contract_sum=item['CONTRACT SUM'],
-                        certified_payments=item['CERTIFIED PAYMENTS TO CONTRACTOR'],
-                        section_id=new_contract_sum_section_id
-                    )
-
-            except Exception:
-                pass
-
-        # new change breakdown sheet
-
-        if "NEW EAChange" not in wb.sheetnames:
-            return JsonResponse({"error": "Sheet 'NEW EAChange' not found"}, status=400)
-
-        new_change_breakdown_sheet = wb["NEW EAChange"]
-
-        new_change_breakdown_required_columns = {"Ref", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR", "ACCRUED & ANTICIPATED PAYMENTS", "TOTAL FORECAST EXPENDITURE", "VARIANCE - TOTAL ", "VARIANCE - IN PERIOD"}
-
-        new_change_breakdown_headers = [cell.value for cell in new_change_breakdown_sheet[1]]
-
-        new_change_breakdown_missing_columns = new_change_breakdown_required_columns - set(new_change_breakdown_headers)
-        if new_change_breakdown_missing_columns:
-            return JsonResponse(
-                {"error": f"Invalid format for Sheet 'NEW Change Breakdown': Missing columns - {', '.join(new_change_breakdown_missing_columns)}"},
-                status=400
-            )
-
-        new_change_breakdown_section_id = ""
-
-        for row in new_change_breakdown_sheet.iter_rows(min_row=2, values_only=True):
-            item = {
-                new_change_breakdown_headers[i]: str(row[i]) if isinstance(row[i], (int, float)) else (row[i] if row[i] not in [None, ""] else 0.0)
-                for i in range(len(new_change_breakdown_headers))
-            }
-
-            try:
-                if "." not in item['Ref'] and item['Item'] != "":
-                    section = models.ChangeBreakDownSection.objects.create(_id=str(ObjectId()), name=item['Item'])
-                    new_change_breakdown_section_id = section._id
-
-                elif "." in item['Ref'] and item['Item'] != "":
-                    row = models.ChangeBreakDown.objects.create(
-                        _id=str(ObjectId()),
-                        ref=item['Ref'],
-                        item=item['Item'],
-                        certified_payments=item['CERTIFIED PAYMENTS TO CONTRACTOR'],
-                        total_expenditure=item['TOTAL FORECAST EXPENDITURE'],
-                        variance_total=item['VARIANCE - TOTAL '],
-                        variance_period=item['VARIANCE - IN PERIOD'],
-                        section_id=new_change_breakdown_section_id
-                    )
-
-            except Exception:
-                pass
-
-        
-        # new cost reporting sheet
-
-        if "New Cost Reporting " not in wb.sheetnames:
-            return JsonResponse({"error": "Sheet 'New Cost Reporting' not found"}, status=400)
-
-        new_cost_reporting_sheet = wb["New Cost Reporting "]
-
-        new_cost_reporting_required_columns = {"Interim Payments", "Month", "Forecast Monthly", "Actual Monthly", "Forecast Cumulative", "Actual Cumulative"}
-
-        new_cost_reporting_headers = [cell.value for cell in new_cost_reporting_sheet[1]]
-
-        new_cost_reporting_missing_columns = new_cost_reporting_required_columns - set(new_cost_reporting_headers)
-        if new_cost_reporting_missing_columns:
-            return JsonResponse(
-                {"error": f"Invalid format for Sheet 'New Cost Reporting': Missing columns - {', '.join(new_cost_reporting_missing_columns)}"},
-                status=400
-            )
-
-        for row in new_cost_reporting_sheet.iter_rows(min_row=2, values_only=True):
-            item = {
-                new_cost_reporting_headers[i]: str(row[i]) if isinstance(row[i], (int, float)) 
-                else (row[i] if row[i] not in [None, "", "#REF!"] else 0.0)
-                for i in range(len(new_cost_reporting_headers))
-            }
-
-            try:
-                models.CostReporting.objects.create(
-                    _id=str(ObjectId()),
-                    interim_payments=item['Interim Payments'],
-                    month=item['Month'] + timedelta(days=1),
-                    forecast_monthly=item['Forecast Monthly'],
-                    actual_monthly=item['Actual Monthly'],
-                    forecast_comulative=item['Forecast Cumulative'],
-                    actual_comulative=item['Actual Cumulative']
+            new_cost_reporting_missing_columns = new_cost_reporting_required_columns - set(new_cost_reporting_headers)
+            if new_cost_reporting_missing_columns:
+                return JsonResponse(
+                    {"error": f"Invalid format for Sheet 'New Cost Reporting': Missing columns - {', '.join(new_cost_reporting_missing_columns)}"},
+                    status=400
                 )
-            except Exception:
-                pass
 
-        return JsonResponse({"message": "File processed successfully"}, status=201)
+            for row in new_cost_reporting_sheet.iter_rows(min_row=2, values_only=True):
+                item = {
+                    new_cost_reporting_headers[i]: str(row[i]) if isinstance(row[i], (int, float)) 
+                    else (row[i] if row[i] not in [None, "", "#REF!"] else 0.0)
+                    for i in range(len(new_cost_reporting_headers))
+                }
+
+                try:
+                    models.CostReporting.objects.create(
+                        _id=str(ObjectId()),
+                        interim_payments=item['Interim Payments'],
+                        month=item['Month'] + timedelta(days=1),
+                        forecast_monthly=item['Forecast Monthly'],
+                        actual_monthly=item['Actual Monthly'],
+                        forecast_comulative=item['Forecast Cumulative'],
+                        actual_comulative=item['Actual Cumulative']
+                    )
+                except Exception:
+                    pass
+
+            return JsonResponse({"message": "File processed successfully"}, status=201)
+
+        except Exception as e:
+            return JsonResponse({"error": f"Processing failed: {str(e)}"}, status=500)
     
 
 class RiskDashboardView(ViewBase):
