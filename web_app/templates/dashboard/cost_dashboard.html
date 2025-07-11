@@ -6602,9 +6602,16 @@
     }
 
     .fullscreen-active {
-        height: 100vh !important;
-        max-height: 100vh !important;
-        overflow: unset !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        max-height: none;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        background: #fff;
+        z-index: 9999;
     }
 
     table {
@@ -7986,13 +7993,15 @@
 
     function toggleFullscreen(tableId) {
         const table = document.getElementById(tableId);
+        if (!table) return;
+
         const container = table.parentElement.previousSibling.previousSibling.previousSibling.parentElement;
 
-        if (
-            !document.fullscreenElement &&
-            !document.webkitFullscreenElement &&
-            !document.msFullscreenElement
-        ) {
+        if (!document.fullscreenElement) {
+            // Fullscreen ON
+            container.classList.add("fullscreen-active");
+            table.parentElement.style.maxHeight = "none";
+
             if (container.requestFullscreen) {
                 container.requestFullscreen();
             } else if (container.webkitRequestFullscreen) {
@@ -8000,9 +8009,8 @@
             } else if (container.msRequestFullscreen) {
                 container.msRequestFullscreen();
             }
-
-            table.parentElement.classList.add("fullscreen-active");
         } else {
+            // Fullscreen OFF
             if (document.exitFullscreen) {
                 document.exitFullscreen();
             } else if (document.webkitExitFullscreen) {
@@ -8010,10 +8018,22 @@
             } else if (document.msExitFullscreen) {
                 document.msExitFullscreen();
             }
-
-            table.parentElement.classList.remove("fullscreen-active");
         }
     }
+
+    document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement) {
+            const active = document.querySelector(".fullscreen-active");
+            if (active) {
+                active.classList.remove("fullscreen-active");
+                const container = active.querySelector(".table-container");
+                if (container) {
+                    container.style.removeProperty('max-height');
+                }
+            }
+        }
+    });
+
 
 
 </script>
