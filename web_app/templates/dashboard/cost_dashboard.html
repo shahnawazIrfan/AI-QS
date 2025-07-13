@@ -3366,8 +3366,8 @@
     .v2035_16819 {
         opacity: 1;
         position: absolute;
-        bottom: 8px;
-        left: 584px;
+        top: 8px;
+        left: 680px;
         cursor: pointer;
     }
 
@@ -6778,6 +6778,7 @@
     </div>
     <div class="v2035_16656">
         <div class="v2035_16657"><span class="v2035_16658">Cost Summary Breakdown</span>
+            <div class="v2035_16819" onclick="costSummaryAddNewColumn()"><img class="img-fluid" src="{% static 'img/add_column.svg' %}" alt=""></div>
             <div class="v2035_16817" onclick="costSummaryAddNewSection()"><img class="img-fluid" src="{% static 'img/add_section.svg' %}" alt=""></div>
             <div class="v2035_16816" onclick="toggleFullscreen('costSummaryTable')"><img class="img-fluid" src="{% static 'img/maximize.svg' %}" alt=""></div>
             <div class="v2035_16818"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
@@ -7170,6 +7171,61 @@
 
         $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
     }
+
+    function costSummaryAddNewColumn() {
+        const table = document.getElementById("costSummaryTable");
+        const theadRow = table.querySelector("thead tr");
+        const tbodyRows = table.querySelectorAll("tbody tr");
+
+        const newHeader = document.createElement("th");
+        newHeader.textContent = "";
+        newHeader.setAttribute("onclick", "costSummaryMakeColumnEditable(this)");
+        theadRow.insertBefore(newHeader, theadRow.lastElementChild);
+        costSummaryMakeColumnEditable(newHeader);
+
+        tbodyRows.forEach(row => {
+            const isSectionHeader = row.classList.contains("section-header");
+
+            if (isSectionHeader) {
+                const th = row.querySelector("th[colspan]");
+                const currentColspan = parseInt(th.getAttribute("colspan"), 10);
+                th.setAttribute("colspan", currentColspan + 1);
+            } else {
+                const newCell = document.createElement("td");
+                newCell.setAttribute("onclick", "costSummaryMakeEditable(this)");
+                newCell.textContent = "";
+                row.insertBefore(newCell, row.lastElementChild);
+            }
+        });
+    }
+
+    function costSummaryMakeColumnEditable(cell) {
+        if (cell.querySelector("input")) return;
+
+        const originalValue = cell.innerText.trim();
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = originalValue;
+        cell.innerText = "";
+        cell.appendChild(input);
+        input.focus();
+
+        input.addEventListener("blur", function () {
+            cell.innerText = input.value.trim();
+            costSummarySaveColumnHeader(cell, originalValue); // Save
+        });
+
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                input.blur(); // Trigger save
+            } else if (e.key === "Escape") {
+                e.preventDefault();
+                cell.innerText = originalValue; // Cancel
+            }
+        });
+    }
+
 
     function costSummaryMakeEditable(cell) {
         if (cell.querySelector("input")) return;
