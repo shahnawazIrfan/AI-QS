@@ -6794,6 +6794,9 @@
                             <th>Total Expenditure</th>
                             <th>Variance Total</th>
                             <th>Variance Period</th>
+                            {% for header in new_cost_summary_dynamic_columns %}
+                                <th>{{ header }}</th>
+                            {% endfor %}
                             <th>Updated At</th>
                             <th>Updated By</th>
                             <th>Actions</th>
@@ -6802,7 +6805,7 @@
                     <tbody>
                         {% for cost in new_cost_summary_data %}
                             <tr class="section-header" data-id="{{ cost.section_id }}">
-                                <th colspan="10" onclick="costSummaryMakeEditable(this)">{{ cost.section_name }}</th>
+                                <th colspan="{{ new_cost_summary_dynamic_columns_colspan }}" onclick="costSummaryMakeEditable(this)">{{ cost.section_name }}</th>
                                 <th>
                                     <button class="add-btn" onclick="costSummaryAddNewRow('{{ cost.section_id }}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
                                     <button class="save-btn" onclick="costSummarySaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
@@ -6819,6 +6822,9 @@
                                     <td onclick="costSummaryMakeEditable(this)">£{{ row.total_expenditure }}</td>
                                     <td onclick="costSummaryMakeEditable(this)">£{{ row.variance_total }}</td>
                                     <td onclick="costSummaryMakeEditable(this)">£{{ row.variance_period }}</td>
+                                    {% for header in new_cost_summary_dynamic_columns %}
+                                        <td onclick="costSummaryMakeEditable(this)">£{{ row|get_item:header }}</td>
+                                    {% endfor %}
                                     <td>{{ row.updated_at }}</td>
                                     <td>{{ row.updated_by }}</td>
                                     <td>
@@ -7212,20 +7218,53 @@
 
         input.addEventListener("blur", function () {
             cell.innerText = input.value.trim();
-            costSummarySaveColumnHeader(cell, originalValue); // Save
+            costSummarySaveColumnHeader(cell, cell.innerText);
         });
 
         input.addEventListener("keydown", function (e) {
             if (e.key === "Enter") {
                 e.preventDefault();
-                input.blur(); // Trigger save
+                input.blur();
             } else if (e.key === "Escape") {
                 e.preventDefault();
-                cell.innerText = originalValue; // Cancel
+                cell.innerText = originalValue;
             }
         });
     }
 
+    function costSummarySaveColumnHeader(cell, name) {
+        const table = document.getElementById("costSummaryTable");
+        const headerCells = table.querySelectorAll("thead tr th");
+        const colIndex = Array.from(headerCells).indexOf(cell);
+
+        const bodyRows = table.querySelectorAll("tbody tr:not(.section-header)");
+        const rowData = [];
+
+        bodyRows.forEach(row => {
+            const refId = row.getAttribute("data-id");
+
+            if (refId) {
+                rowData.push({
+                    _id: refId,
+                    key: name.trim(),
+                });
+            }
+        });
+
+        $.ajax({
+            url: '/dashboard/add-dynamic-column/',
+            type: 'POST',
+            data: JSON.stringify({ rowData }),
+            contentType: 'application/json',
+            headers: { "X-CSRFToken": token},
+            success: function (response) {
+                console.log("Success:", response);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", xhr.responseText);
+            }
+        });
+    }
 
     function costSummaryMakeEditable(cell) {
         if (cell.querySelector("input")) return;
@@ -7378,6 +7417,7 @@
             });
         }
         else {
+            let headerCells = document.querySelector("table thead tr").querySelectorAll("th");
             data["row_id"] = row?.getAttribute("data-id") ?? null;
             data["section_id"] = sectionRow?.getAttribute("data-id") ?? null;
             data["ref"] = cells[0].innerText.trim();
@@ -7388,6 +7428,15 @@
             data["total_expenditure"] = extractNumber(cells[5].innerText.trim());
             data["variance_total"] = extractNumber(cells[6].innerText.trim());
             data["variance_period"] = extractNumber(cells[7].innerText.trim());
+            // Dynamic fields (8 onwards)
+            for (let i = 8; i < cells.length; i++) {
+                let header = headerCells[i];
+                let key = header?.getAttribute("data-key") || header?.innerText.trim();
+                if (!key) continue;
+
+                let value = extractNumber(cells[i].innerText.trim());
+                data[key] = value;
+            }
             data["type"] = 'row';
 
             $.ajax({

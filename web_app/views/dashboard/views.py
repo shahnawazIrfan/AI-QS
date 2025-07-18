@@ -23,7 +23,7 @@ from web_app import models
 from django.db.models import Q
 from django.utils import timezone
 from django.db import transaction
-
+from pymongo import MongoClient
 
 matplotlib.use('Agg')
 
@@ -64,6 +64,11 @@ class CostDashboardView(ViewBase):
     TEMPLATE_NAME = 'dashboard/cost_dashboard.html'
 
     def get(self, request, *args, **kwargs):
+        client = MongoClient(settings.DATABASES['default']['CLIENT']['host'])
+        db =  client[f"{settings.DATABASES['default']['NAME']}"]
+        costsummarysections = db["web_app_costsummarysection"]
+        costsummaries = db["web_app_costsummary"]
+        
         # top card counts
         cost_summary = models.CostSummary.objects.all()
         total_contract_sum = round(sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum), 2)
@@ -74,26 +79,43 @@ class CostDashboardView(ViewBase):
         total_variance_period_sum = round(sum(Decimal(str(obj.variance_period)) for obj in cost_summary if obj.variance_period), 2)
 
         # cost summary table
-        total_new_cost_summary_sections = models.CostSummarySection.objects.count()
-        costSummarySections = models.CostSummarySection.objects.prefetch_related("cost_summaries").all()
+        total_new_cost_summary_sections = costsummarysections.count_documents({})
+
+        costSummarySections = list(costsummarysections.find())
 
         new_cost_summary_data = []
+        new_cost_summary_dynamic_columns_set = set()
 
         for section in costSummarySections:
             section_dict = {
-                "section_id": section._id,
-                "section_name": section.name,
+                "section_id": str(section["_id"]),
+                "section_name": section.get("name", ""),
                 "rows": []
             }
 
-            for cost_summary in section.cost_summaries.all():
-                cost_summary_dict = model_to_dict(cost_summary, exclude=["section"])
-                cost_summary_dict["id"] = str(cost_summary._id)
-                cost_summary_dict["updated_at"] = timezone.localtime(cost_summary.updated_at).strftime("%m/%d/%Y")
+            cost_summaries = list(costsummaries.find({"section_id": section["_id"]}))
+
+            for cost_summary in cost_summaries:
+                cost_summary_dict = {}
+
+                for key, value in cost_summary.items():
+                    if key in ["_id", "section_id"]:
+                        continue
+                    if key == "updated_at" and isinstance(value, datetime):
+                        cost_summary_dict[key] = datetime.strftime(value, "%m/%d/%Y")
+                    else:
+                        cost_summary_dict[key] = value
+
+                cost_summary_dict["id"] = str(cost_summary["_id"])
                 section_dict["rows"].append(cost_summary_dict)
+
+                for key in cost_summary_dict.keys():
+                    if key not in ["id", "ref", "item", "contract_sum", "certified_payments", "accrued_payments", "total_expenditure", "variance_total", "variance_period", "section_id", "created_at", "updated_at", "updated_by"]:
+                        new_cost_summary_dynamic_columns_set.add(key)
 
             new_cost_summary_data.append(section_dict)
 
+        new_cost_summary_dynamic_columns = sorted(new_cost_summary_dynamic_columns_set)
 
         # contract sum table
         total_new_contract_sum_sections = models.ContractSumSection.objects.count()
@@ -155,6 +177,8 @@ class CostDashboardView(ViewBase):
 
         context = {
             'new_cost_summary_data': new_cost_summary_data,
+            'new_cost_summary_dynamic_columns': new_cost_summary_dynamic_columns,
+            'new_cost_summary_dynamic_columns_colspan': 10 + len(new_cost_summary_dynamic_columns),
             'total_new_cost_summary_sections': total_new_cost_summary_sections,
             'new_contract_sum_data': new_contract_sum_data,
             'total_new_contract_sum_sections': total_new_contract_sum_sections,
@@ -508,6 +532,11 @@ class InformationManagementDashboardView(ViewBase):
 
 class costSummaryOperationsView(ViewBase):
     def post(self, request, *args, **kwargs):
+        client = MongoClient(settings.DATABASES['default']['CLIENT']['host'])
+        db =  client[f"{settings.DATABASES['default']['NAME']}"]
+        costsummarysections = db["web_app_costsummarysection"]
+        costsummaries = db["web_app_costsummary"]
+
         try:
             data = json.loads(request.body)
             type = data.get("type")
@@ -532,8 +561,18 @@ class costSummaryOperationsView(ViewBase):
                 return JsonResponse({"message": "Cost summary updated successfully", "id": section_id}, status=200)
             
             if type == "row" and not row_id and section_id:
-                row = models.CostSummary.objects.create(_id=str(ObjectId()), ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, accrued_payments=accrued_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id, created_at=timezone.now(), updated_by=request.user.get_name())
-               
+                # row = models.CostSummary.objects.create(_id=str(ObjectId()), ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, accrued_payments=accrued_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id, created_at=timezone.now(), updated_by=request.user.get_name())
+                filtered_data = {k: v for k, v in data.items() if k not in ["row_id", "Actions", "type", "Updated At", "Updated By"]}
+
+                filtered_data.update({
+                    "_id": str(ObjectId()),
+                    "created_at": timezone.now(),
+                    "updated_at": timezone.now(),
+                    "updated_by": request.user.get_name()
+                })
+
+                row = costsummaries.insert_one(filtered_data)
+
                 cost_summary = models.CostSummary.objects.all()
                 total_contract_sum = sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum)
                 certified_payments_sum = sum(Decimal(str(obj.certified_payments)) for obj in cost_summary if obj.certified_payments)
@@ -542,11 +581,19 @@ class costSummaryOperationsView(ViewBase):
                 total_variance_sum = sum(Decimal(str(obj.variance_total)) for obj in cost_summary if obj.variance_total)
                 total_variance_period_sum = sum(Decimal(str(obj.variance_period)) for obj in cost_summary if obj.variance_period)
                 
-                return JsonResponse({"message": "Cost summary row saved successfully", "id": row._id, "total_contract_sum": total_contract_sum, "certified_payments_sum": certified_payments_sum, "anticipated_payments_sum": anticipated_payments_sum, "forecast_expenditures_sum": forecast_expenditures_sum, "total_variance_sum": total_variance_sum, "total_variance_period_sum": total_variance_period_sum}, status=201)
+                return JsonResponse({"message": "Cost summary row saved successfully", "id": row.inserted_id, "total_contract_sum": total_contract_sum, "certified_payments_sum": certified_payments_sum, "anticipated_payments_sum": anticipated_payments_sum, "forecast_expenditures_sum": forecast_expenditures_sum, "total_variance_sum": total_variance_sum, "total_variance_period_sum": total_variance_period_sum}, status=201)
             
             if type == "row" and row_id and section_id:
-                row = models.CostSummary.objects.filter(_id=row_id).update(ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, accrued_payments=accrued_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id, updated_at=timezone.now(), updated_by=request.user.get_name())
-                
+                # row = models.CostSummary.objects.filter(_id=row_id).update(ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, accrued_payments=accrued_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id, updated_at=timezone.now(), updated_by=request.user.get_name())
+                filtered_data = {k: v for k, v in data.items() if k not in ["row_id", "Actions", "type", "Updated At", "Updated By"]}
+
+                filtered_data.update({
+                    "updated_at": timezone.now(),
+                    "updated_by": request.user.get_name()
+                })
+
+                costsummaries.update_one({"_id": row_id}, {"$set": filtered_data})
+
                 cost_summary = models.CostSummary.objects.all()
                 total_contract_sum = sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum)
                 certified_payments_sum = sum(Decimal(str(obj.certified_payments)) for obj in cost_summary if obj.certified_payments)
@@ -923,3 +970,30 @@ class downloadCostReportView(ViewBase):
 
         except Exception as e:
             return JsonResponse({'success': False, 'message': 'Something went wrong while exporting cost report', 'error': str(e)})
+
+
+class addCostSummaryColumnView(ViewBase):
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body)
+            rowData = data.get("rowData", [])
+
+            client = MongoClient(settings.DATABASES['default']['CLIENT']['host'])
+            db =  client[f"{settings.DATABASES['default']['NAME']}"]
+            collection = db["web_app_costsummary"]
+
+            for data in rowData:
+                doc_id = data.get('_id')
+                key = data.get('key')
+
+                if doc_id and key:
+                    collection.update_one(
+                        {"_id": doc_id},
+                        {"$set": {key: 0}}
+                    )
+
+            return JsonResponse({'success': True, 'message': 'Column created successfully'})
+        
+        except Exception as e:
+            return JsonResponse({'success': False,  "error": str(e)}, status=400)
