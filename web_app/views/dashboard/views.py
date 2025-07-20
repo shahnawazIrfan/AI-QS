@@ -251,6 +251,14 @@ class CostDashboardView(ViewBase):
         wb = openpyxl.load_workbook(file, data_only=True)
 
         try:
+            models.CostSummarySection.objects.all().delete()
+            models.CostSummary.objects.all().delete()
+            models.ContractSumSection.objects.all().delete()
+            models.ContractSum.objects.all().delete()
+            models.ChangeBreakDownSection.objects.all().delete()
+            models.ChangeBreakDown.objects.all().delete()
+            models.CostReporting.objects.all().delete()
+
             with transaction.atomic():
 
                 # === NEW COST SUMMARY ===
@@ -401,7 +409,7 @@ class CostDashboardView(ViewBase):
             return JsonResponse({"message": "File processed successfully"}, status=201)
 
         except Exception as e:
-            return JsonResponse({"error": f"Processing failed: {str(e)}"}, status=500)
+            return JsonResponse({"error": f"Processing failed: Invalid file structure {str(e)}"}, status=500)
     
 
 class RiskDashboardView(ViewBase):

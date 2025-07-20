@@ -7070,8 +7070,9 @@
 
 
     $("#excelFile").change(function () {
-        $("#preloader").show();
-        $("#ctn-preloader").removeClass("loaded");
+        $("#loading").show();
+        $('#loader-text').show()
+        showNextMessage();
 
         var fileInput = this.files[0];
         if (!fileInput) {
@@ -8281,8 +8282,7 @@
     // download cost report start
 
     $("#btn-excel").click(function() {
-      $("#preloader").show();
-      $("#ctn-preloader").removeClass("loaded");
+        $("#loading").show();
 
       $.ajax({
         url: "/dashboard/download-cost-report/",
@@ -8298,8 +8298,8 @@
               let a = $("<a>").attr("href", fileUrl).attr("download", response.file_name).appendTo("body");
               a[0].click();
               a.remove();
-              $("#preloader").hide();
-              $("#ctn-preloader").addClass("loaded");
+              $("#load").fadeOut();
+              $("#loading").delay(5000).fadeOut("");
             }
         },
         catch: function(error){
@@ -8356,7 +8356,33 @@
     });
 
 
+    const messages = [
+      "Please wait while we are working ...",
+      "Processing cost summary breakdown data....",
+      "Processing contract sum breakdown data....",
+      "Processing change breakdown data....",
+      "Processing cost reporting data...",
+      "Mapping ICMS2 codes...",
+      "Rendering Graphs",
+      "Finalizing results......"
+    ];
 
+    let index = 0;
+
+    function showNextMessage() {
+      $('#loader-text').text(messages[index]);
+      index++;
+
+      // Final message has no delay
+      if (index < messages.length - 1) {
+        setTimeout(showNextMessage, 3000); // 3 second delay
+      } else if (index === messages.length - 1) {
+        // Final message without delay, no further setTimeout
+        setTimeout(() => {
+          $('#loader-text').text(messages[index]);
+        }, 3000); // still delay before showing final message
+      }
+    }
 </script>
 
 {% endblock %}
