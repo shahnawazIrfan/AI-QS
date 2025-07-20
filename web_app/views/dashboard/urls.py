@@ -15,5 +15,5 @@ urlpatterns = [
     path('change-breakdown-operations/', views.changeBreakDownOperationsView.as_view(), name='change_breakdown_operations'),
     path("cost-chart-data/", views.getCostChartDataView.as_view(), name="cost-chart-data"),
     path("download-cost-report/", views.downloadCostReportView.as_view(), name="download_cost_report"),
-    path('add-dynamic-column/', views.addCostSummaryColumnView.as_view(), name='add_cost_summary_column'),
+    path('add-dynamic-column/', views.addDynamicColumnView.as_view(), name='add_dynamic_column'),
 ]

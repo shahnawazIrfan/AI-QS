@@ -5118,16 +5118,11 @@
     }
 
     .v2038_21395 {
-        width: 59px;
-        color: rgba(0, 0, 0, 1);
-        position: absolute;
-        top: 15px;
-        left: 0px;
-        font-family: Plus Jakarta Sans;
-        font-weight: Bold;
-        font-size: 10px;
         opacity: 1;
-        text-align: center;
+        position: absolute;
+        top: 8px;
+        left: 350px;
+        cursor: pointer;
     }
 
     .v2038_21396 {
@@ -6941,6 +6936,7 @@
     </div>
     <div class="v2038_21389">
         <div class="v2038_21390"><span class="v2038_21391">Change Breakdown</span>
+            <div class="v2038_21395" onclick="changeBreakDownAddNewColumn()"><img class="img-fluid" src="{% static 'img/add_column.svg' %}" alt=""></div>
             <div class="v2038_21392" onclick="changeBreakDownAddNewSection()"><img class="img-fluid" src="{% static 'img/add_section.svg' %}" alt=""></div>
             <div class="v2038_21394" onclick="toggleFullscreen('changeBreakDownTable')"><img class="img-fluid" src="{% static 'img/maximize.svg' %}" alt=""></div>
             <div class="v2038_21393"><img class="img-fluid" src="{% static 'img/filter.svg' %}" alt=""></div>
@@ -6954,6 +6950,9 @@
                             <th>Total Expenditure</th>
                             <th>Variance Total</th>
                             <th>Variance Period</th>
+                            {% for header in new_change_breakdown_dynamic_columns %}
+                                <th>{{ header }}</th>
+                            {% endfor %}
                             <th>Updated At</th>
                             <th>Updated By</th>
                             <th>Actions</th>
@@ -6962,7 +6961,7 @@
                     <tbody>
                         {% for change in new_change_breakdown_data %}
                             <tr class="section-header" data-id="{{ change.section_id }}">
-                                <th colspan="8" onclick="changeBreakDownMakeEditable(this)">{{ change.section_name }}</th>
+                                <th colspan="{{ new_change_breakdown_dynamic_columns_colspan }}" onclick="changeBreakDownMakeEditable(this)">{{ change.section_name }}</th>
                                 <th>
                                     <button class="add-btn" onclick="changeBreakDownAddNewRow('{{ change.section_id }}')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
                                     <button class="save-btn" onclick="changeBreakDownSaveData(this)" style="display:none;"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"/></svg></button>
@@ -6977,6 +6976,9 @@
                                     <td onclick="changeBreakDownMakeEditable(this)">£{{ row.total_expenditure }}</td>
                                     <td onclick="changeBreakDownMakeEditable(this)">£{{ row.variance_total }}</td>
                                     <td onclick="changeBreakDownMakeEditable(this)">£{{ row.variance_period }}</td>
+                                    {% for header in new_change_breakdown_dynamic_columns %}
+                                        <td onclick="changeBreakDownMakeEditable(this)">£{{ row|get_item:header }}</td>
+                                    {% endfor %}
                                     <td>{{ row.updated_at }}</td>
                                     <td>{{ row.updated_by }}</td>
                                     <td>
@@ -7933,6 +7935,95 @@
         $(".table-container").animate({ scrollTop: $(document).height() }, "slow");
     }
 
+    function changeBreakDownAddNewColumn() {
+        const table = document.getElementById("changeBreakDownTable");
+        const theadRow = table.querySelector("thead tr");
+        const tbodyRows = table.querySelectorAll("tbody tr");
+
+        const newHeader = document.createElement("th");
+        newHeader.textContent = "";
+        newHeader.setAttribute("onclick", "changeBreakDownMakeColumnEditable(this)");
+        theadRow.insertBefore(newHeader, theadRow.lastElementChild);
+        changeBreakDownMakeColumnEditable(newHeader);
+
+        tbodyRows.forEach(row => {
+            const isSectionHeader = row.classList.contains("section-header");
+
+            if (isSectionHeader) {
+                const th = row.querySelector("th[colspan]");
+                const currentColspan = parseInt(th.getAttribute("colspan"), 10);
+                th.setAttribute("colspan", currentColspan + 1);
+            } else {
+                const newCell = document.createElement("td");
+                newCell.setAttribute("onclick", "changeBreakDownMakeEditable(this)");
+                newCell.textContent = "";
+                row.insertBefore(newCell, row.lastElementChild);
+            }
+        });
+    }
+
+    function changeBreakDownMakeColumnEditable(cell) {
+        if (cell.querySelector("input")) return;
+
+        const originalValue = cell.innerText.trim();
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = originalValue;
+        cell.innerText = "";
+        cell.appendChild(input);
+        input.focus();
+
+        input.addEventListener("blur", function () {
+            cell.innerText = input.value.trim();
+            changeBreakDownSaveColumnHeader(cell, cell.innerText);
+        });
+
+        input.addEventListener("keydown", function (e) {
+            if (e.key === "Enter") {
+                e.preventDefault();
+                input.blur();
+            } else if (e.key === "Escape") {
+                e.preventDefault();
+                cell.innerText = originalValue;
+            }
+        });
+    }
+
+    function changeBreakDownSaveColumnHeader(cell, name) {
+        const table = document.getElementById("changeBreakDownTable");
+        const headerCells = table.querySelectorAll("thead tr th");
+        const colIndex = Array.from(headerCells).indexOf(cell);
+
+        const bodyRows = table.querySelectorAll("tbody tr:not(.section-header)");
+        const rowData = [];
+
+        bodyRows.forEach(row => {
+            const refId = row.getAttribute("data-id");
+
+            if (refId) {
+                rowData.push({
+                    _id: refId,
+                    key: name.trim(),
+                    collection: "web_app_changebreakdown"
+                });
+            }
+        });
+
+        $.ajax({
+            url: '/dashboard/add-dynamic-column/',
+            type: 'POST',
+            data: JSON.stringify({ rowData }),
+            contentType: 'application/json',
+            headers: { "X-CSRFToken": token},
+            success: function (response) {
+                console.log("Success:", response);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", xhr.responseText);
+            }
+        });
+    }
+
     function changeBreakDownMakeEditable(cell) {
         if (cell.querySelector("input")) return;
         let input = document.createElement("input");
@@ -8060,6 +8151,7 @@
             });
         }
         else {
+            let headerCells = document.querySelector("#changeBreakDownTable thead tr").querySelectorAll("th");
             data["row_id"] = row?.getAttribute("data-id") ?? null;
             data["section_id"] = sectionRow?.getAttribute("data-id") ?? null;
             data["ref"] = cells[0].innerText.trim();
@@ -8068,6 +8160,15 @@
             data["total_expenditure"] = extractNumber(cells[3].innerText.trim());
             data["variance_total"] = extractNumber(cells[4].innerText.trim());
             data["variance_period"] = extractNumber(cells[5].innerText.trim());
+            // Dynamic fields (6 onwards)
+            for (let i = 6; i < cells.length; i++) {
+                let header = headerCells[i];
+                let key = header?.getAttribute("data-key") || header?.innerText.trim();
+                if (!key) continue;
+
+                let value = extractNumber(cells[i].innerText.trim());
+                data[key] = value;
+            }
             data["type"] = 'row';
 
             $.ajax({

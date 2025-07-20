@@ -70,6 +70,8 @@ class CostDashboardView(ViewBase):
         costsummaries = db["web_app_costsummary"]
         contractsumsections = db["web_app_contractsumsection"]
         contractsums = db["web_app_contractsum"]
+        changebreakdownsections = db["web_app_changebreakdownsection"]
+        changebreakdowns = db["web_app_changebreakdown"]
         
         # top card counts
         cost_summary = models.CostSummary.objects.all()
@@ -160,25 +162,43 @@ class CostDashboardView(ViewBase):
 
 
         # change breakdown table
-        total_new_change_breakdown_sections = models.ChangeBreakDownSection.objects.count()
-        ChangeBreakDownSections = models.ChangeBreakDownSection.objects.prefetch_related("change_breakdown").all()
+        total_new_change_breakdown_sections = changebreakdownsections.count_documents({})
+
+        change_breakdown_sections = list(changebreakdownsections.find())
 
         new_change_breakdown_data = []
+        new_change_breakdown_dynamic_columns_set = set()
 
-        for section in ChangeBreakDownSections:
+        for section in change_breakdown_sections:
             section_dict = {
-                "section_id": section._id,
-                "section_name": section.name,
+                "section_id": str(section["_id"]),
+                "section_name": section.get("name", ""),
                 "rows": []
             }
 
-            for change_breakdown in section.change_breakdown.all():
-                change_breakdown_dict = model_to_dict(change_breakdown, exclude=["section"])
-                change_breakdown_dict["id"] = str(change_breakdown._id)
-                change_breakdown_dict["updated_at"] = timezone.localtime(change_breakdown.updated_at).strftime("%m/%d/%Y")
+            change_breakdowns = list(changebreakdowns.find({"section_id": section["_id"]}))
+
+            for change_breakdown in change_breakdowns:
+                change_breakdown_dict = {}
+
+                for key, value in change_breakdown.items():
+                    if key in ["_id", "section_id"]:
+                        continue
+                    if key == "updated_at" and isinstance(value, datetime):
+                        change_breakdown_dict[key] = datetime.strftime(value, "%m/%d/%Y")
+                    else:
+                        change_breakdown_dict[key] = value
+
+                change_breakdown_dict["id"] = str(change_breakdown["_id"])
                 section_dict["rows"].append(change_breakdown_dict)
 
+                for key in change_breakdown_dict.keys():
+                    if key not in ["id", "ref", "item", "certified_payments", "total_expenditure", "variance_total", "variance_period", "section_id", "created_at", "updated_at", "updated_by"]:
+                        new_change_breakdown_dynamic_columns_set.add(key)
+
             new_change_breakdown_data.append(section_dict)
+
+        new_change_breakdown_dynamic_columns = sorted(new_change_breakdown_dynamic_columns_set)
 
 
         # cost reporting graph sum values
@@ -205,6 +225,8 @@ class CostDashboardView(ViewBase):
             'new_contract_sum_dynamic_columns_colspan': 6 + len(new_contract_sum_dynamic_columns),
             'total_new_contract_sum_sections': total_new_contract_sum_sections,
             'new_change_breakdown_data': new_change_breakdown_data,
+            'new_change_breakdown_dynamic_columns': new_change_breakdown_dynamic_columns,
+            'new_change_breakdown_dynamic_columns_colspan': 8 + len(new_change_breakdown_dynamic_columns),
             'total_new_change_breakdown_sections': total_new_change_breakdown_sections,
             'total_contract_sum': total_contract_sum,
             'certified_payments_sum': certified_payments_sum,
@@ -769,6 +791,11 @@ class contractSumOperationsView(ViewBase):
 
 class changeBreakDownOperationsView(ViewBase):
     def post(self, request, *args, **kwargs):
+        client = MongoClient(settings.DATABASES['default']['CLIENT']['host'])
+        db =  client[f"{settings.DATABASES['default']['NAME']}"]
+        changebreakdownsections = db["web_app_changebreakdownsection"]
+        changebreakdowns = db["web_app_changebreakdown"]
+
         try:
             data = json.loads(request.body)
             type = data.get("type")
@@ -791,11 +818,31 @@ class changeBreakDownOperationsView(ViewBase):
                 return JsonResponse({"message": "Change break down updated successfully", "id": section_id}, status=200)
             
             if type == "row" and not row_id and section_id:
-                row = models.ChangeBreakDown.objects.create(_id=str(ObjectId()), ref=ref, item=item, certified_payments=certified_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id, created_at=timezone.now(), updated_by=request.user.get_name())
+                # row = models.ChangeBreakDown.objects.create(_id=str(ObjectId()), ref=ref, item=item, certified_payments=certified_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id, created_at=timezone.now(), updated_by=request.user.get_name())
+                filtered_data = {k: v for k, v in data.items() if k not in ["row_id", "Actions", "type", "Updated At", "Updated By"]}
+
+                filtered_data.update({
+                    "_id": str(ObjectId()),
+                    "created_at": timezone.now(),
+                    "updated_at": timezone.now(),
+                    "updated_by": request.user.get_name()
+                })
+
+                row = changebreakdowns.insert_one(filtered_data)
+
                 return JsonResponse({"message": "Change break down row saved successfully", "id": row._id}, status=201)
             
             if type == "row" and row_id and section_id:
-                row = models.ChangeBreakDown.objects.filter(_id=row_id).update(ref=ref, item=item, certified_payments=certified_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id, updated_at=timezone.now(), updated_by=request.user.get_name())
+                # row = models.ChangeBreakDown.objects.filter(_id=row_id).update(ref=ref, item=item, certified_payments=certified_payments, total_expenditure=total_expenditure, variance_total=variance_total, variance_period=variance_period, section_id=section_id, updated_at=timezone.now(), updated_by=request.user.get_name())
+                filtered_data = {k: v for k, v in data.items() if k not in ["row_id", "Actions", "type", "Updated At", "Updated By"]}
+
+                filtered_data.update({
+                    "updated_at": timezone.now(),
+                    "updated_by": request.user.get_name()
+                })
+
+                changebreakdowns.update_one({"_id": row_id}, {"$set": filtered_data})
+
                 return JsonResponse({"message": "Change break down row updated successfully", "id": row_id}, status=200)
 
         except Exception as e:
@@ -1018,7 +1065,7 @@ class downloadCostReportView(ViewBase):
             return JsonResponse({'success': False, 'message': 'Something went wrong while exporting cost report', 'error': str(e)})
 
 
-class addCostSummaryColumnView(ViewBase):
+class addDynamicColumnView(ViewBase):
 
     def post(self, request, *args, **kwargs):
         try:
