@@ -68,6 +68,8 @@ class CostDashboardView(ViewBase):
         db =  client[f"{settings.DATABASES['default']['NAME']}"]
         costsummarysections = db["web_app_costsummarysection"]
         costsummaries = db["web_app_costsummary"]
+        contractsumsections = db["web_app_contractsumsection"]
+        contractsums = db["web_app_contractsum"]
         
         # top card counts
         cost_summary = models.CostSummary.objects.all()
@@ -118,25 +120,43 @@ class CostDashboardView(ViewBase):
         new_cost_summary_dynamic_columns = sorted(new_cost_summary_dynamic_columns_set)
 
         # contract sum table
-        total_new_contract_sum_sections = models.ContractSumSection.objects.count()
-        ContractSumSections = models.ContractSumSection.objects.prefetch_related("contract_sums").all()
+        total_new_contract_sum_sections = contractsumsections.count_documents({})
+
+        contract_sum_sections = list(contractsumsections.find())
 
         new_contract_sum_data = []
+        new_contract_sum_dynamic_columns_set = set()
 
-        for section in ContractSumSections:
+        for section in contract_sum_sections:
             section_dict = {
-                "section_id": section._id,
-                "section_name": section.name,
+                "section_id": str(section["_id"]),
+                "section_name": section.get("name", ""),
                 "rows": []
             }
 
-            for contract_sum in section.contract_sums.all():
-                contract_sum_dict = model_to_dict(contract_sum, exclude=["section"])
-                contract_sum_dict["id"] = str(contract_sum._id)
-                contract_sum_dict["updated_at"] = timezone.localtime(contract_sum.updated_at).strftime("%m/%d/%Y")
+            contract_sums = list(contractsums.find({"section_id": section["_id"]}))
+
+            for contract_sum in contract_sums:
+                contract_sum_dict = {}
+
+                for key, value in contract_sum.items():
+                    if key in ["_id", "section_id"]:
+                        continue
+                    if key == "updated_at" and isinstance(value, datetime):
+                        contract_sum_dict[key] = datetime.strftime(value, "%m/%d/%Y")
+                    else:
+                        contract_sum_dict[key] = value
+
+                contract_sum_dict["id"] = str(contract_sum["_id"])
                 section_dict["rows"].append(contract_sum_dict)
 
+                for key in contract_sum_dict.keys():
+                    if key not in ["id", "ref", "item", "contract_sum", "certified_payments", "section_id", "created_at", "updated_at", "updated_by"]:
+                        new_contract_sum_dynamic_columns_set.add(key)
+
             new_contract_sum_data.append(section_dict)
+
+        new_contract_sum_dynamic_columns = sorted(new_contract_sum_dynamic_columns_set)
 
 
         # change breakdown table
@@ -181,6 +201,8 @@ class CostDashboardView(ViewBase):
             'new_cost_summary_dynamic_columns_colspan': 10 + len(new_cost_summary_dynamic_columns),
             'total_new_cost_summary_sections': total_new_cost_summary_sections,
             'new_contract_sum_data': new_contract_sum_data,
+            'new_contract_sum_dynamic_columns': new_contract_sum_dynamic_columns,
+            'new_contract_sum_dynamic_columns_colspan': 6 + len(new_contract_sum_dynamic_columns),
             'total_new_contract_sum_sections': total_new_contract_sum_sections,
             'new_change_breakdown_data': new_change_breakdown_data,
             'total_new_change_breakdown_sections': total_new_change_breakdown_sections,
@@ -658,6 +680,10 @@ class contractSumOperationsView(ViewBase):
         return (total_section_contract_sum, total_section_certified_payments, cost_summary._id)
 
     def post(self, request, *args, **kwargs):
+        client = MongoClient(settings.DATABASES['default']['CLIENT']['host'])
+        db =  client[f"{settings.DATABASES['default']['NAME']}"]
+        contractsumsections = db["web_app_contractsumsection"]
+        contractsums = db["web_app_contractsum"]
         try:
             data = json.loads(request.body)
             type = data.get("type")
@@ -680,17 +706,37 @@ class contractSumOperationsView(ViewBase):
                 return JsonResponse({"message": "Contract sum updated successfully", "id": section_id}, status=200)
             
             if type == "row" and not row_id and section_id:
-                row = models.ContractSum.objects.create(_id=str(ObjectId()), ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, section_id=section_id, created_at=timezone.now(), updated_by=request.user.get_name())
+                # row = models.ContractSum.objects.create(_id=str(ObjectId()), ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, section_id=section_id, created_at=timezone.now(), updated_by=request.user.get_name())
+                filtered_data = {k: v for k, v in data.items() if k not in ["row_id", "Actions", "type", "Updated At", "Updated By"]}
+
+                filtered_data.update({
+                    "_id": str(ObjectId()),
+                    "created_at": timezone.now(),
+                    "updated_at": timezone.now(),
+                    "updated_by": request.user.get_name()
+                })
+
+                row = contractsums.insert_one(filtered_data)
+                
                 total_contract_sum, total_certified_payments, summary_id = self.updateCostSummaryFields(section_id)
 
                 cost_summary = models.CostSummary.objects.all()
                 cost_total_contract_sum = sum(Decimal(str(obj.contract_sum)) for obj in cost_summary if obj.contract_sum)
                 cost_total_certified_payments_sum = sum(Decimal(str(obj.certified_payments)) for obj in cost_summary if obj.certified_payments)
 
-                return JsonResponse({"message": "Contract sum row saved successfully", "id": row._id, "total_contract_sum": total_contract_sum, "total_certified_payments": total_certified_payments, "summary_id": summary_id, "cost_total_contract_sum": cost_total_contract_sum, "cost_total_certified_payments_sum": cost_total_certified_payments_sum}, status=201)
+                return JsonResponse({"message": "Contract sum row saved successfully", "id": row.inserted_id, "total_contract_sum": total_contract_sum, "total_certified_payments": total_certified_payments, "summary_id": summary_id, "cost_total_contract_sum": cost_total_contract_sum, "cost_total_certified_payments_sum": cost_total_certified_payments_sum}, status=201)
             
             if type == "row" and row_id and section_id:
-                row = models.ContractSum.objects.filter(_id=row_id).update(ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, section_id=section_id, updated_at=timezone.now(), updated_by=request.user.get_name())
+                # row = models.ContractSum.objects.filter(_id=row_id).update(ref=ref, item=item, contract_sum=contract_sum, certified_payments=certified_payments, section_id=section_id, updated_at=timezone.now(), updated_by=request.user.get_name())
+                filtered_data = {k: v for k, v in data.items() if k not in ["row_id", "Actions", "type", "Updated At", "Updated By"]}
+
+                filtered_data.update({
+                    "updated_at": timezone.now(),
+                    "updated_by": request.user.get_name()
+                })
+
+                contractsums.update_one({"_id": row_id}, {"$set": filtered_data})
+                
                 total_contract_sum, total_certified_payments, summary_id = self.updateCostSummaryFields(section_id)
 
                 cost_summary = models.CostSummary.objects.all()
@@ -981,11 +1027,11 @@ class addCostSummaryColumnView(ViewBase):
 
             client = MongoClient(settings.DATABASES['default']['CLIENT']['host'])
             db =  client[f"{settings.DATABASES['default']['NAME']}"]
-            collection = db["web_app_costsummary"]
 
             for data in rowData:
                 doc_id = data.get('_id')
                 key = data.get('key')
+                collection = db[data.get('collection')]
 
                 if doc_id and key:
                     collection.update_one(
