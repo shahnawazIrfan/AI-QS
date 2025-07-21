@@ -134,6 +134,7 @@ class ContractSum(models.Model):
     _id = models.CharField(max_length=24, primary_key=True)
     ref = models.CharField(max_length=50)
     item = models.CharField(max_length=255, blank=True, null=True)
+    component = models.CharField(max_length=255, blank=True, null=True)
     contract_sum = models.FloatField(blank=True, null=True)
     certified_payments = models.FloatField(blank=True, null=True)
     section = models.ForeignKey(ContractSumSection, on_delete=models.CASCADE, related_name="contract_sums")

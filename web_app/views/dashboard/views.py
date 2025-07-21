@@ -305,7 +305,7 @@ class CostDashboardView(ViewBase):
 
                 sheet = wb["NEW Contract Sum"]
                 headers = [cell.value for cell in sheet[1]]
-                required = {"ICMS2", "Item", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR"}
+                required = {"ICMS2", "Item", "Group Element/Element/Sub-element/Component", "CONTRACT SUM", "CERTIFIED PAYMENTS TO CONTRACTOR"}
                 if missing := required - set(headers):
                     return JsonResponse({"error": f"Missing columns in 'NEW Contract Sum': {', '.join(missing)}"}, status=400)
 
@@ -325,6 +325,7 @@ class CostDashboardView(ViewBase):
                             _id=str(ObjectId()),
                             ref=data["ICMS2"],
                             item=data["Item"],
+                            component=data["Group Element/Element/Sub-element/Component"],
                             contract_sum=data["CONTRACT SUM"],
                             certified_payments=data["CERTIFIED PAYMENTS TO CONTRACTOR"],
                             section_id=csum_section_id
