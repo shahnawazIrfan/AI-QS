@@ -39,11 +39,11 @@
 
     .v2032_15940 {
         width: 100%;
-        height: 250px;
+        height: 65px;
         background: rgba(255, 255, 255, 1);
         opacity: 1;
         position: absolute;
-        top: 90px;
+        top: 8px;
         left: 14px;
         border-top-left-radius: 10px;
         border-top-right-radius: 10px;
@@ -76,6 +76,19 @@
         font-family: Plus Jakarta Sans;
         font-weight: Bold;
         font-size: 16px;
+        opacity: 1;
+        text-align: left;
+    }
+
+    .v2032_15941 {
+        width: 115px;
+        color: rgba(21, 22, 20, 1);
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-family: Plus Jakarta Sans;
+        font-weight: Bold;
+        font-size: 18px;
         opacity: 1;
         text-align: left;
     }
@@ -136,6 +149,79 @@
         font-family: Plus Jakarta Sans;
         font-weight: Bold;
         font-size: 20px;
+        opacity: 1;
+        text-align: left;
+    }
+
+    .v2032_15956 {
+        width: 188px;
+        height: 157px;
+        background: rgba(250, 250, 250, 1);
+        padding: 15px 15px;
+        margin: 14px;
+        opacity: 1;
+        position: relative;
+        bottom: 173px;
+        left: 205px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        /* overflow: hidden; */;
+    }
+
+    .v2032_15957 {
+        width: 135px;
+        height: 25px;
+        background: url("../images/v2032_15947.png");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        margin: 4px;
+        opacity: 1;
+        position: absolute;
+        top: 16px;
+        left: 22px;
+        /* overflow: hidden; */;
+    }
+
+    .v2032_15958 {
+        width: 135px;
+        color: rgba(21, 22, 20, 1);
+        position: relative;
+        top: 0px;
+        left: 0px;
+        font-family: Plus Jakarta Sans;
+        font-weight: Bold;
+        font-size: 16px;
+        opacity: 1;
+        text-align: left;
+    }
+
+    .v2032_15959 {
+        width: 135px;
+        height: 25px;
+        background: url(../images/v2032_15947.png);
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        margin: 4px;
+        opacity: 1;
+        position: absolute;
+        top: 85px;
+        left: 30px;
+        /* overflow: hidden */;
+    }
+
+    .v2032_15960 {
+        width: 135px;
+        color: rgba(21, 22, 20, 1);
+        position: relative;
+        top: 0px;
+        left: 0px;
+        font-family: Plus Jakarta Sans;
+        font-weight: Bold;
+        font-size: 16px;
         opacity: 1;
         text-align: left;
     }
@@ -1234,11 +1320,37 @@
         width: 145px;
         color: rgba(21, 22, 20, 1);
         position: absolute;
-        top: 155px;
-        left: 50px;
+        top: 80px;
+        left: 0;
         font-family: Plus Jakarta Sans;
         font-weight: Bold;
         font-size: 22px;
+        opacity: 1;
+        text-align: center;
+    }
+
+    .v2032_16052 {
+        width: 145px;
+        color: rgba(21, 22, 20, 1);
+        position: absolute;
+        top: 35px;
+        right: 5px;
+        font-family: Plus Jakarta Sans;
+        font-weight: Bold;
+        font-size: 14px;
+        opacity: 1;
+        text-align: center;
+    }
+
+    .v2032_16053 {
+        width: 145px;
+        color: rgba(21, 22, 20, 1);
+        position: absolute;
+        top: 35px;
+        right: 14px;
+        font-family: Plus Jakarta Sans;
+        font-weight: Bold;
+        font-size: 14px;
         opacity: 1;
         text-align: center;
     }
@@ -3383,6 +3495,22 @@
         position: absolute;
         top: 15px;
         right: 325px;
+        cursor: pointer;
+    }
+
+    .v2032_15944 {
+       opacity: 1;
+        position: absolute;
+        top: 7px;
+        right: 205px;
+        cursor: pointer;
+    }
+
+    .v2032_15949 {
+       opacity: 1;
+        position: absolute;
+        top: 7px;
+        right: 15px;
         cursor: pointer;
     }
 
@@ -6554,6 +6682,20 @@
         left: 780px;
     }
 
+    .v2032_15842 {
+        cursor: pointer;
+        color: rgba(21, 22, 20, 1);
+        position: relative;
+        top: 15px;
+        left: -31px;
+        float: right;
+        font-family: Plus Jakarta Sans;
+        font-weight: Bold;
+        font-size: 16px;
+        opacity: 1;
+        text-align: left;
+    }
+
     .v2032_15843 {
         cursor: pointer;
         color: rgba(21, 22, 20, 1);
@@ -6735,64 +6877,26 @@
 
 <div class="v2011_16830">
      <div class="v2032_15940">
-
+        <span class="v2032_15941">Albert House</span>
+        <div class="v2032_15944"><input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;"><img class="img-fluid" src="{% static 'img/upload.svg' %}" alt="" id="upload_btn"></div>
+        <div class="v2032_15949"><a href="javascript:void(0)" id="btn-excel"><img class="img-fluid" src="{% static 'img/download.svg' %}" alt=""></a></div>
      </div>
-    <div class="v2032_15942"><span class="v2032_15943">Cost Summary</span><span class="v2032_15843"><input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;"><img class="img-fluid" src="/static/img/download.svg" alt="" id="upload_btn">Upload Excel</span>
+    <div class="v2032_15942"><span class="v2032_15943">Cost Summary</span>
         <div class="v2032_15945">
             <div class="v2032_15946">
-                <div class="v2032_15947"><span class="v2032_15948">Contract Sum</span></div>
+                <div class="v2032_15947">
+                    <span class="v2032_15948">Contract Sum</span>
+                    <span class="v2032_16022">£{{ total_contract_sum }}</span>
+                </div>
             </div>
-            <div class="v2032_15963">
-                <div class="v2032_15964"><span class="v2032_15965">£{{ certified_payments_sum }}</span>
-                    <div class="v2032_15966"><span class="v2032_15967">0%</span></div>
-                </div><span class="v2032_15968">Certified Payment to Contractor</span>
-                <!-- <div class="v2032_15969">
-                    <img class="top_graph" src="data:image/png;base64,{{ graphs.certified_payments_sum }}" alt="Graph">
-                </div> -->
-            </div>
-            <div class="v2033_16100">
-                <div class="v2033_16101"><span class="v2033_16102">£{{ anticipated_payments_sum }}</span>
-                    <div class="v2033_16103"><span class="v2033_16104">0%</span></div>
-                </div><span class="v2033_16105">Accrued &amp; Anticipated Payments</span>
-                <!-- <div class="v2033_16106">
-                    <img class="top_graph" src="data:image/png;base64,{{ graphs.anticipated_payments_sum }}" alt="Graph">
-                </div> -->
-            </div>
-            <div class="v2033_16118">
-                <div class="v2033_16119"><span class="v2033_16120">£{{ forecast_expenditures_sum }}</span>
-                    <div class="v2033_16121"><span class="v2033_16122">0%</span></div>
-                </div><span class="v2033_16123">Total Forecast Expenditures</span>
-                <!-- <div class="v2033_16124">
-                    <img class="top_graph" src="data:image/png;base64,{{ graphs.forecast_expenditures_sum }}" alt="Graph">
-                </div> -->
-            </div>
-            <div class="v2033_16136">
-                <div class="v2033_16137"><span class="v2033_16138">£{{ total_variance_sum }}</span>
-                    <div class="v2033_16139"><span class="v2033_16140">0%</span></div>
-                </div><span class="v2033_16141">Variance Total</span>
-                <!-- <div class="v2033_16142">
-                    <img class="top_graph" src="data:image/png;base64,{{ graphs.total_variance_sum }}" alt="Graph">
-                </div> -->
-            </div>
-            <div class="v2033_16154">
-                <div class="v2033_16155"><span class="v2033_16156">£{{ total_variance_period_sum }}</span>
-                    <div class="v2033_16157"><span class="v2033_16158">0%</span></div>
-                </div><span class="v2033_16159">Variance Period</span>
-                <!-- <div class="v2033_16160">
-                    <img class="top_graph" src="data:image/png;base64,{{ graphs.total_variance_period_sum }}" alt="Graph">
-                </div> -->
-            </div>
-        </div><span class="v2032_16022">£{{ total_contract_sum }}</span>
-        <div class="v2034_16202">
-            <div class="v2034_16203"><span class="v2034_16204">Month</span></div><span class="v2034_16206">{% now "F Y" %}</span>
-        </div>
-        <div class="v2034_16208">
-            <div class="v2034_16209"></div><span class="v2034_16210">Download Cost Report</span>
-            <div class="v2034_16213">
-                <div class="v2034_16214">
-                    <a href="javascript:void(0)" id="btn-excel">
-                        <img class="img-fluid" src="{% static 'img/share.svg' %}" alt="">
-                    </a>
+            <div class="v2032_15956">
+                <div class="v2032_15957">
+                    <span class="v2032_15958">Aquisition Cost</span>
+                    <span class="v2032_16052">£{{ total_contract_sum }}</span>
+                </div>
+                <div class="v2032_15959">
+                    <span class="v2032_15960">Cost to Date</span>
+                    <span class="v2032_16053">£{{ total_contract_sum }}</span>
                 </div>
             </div>
         </div>

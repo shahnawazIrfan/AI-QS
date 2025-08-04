@@ -153,7 +153,7 @@ class CostDashboardView(ViewBase):
                 section_dict["rows"].append(contract_sum_dict)
 
                 for key in contract_sum_dict.keys():
-                    if key not in ["id", "ref", "item", "contract_sum", "certified_payments", "section_id", "created_at", "updated_at", "updated_by"]:
+                    if key not in ["id", "ref", "item", "component", "contract_sum", "certified_payments", "section_id", "created_at", "updated_at", "updated_by"]:
                         new_contract_sum_dynamic_columns_set.add(key)
 
             new_contract_sum_data.append(section_dict)
@@ -222,7 +222,7 @@ class CostDashboardView(ViewBase):
             'total_new_cost_summary_sections': total_new_cost_summary_sections,
             'new_contract_sum_data': new_contract_sum_data,
             'new_contract_sum_dynamic_columns': new_contract_sum_dynamic_columns,
-            'new_contract_sum_dynamic_columns_colspan': 6 + len(new_contract_sum_dynamic_columns),
+            'new_contract_sum_dynamic_columns_colspan': 7 + len(new_contract_sum_dynamic_columns),
             'total_new_contract_sum_sections': total_new_contract_sum_sections,
             'new_change_breakdown_data': new_change_breakdown_data,
             'new_change_breakdown_dynamic_columns': new_change_breakdown_dynamic_columns,
