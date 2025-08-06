@@ -6812,6 +6812,14 @@
         top: 80px;
     }
 
+    .cost_reporting_graph.pie-chart-style {
+        position: relative;
+        right: 0;
+        width: 700px;
+        height: 1400px;
+        top: 100px;
+    }
+
     .top_graph {
         position: relative;
         width: 100%;
@@ -6960,6 +6968,13 @@
             left: 130px;
             position: relative;
             cursor: pointer;
+        }
+
+        #chartType{
+            left: 247px;
+            position: relative;
+            cursor: pointer;
+            bottom: 24px;
         }
     
 </style>
@@ -7211,6 +7226,13 @@
                             <option value="{{ month }}">{{ month }}</option>
                         {% endfor %}
                     </select>
+
+                    <select id="chartType">
+                        <option value="bar">Bar</option>
+                        <option value="line">Line</option>
+                        <option value="pie">Pie</option>
+                    </select>
+
                 </div>
                 <div class="cost_reporting_graph"><canvas id="cost_reporting_graph"></canvas></div>
                 
@@ -7284,33 +7306,45 @@
 
 {% block extra_script %}
 <script>
+    let currentDataType = "forecast";
+    let chartData = null;
+    let costChart = null;
+    let selectedMonth = "";
+    let selectedChartType = "bar";
 
     $(document).ready(function () {
         $.ajax({
-            url: "/dashboard/cost-chart-data/",
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                chartData = data;
-                renderChart("forecast");
-            },
-            error: function (xhr, status, error) {
-                console.error("Error loading chart data:", error);
-            }
-        });
-
-        $("#showForecast").click(function () {
+        url: "/dashboard/cost-chart-data/",
+        type: "GET",
+        dataType: "json",
+        success: function (data) {
+            chartData = data;
             renderChart("forecast");
-        });
+        },
+        error: function (xhr, status, error) {
+            console.error("Error loading chart data:", error);
+        }
+    });
 
-        $("#showActual").click(function () {
-            renderChart("actual");
-        });
+    $("#showForecast").click(function () {
+        renderChart("forecast");
+    });
 
-        $("#monthFilter").change(function () {
-            selectedMonth = $(this).val();
-            renderChart(costChart.config.data.datasets[0].label.includes("Forecast") ? "forecast" : "actual");
-        });
+    $("#showActual").click(function () {
+        renderChart("actual");
+    });
+
+    $("#monthFilter").change(function () {
+        selectedMonth = $(this).val();
+        const currentType = costChart.config.data.datasets[0].label.includes("Forecast") ? "forecast" : "actual";
+        renderChart(currentType);
+    });
+
+    $("#chartType").change(function () {
+        selectedChartType = $(this).val();
+        const currentType = costChart.config.data.datasets[0].label.includes("Forecast") ? "forecast" : "actual";
+        renderChart(currentType);
+    });
 
         $("#projects").show();
     });
@@ -8483,82 +8517,128 @@
 
     // cost reporting graph start
 
-    let chartData = null;
-    let costChart = null;
-    let selectedMonth = "";
-
     function prepareChartData(type, data) {
-        let labels = data.labels;
-        let datasets = type === "forecast"
-            ? [
-                {
-                    type: "bar",
-                    label: "Forecast Monthly",
-                    data: data.datasets[0].data,
-                    backgroundColor: data.datasets[0].backgroundColor,
-                    borderColor: data.datasets[0].borderColor,
-                    borderWidth: 1,
-                    stack: "Stack 0"
-                },
-                {
-                    type: "line",
-                    label: "Forecast Cumulative",
-                    data: data.datasets[2].data,
-                    borderColor: data.datasets[2].borderColor,
-                    borderWidth: 2,
-                    fill: false
-                }
-            ]
-            : [
-                {
-                    type: "bar",
-                    label: "Actual Monthly",
-                    data: data.datasets[1].data,
-                    backgroundColor: data.datasets[1].backgroundColor,
-                    borderColor: data.datasets[1].borderColor,
-                    borderWidth: 1,
-                    stack: "Stack 0"
-                },
-                {
-                    type: "line",
-                    label: "Actual Cumulative",
-                    data: data.datasets[3].data,
-                    borderColor: data.datasets[3].borderColor,
-                    borderWidth: 2,
-                    fill: false
-                }
-            ];
+    let labels = data.labels;
+    let datasets = [];
+
+    if (selectedChartType === "pie") {
+        const index = type === "forecast" ? 0 : 1;
+        let pieData = data.datasets[index];
+
+        let pieLabels = [...labels];
+        let pieValues = [...pieData.data];
 
         if (selectedMonth) {
-            let index = labels.findIndex(label => label.includes(selectedMonth));
-            if (index !== -1) {
-                labels = [labels[index]];
-                datasets.forEach(dataset => {
-                    dataset.data = [dataset.data[index]];
-                });
+            const monthIndex = labels.findIndex(label => label.includes(selectedMonth));
+            if (monthIndex !== -1) {
+                pieLabels = [labels[monthIndex]];
+                pieValues = [pieData.data[monthIndex]];
             }
         }
 
-        return { labels, datasets };
+        const pieColors = [
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+            '#9966FF', '#FF9F40', '#8B0000', '#00CED1',
+            '#2E8B57', '#FF1493', '#708090', '#FFD700'
+        ];
+
+        return {
+            labels: pieLabels,
+            datasets: [{
+                label: pieData.label,
+                data: pieValues,
+                backgroundColor: pieColors.slice(0, pieValues.length),
+                borderColor: "#fff",
+                borderWidth: 1
+            }]
+        };
     }
 
+    datasets = type === "forecast"
+        ? [
+            {
+                type: selectedChartType,
+                label: "Forecast Monthly",
+                data: data.datasets[0].data,
+                backgroundColor: data.datasets[0].backgroundColor,
+                borderColor: data.datasets[0].borderColor,
+                borderWidth: 1
+            },
+            {
+                type: "line",
+                label: "Forecast Cumulative",
+                data: data.datasets[2].data,
+                borderColor: data.datasets[2].borderColor,
+                borderWidth: 2,
+                fill: false
+            }
+        ]
+        : [
+            {
+                type: selectedChartType,
+                label: "Actual Monthly",
+                data: data.datasets[1].data,
+                backgroundColor: data.datasets[1].backgroundColor,
+                borderColor: data.datasets[1].borderColor,
+                borderWidth: 1
+            },
+            {
+                type: "line",
+                label: "Actual Cumulative",
+                data: data.datasets[3].data,
+                borderColor: data.datasets[3].borderColor,
+                borderWidth: 2,
+                fill: false
+            }
+        ];
+
+    if (selectedMonth) {
+        const index = labels.findIndex(label => label.includes(selectedMonth));
+        if (index !== -1) {
+            labels = [labels[index]];
+            datasets.forEach(dataset => {
+                dataset.data = [dataset.data[index]];
+            });
+        }
+    }
+
+    return { labels, datasets };
+}
+
     function renderChart(type) {
+        const container = document.querySelector(".cost_reporting_graph");
+        container.classList.remove("pie-chart-style");
+
+        if (selectedChartType === "pie") {
+            container.classList.add("pie-chart-style");
+        }
+        
         if (costChart) {
             costChart.destroy();
         }
 
         const ctx = document.getElementById("cost_reporting_graph").getContext("2d");
-        costChart = new Chart(ctx, {
-            type: "bar",
+        const chartConfig = {
+            type: selectedChartType === "pie" ? "pie" : "bar",
             data: prepareChartData(type, chartData),
             options: {
                 responsive: true,
-                scales: {
+                plugins: {
+                    legend: {
+                        display: true
+                    }
+                },
+                layout: selectedChartType === "pie" ? {
+                    padding: 20
+                } : {},
+                scales: (selectedChartType === "pie") ? {} : {
                     x: { stacked: true },
                     y: { stacked: true }
                 }
             }
-        });
+        };
+
+        costChart = new Chart(ctx, chartConfig);
     }
 
     // cost reporting graph end
