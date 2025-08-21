@@ -45,7 +45,7 @@ MIDDLEWARE = [
 
 #==================================================Base Url configuration==================================================
 LOGIN_URL = reverse_lazy('login_url')
-LOGIN_REDIRECT_URL = reverse_lazy('user_dashboard')
+LOGIN_REDIRECT_URL = reverse_lazy('cost_dashboard')
 LOGOUT_REDIRECT_URL = reverse_lazy('login_url')
 ROOT_URLCONF = 'AI-QS.urls'
 

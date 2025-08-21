@@ -44,30 +44,30 @@ SITE_TABS = [
                 'link_url': reverse_lazy('cost_dashboard'),
                 'visible': ['user']
             },
-            {
-                'display_name': 'Risk Report Dashboard',
-                'id': 'risk_Dashboard',
-                'link_url': reverse_lazy('risk_dashboard'),
-                'visible': ['user']
-            },
-            {
-                'display_name': 'Net Zero Carbon Dashboard',
-                'id': 'net_carbon_Dashboard',
-                'link_url': reverse_lazy('net_carbon'),
-                'visible': ['user']
-            },
-            {
-                'display_name': 'RetroFit Dashboard',
-                'id': 'retrofit_Dashboard',
-                'link_url': reverse_lazy('retro_fit'),
-                'visible': ['user']
-            },
-            {
-                'display_name': 'Information Dashboard',
-                'id': 'information_Management_Dashboard',
-                'link_url': reverse_lazy('information_management'),
-                'visible': ['user']
-            }
+            # {
+            #     'display_name': 'Risk Report Dashboard',
+            #     'id': 'risk_Dashboard',
+            #     'link_url': reverse_lazy('risk_dashboard'),
+            #     'visible': ['user']
+            # },
+            # {
+            #     'display_name': 'Net Zero Carbon Dashboard',
+            #     'id': 'net_carbon_Dashboard',
+            #     'link_url': reverse_lazy('net_carbon'),
+            #     'visible': ['user']
+            # },
+            # {
+            #     'display_name': 'RetroFit Dashboard',
+            #     'id': 'retrofit_Dashboard',
+            #     'link_url': reverse_lazy('retro_fit'),
+            #     'visible': ['user']
+            # },
+            # {
+            #     'display_name': 'Information Dashboard',
+            #     'id': 'information_Management_Dashboard',
+            #     'link_url': reverse_lazy('information_management'),
+            #     'visible': ['user']
+            # }
         ],
     },
     # {
